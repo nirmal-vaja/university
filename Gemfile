@@ -78,3 +78,5 @@ end
 
 gem 'ros-apartment', require: 'apartment'
 gem 'pry-rails', :group => :development
+gem 'devise'
+gem 'doorkeeper'

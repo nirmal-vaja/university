@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  rolify
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -15,4 +16,21 @@ class User < ApplicationRecord
       user&.valid_password?(password) ? user : nil
     end
   end
+
+  def examination_controller?
+    self.has_role? :examination_controller
+  end
+
+  def assistant_exam_controller?
+    self.has_role? :assistant_exam_controller
+  end
+
+  def academic_head?
+    self.has_role? :academic_head
+  end
+
+  def hod?
+    self.has_role? :hod
+  end
+  
 end

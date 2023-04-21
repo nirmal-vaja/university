@@ -49,7 +49,7 @@ module Api
             name: doorkeeper_client.name,
             client_id: doorkeeper_client.uid,
             client_secret: doorkeeper_client.secret
-          }
+          },status: :ok
         }
       end
 

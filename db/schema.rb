@@ -10,9 +10,93 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_21_112124) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_27_063157) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "courses", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "excel_sheets", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "faculty_marks_entries", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "course_id", null: false
+    t.bigint "semester_id", null: false
+    t.bigint "subject_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_faculty_marks_entries_on_course_id"
+    t.index ["semester_id"], name: "index_faculty_marks_entries_on_semester_id"
+    t.index ["subject_id"], name: "index_faculty_marks_entries_on_subject_id"
+    t.index ["user_id"], name: "index_faculty_marks_entries_on_user_id"
+  end
+
+  create_table "faculty_subjects", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "subject_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "type"
+    t.index ["subject_id"], name: "index_faculty_subjects_on_subject_id"
+    t.index ["user_id"], name: "index_faculty_subjects_on_user_id"
+  end
+
+  create_table "faculty_supervisions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "subject_id", null: false
+    t.datetime "data"
+    t.string "time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["subject_id"], name: "index_faculty_supervisions_on_subject_id"
+    t.index ["user_id"], name: "index_faculty_supervisions_on_user_id"
+  end
+
+  create_table "marks_entries", force: :cascade do |t|
+    t.string "enrollment_number"
+    t.bigint "subject_id", null: false
+    t.string "marks"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["subject_id"], name: "index_marks_entries_on_subject_id"
+  end
 
   create_table "oauth_access_tokens", force: :cascade do |t|
     t.bigint "resource_owner_id"
@@ -42,14 +126,40 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_21_112124) do
     t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
   end
 
+  create_table "role_emails", force: :cascade do |t|
+    t.string "email"
+    t.bigint "role_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["role_id"], name: "index_role_emails_on_role_id"
+  end
+
   create_table "roles", force: :cascade do |t|
     t.string "name"
     t.string "resource_type"
     t.bigint "resource_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "default_email"
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource"
+  end
+
+  create_table "semesters", force: :cascade do |t|
+    t.string "name"
+    t.bigint "course_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_semesters_on_course_id"
+  end
+
+  create_table "subjects", force: :cascade do |t|
+    t.string "code"
+    t.string "name"
+    t.bigint "semester_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["semester_id"], name: "index_subjects_on_semester_id"
   end
 
   create_table "universities", force: :cascade do |t|
@@ -93,5 +203,19 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_21_112124) do
     t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "faculty_marks_entries", "courses"
+  add_foreign_key "faculty_marks_entries", "semesters"
+  add_foreign_key "faculty_marks_entries", "subjects"
+  add_foreign_key "faculty_marks_entries", "users"
+  add_foreign_key "faculty_subjects", "subjects"
+  add_foreign_key "faculty_subjects", "users"
+  add_foreign_key "faculty_supervisions", "subjects"
+  add_foreign_key "faculty_supervisions", "users"
+  add_foreign_key "marks_entries", "subjects"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
+  add_foreign_key "role_emails", "roles"
+  add_foreign_key "semesters", "courses"
+  add_foreign_key "subjects", "semesters"
 end

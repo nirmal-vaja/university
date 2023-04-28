@@ -5,6 +5,13 @@ namespace :api do
     scope :users, module: :users do
       post '/', to: 'registrations#create', as: :user_registration
     end
+    resources :universities, only: [:index, :create] do
+      member do
+        get :get_authorization_details
+      end
+    end
+
+    resources :excel_sheets, only: [:index, :create, :update, :destroy]
   end
 end
 

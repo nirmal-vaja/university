@@ -7,13 +7,19 @@ class User < ApplicationRecord
 
   validates :email, format: URI::MailTo::EMAIL_REGEXP
 
+  has_many :faculty_subjects, dependent: :destroy
+  has_many :subjects, through: :faculty_subjects
+
+  has_many :faculty_supervisions, dependent: :destroy
+  has_many :subjects_to_supervision, through: :faculty_supervisions, class_name: "Subject", foreign_key: "subject_id"
+
   # the authenticate method from devise documentation
   def self.authenticate(subdomain, email, password)
     if Apartment.tenant_names.include?(subdomain)
       Apartment::Tenant.switch!(subdomain)
       puts "tenant switched"
       user = User.find_for_authentication(email: email)
-      user&.valid_password?(password) ? user : nil
+      user&.valid_password?(password) && user&.status == true ? user : nil
     end
   end
 

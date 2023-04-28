@@ -15,10 +15,13 @@ module Api
       end
 
       def create
-        @university = University.new(organization_params)
+        @university = University.new(university_params)
 
         if @university.save
+          current_tenant = Apartment::Tenant.current
+          Apartment::Tenant.switch!(@university.subdomain)
           doorkeeper_application = Doorkeeper::Application.first
+          Apartment::Tenant.switch!(current_tenant)
           render json: {
             message: "University has been created",
             status: :created,
@@ -27,7 +30,7 @@ module Api
               doorkeeper_application: {
                 name: doorkeeper_application.name,
                 client_id: doorkeeper_application.uid,
-                client_secret: doorkeeper_application.client_secret
+                client_secret: doorkeeper_application.secret
               }
             }
           }
@@ -56,7 +59,7 @@ module Api
       private
 
       def university_params
-        params.require(:university).permit(:name, :subdomain, :established_year, :city, :state, :country)
+        params.require(:university).permit(:name, :subdomain, :established_year, :city, :state, :country, :examination_controller_email, :assistant_exam_controller_email, :academic_head_email, :hod_email)
       end
     end
   end

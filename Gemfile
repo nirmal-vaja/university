@@ -80,6 +80,7 @@ gem 'ros-apartment', require: 'apartment'
 gem 'pry-rails', :group => :development
 gem 'devise'
 gem 'doorkeeper'
+gem 'aws-sdk-s3'
 gem 'roo', '~> 2.8' 
 gem "rolify"
 gem "pundit"

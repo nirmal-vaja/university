@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  subject: one
+  data: 2023-04-26 14:31:33
+  time: MyString
+
+two:
+  user: two
+  subject: two
+  data: 2023-04-26 14:31:33
+  time: MyString

@@ -291,7 +291,7 @@ DEPENDENCIES
   capistrano-bundler
   capistrano-rails
   capistrano-rbenv
-  capistrano3-puma
+  capistrano3-puma (~> 5.2.0)
   capybara
   debug
   devise

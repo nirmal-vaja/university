@@ -31,9 +31,9 @@ set :puma_worker_timeout, nil
 set :puma_init_active_record, true  # Change to false when not using ActiveRecord
 set :puma_enabled_socket_service, true
 set :puma_user, fetch(:user)
-set :puma_role. :web
 set :puma_service_unit_env_files, []
 set :puma_service_unit_env_vars, []
+set :puma_role, :web
 
 append :rbenv_map_bins, 'puma', 'pumactl'
 

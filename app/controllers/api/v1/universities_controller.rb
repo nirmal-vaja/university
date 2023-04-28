@@ -21,6 +21,12 @@ module Api
           current_tenant = Apartment::Tenant.current
           Apartment::Tenant.switch!(@university.subdomain)
           doorkeeper_application = Doorkeeper::Application.first
+          user = User.create(
+            email: university_params[:admin_email],
+            password: university_params[:admin_password]
+          )
+
+          user.add_role :super_admin
           Apartment::Tenant.switch!(current_tenant)
           render json: {
             message: "University has been created",
@@ -59,7 +65,7 @@ module Api
       private
 
       def university_params
-        params.require(:university).permit(:name, :subdomain, :established_year, :city, :state, :country, :examination_controller_email, :assistant_exam_controller_email, :academic_head_email, :hod_email)
+        params.require(:university).permit(:name, :subdomain, :established_year, :city, :state, :country, :admin_email, :admin_password, :examination_controller_email, :assistant_exam_controller_email, :academic_head_email, :hod_email)
       end
     end
   end

@@ -82,13 +82,11 @@ namespace :import do
 
           cs_data = Hash[[downcased_headers, row].transpose]
 
-          binding.pry
           course = Course.find_or_initialize_by(
             name: cs_data["course"]
           )
 
           course.save
-          binding.pry
           cs_data["semesters"].times do |i|
             semester = Semester.find_or_initialize_by(name: i+1, course_id: course.id)
             semester.save

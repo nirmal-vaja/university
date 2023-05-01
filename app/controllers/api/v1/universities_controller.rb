@@ -16,7 +16,7 @@ module Api
 
       def create
         @university = University.new(university_params)
-        @university.subdomain = name.split().reject{|i| i.downcase=="university"}.join("_").downcase
+        @university.subdomain = @university.name.split().reject{|i| i.downcase=="university"}.join("_").downcase
 
         if @university.save
           current_tenant = Apartment::Tenant.current

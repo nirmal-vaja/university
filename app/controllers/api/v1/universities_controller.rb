@@ -24,7 +24,8 @@ module Api
           doorkeeper_application = Doorkeeper::Application.first
           user = User.create(
             email: university_params[:admin_email],
-            password: university_params[:admin_password]
+            password: university_params[:admin_password],
+            status: true
           )
 
           user.add_role :super_admin

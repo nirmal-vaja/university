@@ -2,14 +2,16 @@ class University < ApplicationRecord
 
   attr_accessor :examination_controller_email, :assistant_exam_controller_email, :academic_head_email, :hod_email, :admin_email, :admin_password
 
-  validates_presence_of :name, :subdomain
-  after_create :create_tenant
+  validates_presence_of :name
+  after_create :create_subdomain_and_tenant
   after_create :create_doorkeeper_application
   after_create :create_default_roles
 
   private
 
-  def create_tenant
+  def create_subdomain_and_tenant
+    subdomain = name.split().reject{|i| i.downcase=="university"}.join("_").downcase
+    update(subdomain: subdomain)
     Apartment::Tenant.create(subdomain)
   end
 

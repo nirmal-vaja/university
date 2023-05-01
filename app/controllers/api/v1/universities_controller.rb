@@ -4,7 +4,7 @@ module Api
       skip_before_action :doorkeeper_authorize!
       skip_before_action :set_tenant
 
-      def index 
+      def index
         @universities = University.all
         render json: {
           data: {
@@ -12,6 +12,16 @@ module Api
           },
           status: :ok
         }
+      end
+
+      def get_details
+        @university = University.find_by(subdomain: params[:id])
+
+        if @university
+          render json: {
+            university: @university
+          }
+        end
       end
 
       def create
@@ -25,7 +35,7 @@ module Api
           user = User.create(
             email: university_params[:admin_email],
             password: university_params[:admin_password],
-            status: true
+            status: "true"
           )
 
           user.add_role :super_admin

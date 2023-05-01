@@ -4,6 +4,11 @@ namespace :api do
   namespace :v1 do
     scope :users, module: :users do
       post '/', to: 'registrations#create', as: :user_registration
+      resources :users, only: [:index] do
+        collection do
+          get :find_user
+        end
+      end
     end
     resources :universities, only: [:index, :create] do
       member do

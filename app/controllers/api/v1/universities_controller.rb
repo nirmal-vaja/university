@@ -63,9 +63,13 @@ module Api
       def get_authorization_details
         current_tenant = Apartment::Tenant.current
         Apartment::Tenant.switch!(params[:id])
+        university = University.find_by_subdomain(params[:id])
         doorkeeper_client = Doorkeeper::Application.first
         Apartment::Tenant.switch!(current_tenant)
         render json: {
+          university: {
+            name: university.name
+          },
           doorkeeper: {
             name: doorkeeper_client.name,
             client_id: doorkeeper_client.uid,

@@ -19,7 +19,7 @@ class User < ApplicationRecord
       Apartment::Tenant.switch!(subdomain)
       puts "tenant switched"
       user = User.find_for_authentication(email: email)
-      user&.valid_password?(password) && user&.status == true ? user : nil
+      user&.valid_password?(password) && user&.status == "true" ? user : nil
     end
   end
 

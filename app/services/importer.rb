@@ -9,7 +9,7 @@ class Importer
     excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
 
     if excel_sheet.sheet.attached?
-      data = Roo::Spreadsheet.open(excel_sheet.sheet)
+      data = Roo::Spreadsheet.open(create_temp_file(excel_sheed.id))
       headers = Array.new
       i = 0
       while headers.compact.empty?
@@ -20,7 +20,7 @@ class Importer
       downcased_headers = headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
       puts downcased_headers
       data.each_with_index do |row, idx|
-        next if idx == 0 # skip header
+        next if idx == 0 || idx == 1 # skip header
         # create hash from headers and cells
         user_data = Hash[[downcased_headers, row].transpose]
 
@@ -57,8 +57,8 @@ class Importer
     excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
     if excel_sheet.sheet.attached?
       data = Array.new
-      excel_sheet.sheet.open do |file|
-        data = Roo::Spreadsheet.open(file)
+      # excel_sheet.sheet.open do |file|
+        data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
         headers = Array.new
         i = 0
         while headers.compact.empty?
@@ -81,7 +81,7 @@ class Importer
             semester.save
           end
         end
-      end
+      # end
     end
   end
 
@@ -115,5 +115,16 @@ class Importer
         end
       end
     end
+  end
+
+  private
+
+  def create_temp_file(sheet_id)
+    excel_sheet = ExcelSheet.find_by_id(sheet_id)
+    file_name = excel_sheet.sheet.blob.filename
+      @tmp = Tempfile.new([file_name.base, file_name.extension_with_delimiter], binmode: true)
+      @tmp.write(excel_sheet.sheet.download)
+      @tmp.rewind
+      @tmp
   end
 end

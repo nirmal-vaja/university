@@ -6,7 +6,7 @@ class ExcelSheet < ApplicationRecord
   validates_presence_of :sheet, :name
   validates_uniqueness_of :name
 
-  after_create :save_data
+  # after_ :save_data
 
   private
 

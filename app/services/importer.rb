@@ -103,15 +103,13 @@ class Importer
         
         subject_details = Hash[[downcased_headers, row].transpose]
 
-        subject_details.each do |i|
-          course = Course.find_by_name(data[:course])
-          semester = course.semesters.find_by_name(data[:semester])
+        course = Course.find_by_name(subject_details[:course])
+        semester = course.semesters.find_by_name(subject_details[:semester])
 
-          subject = Subject.find_or_initialize_by(code: data[:subject_code]).tap do |s|
-            s.name = data[:subject_name]
-            s.semester_id = semester.id
-            s.save
-          end
+        subject = Subject.find_or_initialize_by(code: subject_details[:subject_code]).tap do |s|
+          s.name = subject_details[:subject_name]
+          s.semester_id = semester.id
+          s.save
         end
       end
     end

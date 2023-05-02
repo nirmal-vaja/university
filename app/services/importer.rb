@@ -88,7 +88,7 @@ class Importer
   def create_subject
     excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
     if excel_sheet.sheet.attached?
-      data = Roo::Spreadsheet.open(excel_sheet.sheet)
+      data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
       headers = Array.new
       i = 0
       while headers.compact.empty?
@@ -99,7 +99,7 @@ class Importer
       downcased_headers = headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
       puts downcased_headers
       data.each_with_index do |row, idx|
-        next if idx == 0
+        next if idx == 0 || idx == 1
         
         subject_details = Hash[[downcased_headers, row].transpose]
 

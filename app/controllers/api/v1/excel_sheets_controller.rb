@@ -18,6 +18,16 @@ module Api
         @excel_sheet = ExcelSheet.new(excel_sheet_params)
 
         if @excel_sheet.save
+
+          case @excel_sheet.name
+          when "Faculty Details"
+            Importer.new(@excel_sheet.id).create_faculty_details
+          when "Course and Semester Details"
+            Importer.new(@excel_sheet.id).create_course_and_semester
+          when "Subject Details"
+            Importer.new(@excel_sheet.id).create_subject
+          end
+
           render json: {
             data: {
               excel_sheet: @excel_sheet

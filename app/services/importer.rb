@@ -31,6 +31,7 @@ class Importer
 
         user.phone_number = user_data[:phone_number]
         user.designation = user_data[:designation]
+        user.password = "password"
         user.date_of_joining = user_data[:doj]
         user.gender = user_data[:gender]
         user.department = user_data[:department]

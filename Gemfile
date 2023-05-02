@@ -85,3 +85,4 @@ gem 'roo', '~> 2.8'
 gem "rolify"
 gem "pundit"
 gem 'rack-cors'
+gem 'dotenv-rails', groups: [:development, :test]

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_27_063157) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_02_094721) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -47,6 +47,20 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_063157) do
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "exam_time_tables", force: :cascade do |t|
+    t.string "name"
+    t.string "department"
+    t.bigint "semester_id", null: false
+    t.bigint "subject_id", null: false
+    t.text "day"
+    t.date "date"
+    t.text "time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["semester_id"], name: "index_exam_time_tables_on_semester_id"
+    t.index ["subject_id"], name: "index_exam_time_tables_on_subject_id"
   end
 
   create_table "excel_sheets", force: :cascade do |t|
@@ -205,6 +219,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_063157) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "exam_time_tables", "semesters"
+  add_foreign_key "exam_time_tables", "subjects"
   add_foreign_key "faculty_marks_entries", "courses"
   add_foreign_key "faculty_marks_entries", "semesters"
   add_foreign_key "faculty_marks_entries", "subjects"

@@ -7,6 +7,7 @@ namespace :api do
       resources :users, only: [:index] do
         collection do
           get :find_user
+          get :faculty_names
         end
       end
     end

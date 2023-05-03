@@ -16,6 +16,17 @@ module Api
           }
         end
 
+        # Fetching Faculty Names in the assign roles page
+        def faculty_names
+          @users = User.with_role(:faculty)
+
+          render json: {
+            message: "Faculty lists",
+            data: {
+              users: @users.pluck(:name, :designation)
+            }
+          }
+        end
       end
     end
   end

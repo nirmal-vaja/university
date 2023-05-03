@@ -26,12 +26,14 @@ module Api
             Importer.new(@excel_sheet.id).create_course_and_semester
           when "Subject Details"
             Importer.new(@excel_sheet.id).create_subject
-          when "Faculty Supervision"
-            Importer.new(@excel_sheet.id).create_supervision_list
-          when "Marks Entry Details"
-            Importer.new(@excel_sheet.id).create_marks_entry
-          when "Faculty Assignment for marks entry"
-            Importer.new(@excel_sheet.id).create_faculty_assignment_for_marks_entry
+          # when "Faculty Supervision"
+          #   Importer.new(@excel_sheet.id).create_supervision_list
+          # when "Marks Entry Details"
+          #   Importer.new(@excel_sheet.id).create_marks_entry
+          # when "Faculty Assignment for marks entry"
+          #   Importer.new(@excel_sheet.id).create_faculty_assignment_for_marks_entry
+          # when "Exam Time Table"
+          #   Importer.new(@excel_sheed.id).create_exam_time_table
           end
 
           render json: {

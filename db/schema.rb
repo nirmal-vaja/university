@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_02_094721) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_03_113446) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -42,6 +42,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_02_094721) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "branches", force: :cascade do |t|
+    t.string "name"
+    t.bigint "course_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_branches_on_course_id"
+  end
+
   create_table "courses", force: :cascade do |t|
     t.string "name"
     t.string "description"
@@ -51,7 +59,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_02_094721) do
 
   create_table "exam_time_tables", force: :cascade do |t|
     t.string "name"
-    t.string "department"
     t.bigint "semester_id", null: false
     t.bigint "subject_id", null: false
     t.text "day"
@@ -59,6 +66,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_02_094721) do
     t.text "time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "course_id", null: false
+    t.bigint "branch_id", null: false
+    t.index ["branch_id"], name: "index_exam_time_tables_on_branch_id"
+    t.index ["course_id"], name: "index_exam_time_tables_on_course_id"
     t.index ["semester_id"], name: "index_exam_time_tables_on_semester_id"
     t.index ["subject_id"], name: "index_exam_time_tables_on_subject_id"
   end
@@ -219,6 +230,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_02_094721) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "branches", "courses"
+  add_foreign_key "exam_time_tables", "branches"
+  add_foreign_key "exam_time_tables", "courses"
   add_foreign_key "exam_time_tables", "semesters"
   add_foreign_key "exam_time_tables", "subjects"
   add_foreign_key "faculty_marks_entries", "courses"

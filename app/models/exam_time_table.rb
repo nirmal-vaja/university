@@ -3,7 +3,7 @@ class ExamTimeTable < ApplicationRecord
   belongs_to :subject
 
   validates_presence_of :name, :department, :day, :time, :date
-  enum :day: {
+  enum day: {
     monday: 0,
     tuesday: 1,
     wednesday: 2,

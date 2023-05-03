@@ -9,7 +9,7 @@ class Importer
     excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
 
     if excel_sheet.sheet.attached?
-      data = Roo::Spreadsheet.open(create_temp_file(excel_sheed.id))
+      data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
       headers = Array.new
       i = 0
       while headers.compact.empty?
@@ -38,7 +38,7 @@ class Importer
         user.email = user_data[:email]
         current_subject = Subject.find_by_code(user_data[:current_subject_code])
         previous_subject = Subject.find_by_code(user_data[:previous_subject_code])
-
+        user.add_role :faculty
         user.save
 
         if current_subject
@@ -83,6 +83,45 @@ class Importer
           end
         end
       # end
+    end
+  end
+
+  def create_exam_time_table
+    excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
+    if excel_sheet.sheet.attached?
+      data = Roo::SpreadSheet.open(create_temp_file(excel_sheet.id))
+      headers = Array.new
+      i = 0
+      while headers.compact.empty?
+        headers = data.row(i)
+        i += 1
+      end
+      user_data = []
+      downcased_headers = headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
+      puts downcased_headers
+      data.each_with_index do |row, idx|
+        next if idx == 0 || idx == 1
+
+        time_table_details = Hash[[downcased_headers, row].transpose]
+
+        course = Course.find_by_name(time_table_details[:department])
+        branch = Branch.find_by_name(time_table_details[:branch])
+        semester = Semester.find_by_name(time_table_details[:semester])
+        subject = Subject.find_by_code(time_table_details[:subject_code])
+
+        time_table = ExamTimeTable.new(
+          name: time_table_details[:name],
+          course_id: course.id,
+          branch_id: branch.id,
+          semester_id: semester.id,
+          subject_id: subject.id,
+          day: time_table_details[:day],
+          date: time_table_details[:date],
+          time: time_table_details[:time]
+        )
+
+        time_table.save
+      end
     end
   end
 

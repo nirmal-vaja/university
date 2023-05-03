@@ -116,6 +116,102 @@ class Importer
     end
   end
 
+  def create_supervision_list
+    excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
+    if excel_sheet.sheet.attached?
+      data = Roo::SpreadSheet.open(create_temp_file(excel_sheet.id))
+      headers = Array.new
+      i = 0
+      while headers.compact.empty?
+        headers = data.row(i)
+        i+=1
+      end
+      user_data = []
+      downcased_headers = headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
+      puts downcased_headers
+      data.each_with_index do |row, idx|
+        next if idx == 0
+
+        supervision_details = Hash[[downcased_headers, row].transpose]
+
+        supervision_details.each do |sd|
+          faculty = User.find_by_name(sd[:faculty_name])
+          subject = Subject.find_by_code(sd[:subject_code])
+
+          faculty_supervision = FacultySupervison.new(
+            user_id: faculty.id,
+            subject_id: subject.id,
+            date: sd[:date],
+            time: sd[:time]
+          )
+
+          faculty_supervision.save
+        end
+      end
+    end
+  end
+
+  def create_marks_entry
+    excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
+    if excel_sheet.sheet.attached?
+      data = Roo::SpreadSheet.open(create_temp_file(excel_sheet.id))
+      headers = Array.new
+      i = 0
+      while headers.compact.empty?
+        headers = data.row(i)
+        i += 1
+      end
+      downcased_headers = headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
+      puts downcased_headers
+      data.each_with_index do |row, idx|
+        next if idx == 0
+
+        marks_entry_details = Hash[[downcased_headers, row].transpose]
+
+        marks_entry_details.each do |marks|
+          subject = Subject.find_by(code: marks[:code])
+
+          marks_entry = MarksEntry.find_or_initialize_by(enrollment_number: marks[:enrollment_number], subject_id: subject.id).tap do |mark|
+            mark.marks = marks[:marks]
+            mark.save
+          end
+        end
+      end
+    end
+  end
+
+  def create_faculty_assignment_for_marks_entry
+    excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
+
+    if excel_sheet.sheet.attached?
+      data = Roo::SpreadSheet.open(create_temp_file(excel_sheet.id))
+      headers = Array.new
+
+      i = 0
+      while headers.compact.empty?
+        headers = data.row(i)
+        i += 1
+      end
+
+      downcased_headers =  headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
+      puts downcased_headers
+      data.each_with_index do |row, idx|
+        next if idx == 0
+
+        faculty_assign_details = Hash[[downcased_headers, row].transpose]
+
+        faculty_assign_details.each do |detail|
+          course = Course.find_by_name(detail[:course])
+          semester = course.semesters.find_by_name(detail[:semester])
+          subject = semester.subjects.find_by_code(detail[:subject])
+          user = subject.users.find_by_name(detail[:faculty_name])
+          assign_faculty = FacultyMarkEntry.find_or_initialize_by(course_id: course.id, semester_id: semester.id, subject_id: subject.id, user_id: user.id)
+          assign_faculty.save
+        end
+      end
+    end
+  end
+
   private
 
   def create_temp_file(sheet_id)

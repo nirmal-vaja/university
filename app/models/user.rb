@@ -23,6 +23,10 @@ class User < ApplicationRecord
     end
   end
 
+  def name
+    "#{first_name} #{last_name}"
+  end
+
   def examination_controller?
     self.has_role? :examination_controller
   end

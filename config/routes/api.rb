@@ -11,9 +11,11 @@ namespace :api do
         end
         member do
           post :assign_role
+          post :remove_role
         end
       end
     end
+    resources :roles, only: [:create, :destroy]
     resources :universities, only: [:index, :create] do
       member do
         get :get_authorization_details

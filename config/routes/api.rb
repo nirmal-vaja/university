@@ -9,6 +9,9 @@ namespace :api do
           get :find_user
           get :faculty_names
         end
+        member do
+          post :assign_role
+        end
       end
     end
     resources :universities, only: [:index, :create] do

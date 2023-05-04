@@ -23,9 +23,33 @@ module Api
           render json: {
             message: "Faculty lists",
             data: {
-              users: @users.pluck(:name, :designation)
+              users: @users
             }
           }
+        end
+
+        def assign_role
+          add_role(params[:id], user_params[:role_name])
+          @user = User.find_by_id(params[:id])
+
+          render json: {
+            message: "Role assigned",
+            data: {
+              user: @user,
+              role: @user.roles
+            }, status: :ok
+          }
+        end
+
+        private
+
+        def add_role(user_id, role_name)
+          @user = User.find_by_id(user_id)
+          @user.add_role(role_name) unless @user.has_role? role_name
+        end
+
+        def user_params
+          params.require(:user).permit(:role_name)
         end
       end
     end

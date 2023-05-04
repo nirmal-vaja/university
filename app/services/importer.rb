@@ -34,6 +34,7 @@ class Importer
         user.password = "password"
         user.date_of_joining = user_data["date_of_joining"]
         user.gender = user_data["gender"]
+        user.status = "true"
         user.department = user_data["department"]
         user.email = user_data["email"]
         # current_subject = Subject.find_by_code(user_data[:current_subject_code])

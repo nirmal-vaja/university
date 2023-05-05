@@ -1,6 +1,18 @@
 module Api
   module V1
     class RolesController < ApiController
+
+      def index
+        @roles = Role.where.not(name: ['super_admin', 'faculty'])
+
+        render json: {
+          message: "These are the roles",
+          data: {
+            role_names: @roles&.pluck(:name)
+          }, status: :ok
+        }
+      end
+
       def create
         @role = Role.new(role_params)
         if @role.save

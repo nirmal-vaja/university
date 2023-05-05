@@ -8,7 +8,7 @@ module Api
         render json: {
           message: "These are the roles",
           data: {
-            role_names: @roles&.pluck(:name)
+            role_names: @roles
           }, status: :ok
         }
       end

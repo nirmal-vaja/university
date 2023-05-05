@@ -11,7 +11,7 @@ namespace :api do
         end
         member do
           post :assign_role
-          post :remove_role
+          post :deassign_role
         end
       end
     end

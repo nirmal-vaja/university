@@ -36,7 +36,7 @@ module Api
             message: "Role assigned",
             data: {
               user: @user,
-              role: @user.roles
+              role: user_params[:role_name]
             }, status: :ok
           }
         end

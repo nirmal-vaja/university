@@ -15,7 +15,7 @@ namespace :api do
         end
       end
     end
-    resources :roles, only: [:create, :destroy]
+    resources :roles, only: [:index,:create, :destroy]
     resources :universities, only: [:index, :create] do
       member do
         get :get_authorization_details

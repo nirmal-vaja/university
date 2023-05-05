@@ -44,12 +44,12 @@ module Api
         def deassign_role
           remove_role(params[:id], user_params[:role_name])
           @user = User.find_by_id(params[:id])
-
+          role_name = user_params[:role_name]
           render json: {
             message: "Role Deassigned",
             data: {
               user: @user,
-              role: @user.roles
+              role: role_name
             }, status: :ok
           }
         end

@@ -19,38 +19,40 @@ class Importer
       user_data = []
       downcased_headers = headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
       puts downcased_headers
+      success = 0
+      users = 0
       data.each_with_index do |row, idx|
-        next if idx == 0 || idx == 1 # skip header
+        next if  row.include?(nil) || row[0] == headers[0] # skip header and nil rows
         # create hash from headers and cells
         user_data = Hash[[downcased_headers, row].transpose]
 
-        user = User.new(
-          first_name: user_data["faculty_name"].split(' ')[0],
-          last_name: user_data["faculty_name"].split(' ')[1]
+        user = User.find_or_initialize_by(
+          email: user_data["email"]
         )
-
+        user.first_name = user_data["faculty_name"].split(' ')[0]
+        user.last_name = user_data["faculty_name"].split(' ')[1]
         user.phone_number = user_data["phone_number"]
         user.designation = user_data["designation"]
-        user.password = "password"
-        user.date_of_joining = user_data["date_of_joining"]
+        user.password = "password" if user.password.nil?
+        user.date_of_joining = user_data["dateof_joining"]
         user.gender = user_data["gender"]
         user.status = "true"
         user.department = user_data["department"]
-        user.email = user_data["email"]
-        # current_subject = Subject.find_by_code(user_data[:current_subject_code])
-        # previous_subject = Subject.find_by_code(user_data[:previous_subject_code])
         user.add_role :faculty
-        user.save
-
-        # if current_subject
-        #   faculty_subject = FacultySubject.find_or_initialize_by(user_id: user.id, subject_id: current_subject.id, type: 0)
-        #   faculty_subject.save
-        # end
-
-        # if previous_subject
-        #   faculty_subject = FacultySubject.find_or_initialize_by(user_id: user.id, subject_id: previous_subject.id, type: 1)
-        #   faculty_subject.save
-        # end
+        users += 1
+        if user.save
+          success += 1
+        else
+          return { message: "#{user.first_name}'s " + user.errors.full_messages.join(' '), status: :unprocessable_entity }
+        end
+      end
+      if success == users
+        {
+          message: "Excel Sheet has been uploaded successfully",
+          data: {
+            users: User.with_role(:faculty)
+          }, status: :created
+        }
       end
     end
   end

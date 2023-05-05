@@ -6,6 +6,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   validates :email, format: URI::MailTo::EMAIL_REGEXP
+  validates_format_of :phone_number, :with =>  /\+?\d[\d -]{8,12}\d/
 
   has_many :faculty_subjects, dependent: :destroy
   has_many :subjects, through: :faculty_subjects

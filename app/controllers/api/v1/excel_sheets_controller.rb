@@ -15,54 +15,35 @@ module Api
       end
 
       def create
-        @excel_sheet = ExcelSheet.new(excel_sheet_params)
+        @excel_sheet = ExcelSheet.find_by_name(excel_sheet_params[:name])
 
-        if @excel_sheet.save
-
-          case @excel_sheet.name
-          when "Faculty Details"
-            Importer.new(@excel_sheet.id).create_faculty_details
-          when "Course and Semester Details"
-            Importer.new(@excel_sheet.id).create_course_and_semester
-          when "Subject Details"
-            Importer.new(@excel_sheet.id).create_subject
-          # when "Faculty Supervision"
-          #   Importer.new(@excel_sheet.id).create_supervision_list
-          # when "Marks Entry Details"
-          #   Importer.new(@excel_sheet.id).create_marks_entry
-          # when "Faculty Assignment for marks entry"
-          #   Importer.new(@excel_sheet.id).create_faculty_assignment_for_marks_entry
-          # when "Exam Time Table"
-          #   Importer.new(@excel_sheed.id).create_exam_time_table
+        if @excel_sheet
+          if @excel_sheet.update(excel_sheet_params)
+            if @excel_sheet.sheet.attached?
+              render json: run_creator(@excel_sheet.id)
+            else
+              render json: {
+                message: "The excel sheet has not been uploaded properly, kindly upload it again!",
+                status: :unprocessable_entity
+              }
+            end
+          else
+            render json: {
+              message: @excel_sheet.errors.full_messages.join(' '),
+              status: :unprocessable_entity
+            }
           end
-
-          render json: {
-            data: {
-              excel_sheet: @excel_sheet
-            },status: :created,
-            message: "Excel Sheet has been uploaded"
-          }
         else
-          render json: {
-            message: @excel_sheet.errors.full_messages.join(', '),
-            status: :unprocessable_entity
-          }
-        end
-      end
+          @excel_sheet = ExcelSheet.new(excel_sheet_params)
 
-      def update
-        if @excel_sheet.update(excel_sheet_params)
-          render json: {
-            data: {
-              excel_sheet: @excel_sheet
-            }, status: :ok,
-            message: "Excel sheet has been updated"
-          }
-        else
-          render json: {
-            message: @excel_sheet.errors.full_messages.join(', '),
-            status: :unprocessable_entity
-          }
+          if @excel_sheet.save
+            render json: run_creator(@excel_sheet.id)
+          else
+            render json: {
+              message: @excel_sheet.errors.full_messages.join(' '),
+              status: :unprocessable_entity
+            }
+          end
         end
       end
 
@@ -81,6 +62,19 @@ module Api
       end
 
       private
+
+      def run_creator(excel_sheet_id)
+        excel_sheet = ExcelSheet.find_by_id(excel_sheet_id)
+
+        case excel_sheet.name
+        when "Faculty Details"
+          Importer.new(excel_sheet.id).create_faculty_details
+        when "Course and Semester Details"
+          Importer.new(excel_sheet.id).create_course_and_semester
+        when "Subject Details"
+          Importer.new(excel_sheet.id).create_subject
+        end
+      end
 
       def find_excel_sheet
         @excel_sheet = ExcelSheet.find_by_id(params[:id])

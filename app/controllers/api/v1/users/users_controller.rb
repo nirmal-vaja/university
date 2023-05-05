@@ -31,12 +31,12 @@ module Api
         def assign_role
           add_role(params[:id], user_params[:role_name])
           @user = User.find_by_id(params[:id])
-
+          role_name = user_params[:role_name]
           render json: {
             message: "Role assigned",
             data: {
               user: @user,
-              role: user_params[:role_name]
+              role: role_name
             }, status: :ok
           }
         end

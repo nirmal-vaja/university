@@ -5,6 +5,8 @@ set :repo_url,        'git@github.com:nirmal-vaja/university.git'
 set :application,     'university'
 set :branch,          'master'
 
+set :ssh_options,     { forward_agent: true, user: fetch(:user), keys: %w(~/.ssh/id_rsa.pub) }
+
 set :rbenv_ruby,      '3.1.3'
 # set :rbenv_ruby_dir,  '/home/ubuntu/.rbenv/versions/3.0.2'
 set :default_env, { path: "~/.rbenv/shims:~/.rbenv/bin:$PATH" }

@@ -22,6 +22,8 @@ namespace :api do
       end
     end
 
+    resources :exam_time_tables, only: [:index, :create, :update, :destroy]
+    resources :time_table_block_wise_reports, only: [:index, :create]
     resources :excel_sheets, only: [:index, :create, :update, :destroy]
   end
 end

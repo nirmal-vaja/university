@@ -15,12 +15,13 @@ module Api
 
       def create
         @exam_time_table = ExamTimeTable.new(time_table_params)
-        @exam_time_table.course = Course.find_by_name(time_table_params[:department])
-        @exam_time_table.branch = Branch.find_by_name(time_table_params[:branch])
-        @exam_time_table.semester = Semester.find_by_name(time_table_params[:semester_name])
         @exam_time_table.subject = Subject.find_by_code(time_table_params[:subject_code])
+        @exam_time_table.semester = @exam_time_table.subject.semester
+        @exam_time_table.branch = @exam_time_table.semester.branch
+        @exam_time_table.course = @exam_time_table.branch.course
 
         if @exam_time_table.save
+          binding.pry
           render json: {
             message: "Time table has been created",
             data: {
@@ -28,6 +29,7 @@ module Api
             }, status: :created
           }
         else
+          binding.pry
           render json: {
             message: @exam_time_table.errors.full_messages.join(' '),
             status: :unprocessable_entity
@@ -68,11 +70,11 @@ module Api
       private
 
       def set_time_table
-        @time_table = TimeTable.find_by_id(params[:id])
+        @time_table = ExamTimeTable.find_by_id(params[:id])
       end
 
       def time_table_params
-        params.require(:time_table).permit(:name, :department, :branch, :semester_name, :subject_code, :subject_name, :day, :date, :time)
+        params.require(:time_table).permit(:name, :subject_code, :subject_name, :day, :date, :time, :academic_year)
       end
     end
   end

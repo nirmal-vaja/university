@@ -1,6 +1,10 @@
 class ExamTimeTable < ApplicationRecord
   belongs_to :semester
   belongs_to :subject
+  belongs_to :branch
+  belongs_to :course
+
+  attr_accessor :subject_code, :subject_name
 
   validates_presence_of :name, :department, :day, :time, :date
   enum day: {
@@ -17,7 +21,5 @@ class ExamTimeTable < ApplicationRecord
     morning: "10:30 A.M to 01:00 P.M",
     evening: "03:00 P.M to 05:30 P.M"
   }
-
-  
 
 end

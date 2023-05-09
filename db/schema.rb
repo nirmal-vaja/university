@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_03_113446) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_09_092516) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -68,6 +68,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_03_113446) do
     t.datetime "updated_at", null: false
     t.bigint "course_id", null: false
     t.bigint "branch_id", null: false
+    t.string "academic_year"
     t.index ["branch_id"], name: "index_exam_time_tables_on_branch_id"
     t.index ["course_id"], name: "index_exam_time_tables_on_course_id"
     t.index ["semester_id"], name: "index_exam_time_tables_on_semester_id"
@@ -172,10 +173,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_03_113446) do
 
   create_table "semesters", force: :cascade do |t|
     t.string "name"
-    t.bigint "course_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["course_id"], name: "index_semesters_on_course_id"
+    t.bigint "branch_id", null: false
+    t.index ["branch_id"], name: "index_semesters_on_branch_id"
   end
 
   create_table "subjects", force: :cascade do |t|
@@ -185,6 +186,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_03_113446) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["semester_id"], name: "index_subjects_on_semester_id"
+  end
+
+  create_table "time_table_block_wise_reports", force: :cascade do |t|
+    t.bigint "exam_time_table_id", null: false
+    t.integer "rooms"
+    t.integer "blocks"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "academic_year"
+    t.index ["exam_time_table_id"], name: "index_time_table_block_wise_reports_on_exam_time_table_id"
   end
 
   create_table "universities", force: :cascade do |t|
@@ -246,6 +257,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_03_113446) do
   add_foreign_key "marks_entries", "subjects"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "role_emails", "roles"
-  add_foreign_key "semesters", "courses"
+  add_foreign_key "semesters", "branches"
   add_foreign_key "subjects", "semesters"
+  add_foreign_key "time_table_block_wise_reports", "exam_time_tables"
 end

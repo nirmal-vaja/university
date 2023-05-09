@@ -2,7 +2,7 @@ class ReportGenerator
 
   attr_accessor :academic_year, :no_of_students
 
-  def initialize(academic_year, no_of_students)
+  def initialize(academic_year, no_of_students = 100)
     @academic_year = academic_year
     @no_of_students = no_of_students
   end

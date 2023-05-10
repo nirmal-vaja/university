@@ -17,7 +17,6 @@ module Api
         @supervision = Supervision.new(supervision_params)
         @supervision.metadata = params["supervision"]["metadata"]
         if @supervision.save
-          binding.pry
           render json: {
             message: "List has been saved.",
             data: {

@@ -156,7 +156,8 @@ class Importer
         subject_details = Hash[[downcased_headers, row].transpose]
 
         course = Course.find_by_name(subject_details["course"])
-        semester = course.semesters.find_by_name(subject_details["semester"])
+        branch = course.branches.find_by_name(subject_details["branch"])
+        semester = branch.semesters.find_by_name(subject_details["semester"])
 
         subject = Subject.find_or_initialize_by(code: subject_details["subject_code"]).tap do |s|
           s.name = subject_details["subject_name"]

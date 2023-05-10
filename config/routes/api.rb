@@ -29,6 +29,10 @@ namespace :api do
         get :fetch_subject_codes
       end
     end
+    resources :courses, only: [:index]
+    resources :branches, only: [:index]
+    resources :semesters, only: [:index]
+    resources :subjects, only: [:index]
     resources :supervisions, only: [:index, :create]
     resources :time_table_block_wise_reports, only: [:index, :create]
     resources :excel_sheets, only: [:index, :create, :update, :destroy]

@@ -20,7 +20,7 @@ class ReportGenerator
         blocks: equation.ceil(),
         academic_year: @academic_year
       )
-      report += 1
+      reports += 1
       if report.save
         success +=1
       else

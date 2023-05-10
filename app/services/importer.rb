@@ -80,8 +80,17 @@ class Importer
           )
 
           course.save
+
+          branch = Branch.find_or_initialize_by(
+            name: cs_data["branch"]
+          )
+          branch.course = course
+
+          branch.save
+
+
           cs_data["semesters"].times do |i|
-            semester = Semester.find_or_initialize_by(name: i+1, course_id: course.id)
+            semester = Semester.find_or_initialize_by(name: i+1, branch_id: branch.id)
             semester.save
           end
         end

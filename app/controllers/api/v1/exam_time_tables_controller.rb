@@ -13,6 +13,61 @@ module Api
         }
       end
 
+      def fetch_details
+        subject = Subject.find_by_code(params[:id])
+        subject = Subject.find_by_name(params[:id]) unless subject
+        @exam_time_table = ExamTimeTable.find_by(subject_id: subject.id)
+        
+        if @exam_time_table
+          render json: {
+            message: "Details found",
+            data: {
+              time_table: @exam_time_table
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: "No timetable found.",
+            status: :unprocessable_entity
+          }
+        end
+      end
+
+      def fetch_subjects
+        @exam_time_table = ExamTimeTable.joins(:subject).where(academic_year: params[:id])
+
+        if @exam_time_table
+          render json: {
+            message: "These are the time table objects",
+            data: {
+              subject_info: @exam_time_table.pluck(:code, 'subjects.name')
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: "No time table found",
+            status: :unprocessable_entity
+          }
+        end
+      end
+      
+      def fetch_dates
+        @exam_time_tables = ExamTimeTable.where(academic_year: params[:id])
+        if @exam_time_tables
+          render json: {
+            message: "These are the time table objects",
+            data: {
+              dates: @exam_time_tables.pluck(:date)
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: "No timetable found for #{academic_year} year",
+            status: :unprocessable_entity
+          }
+        end
+      end
+
       def create
         @exam_time_table = ExamTimeTable.new(time_table_params)
         @exam_time_table.subject = Subject.find_by_code(time_table_params[:subject_code])
@@ -21,7 +76,6 @@ module Api
         @exam_time_table.course = @exam_time_table.branch.course
 
         if @exam_time_table.save
-          binding.pry
           render json: {
             message: "Time table has been created",
             data: {
@@ -29,7 +83,6 @@ module Api
             }, status: :created
           }
         else
-          binding.pry
           render json: {
             message: @exam_time_table.errors.full_messages.join(' '),
             status: :unprocessable_entity

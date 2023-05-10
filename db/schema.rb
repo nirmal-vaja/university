@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_09_092516) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_09_121552) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -188,6 +188,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_09_092516) do
     t.index ["semester_id"], name: "index_subjects_on_semester_id"
   end
 
+  create_table "supervisions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.text "metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "academic_year"
+    t.string "list_type"
+    t.index ["user_id"], name: "index_supervisions_on_user_id"
+  end
+
   create_table "time_table_block_wise_reports", force: :cascade do |t|
     t.bigint "exam_time_table_id", null: false
     t.integer "rooms"
@@ -259,5 +269,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_09_092516) do
   add_foreign_key "role_emails", "roles"
   add_foreign_key "semesters", "branches"
   add_foreign_key "subjects", "semesters"
+  add_foreign_key "supervisions", "users"
   add_foreign_key "time_table_block_wise_reports", "exam_time_tables"
 end

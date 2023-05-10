@@ -13,7 +13,28 @@ module Api
       end
 
       def create
-        ReportGenerator.new(report_params).create_report
+        @report = TimeTableBlockWiseReport.new(report_params)
+        subject = Subject.find_by_code(params[:subject_code]) if params[:subject_code]
+        subject = Subject.find_by_name(params[:subject_name]) if params[:subject_name]
+
+        @report.exam_time_table = ExamTimeTable.find_by(subject_id: subject.id)
+        equation = @report.no_of_students / 30
+        @report.rooms = equation.ceil()
+        @report.block = equation.ceil()
+
+        if @report.save
+          render json: {
+            message: "Report created",
+            data: {
+              report: @report
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: @report.errors.full_messages.join(' '),
+            status: :unprocessable_entity
+          }
+        end
       end
 
       private

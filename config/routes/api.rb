@@ -22,7 +22,14 @@ namespace :api do
       end
     end
 
-    resources :exam_time_tables, only: [:index, :create, :update, :destroy]
+    resources :exam_time_tables, only: [:index, :create, :update, :destroy] do
+      member do
+        get :fetch_dates
+        get :fetch_details
+        get :fetch_subject_codes
+      end
+    end
+    resources :supervisions, only: [:index, :create]
     resources :time_table_block_wise_reports, only: [:index, :create]
     resources :excel_sheets, only: [:index, :create, :update, :destroy]
   end

@@ -6,7 +6,7 @@ class ExamTimeTable < ApplicationRecord
 
   attr_accessor :subject_code, :subject_name
 
-  validates_presence_of :name, :department, :day, :time, :date
+  validates_presence_of :name, :day, :time, :date
   enum day: {
     monday: 0,
     tuesday: 1,

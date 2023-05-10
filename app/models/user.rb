@@ -11,6 +11,8 @@ class User < ApplicationRecord
   has_many :faculty_subjects, dependent: :destroy
   has_many :subjects, through: :faculty_subjects
 
+  has_many :supervisions, dependent: :destroy
+
   has_many :faculty_supervisions, dependent: :destroy
   has_many :subjects_to_supervision, through: :faculty_supervisions, class_name: "Subject", foreign_key: "subject_id"
 

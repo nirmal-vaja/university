@@ -2,7 +2,7 @@ module Api
   module V1
     class SubjectsController < ApiController
       def index
-        @subjects = Subject.where(subject_id: params[:subject_id])
+        @subjects = Subject.where(semester_id: params[:semester_id])
 
         render json: {
           data: {

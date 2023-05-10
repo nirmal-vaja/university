@@ -71,7 +71,7 @@ class Importer
         end
         downcased_headers = headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
         data.each_with_index do |row, idx|
-          next if idx == 0 || idx == 1
+          next if row.include?(nil) || row[0] == headers[0]
 
           cs_data = Hash[[downcased_headers, row].transpose]
 
@@ -151,7 +151,7 @@ class Importer
       downcased_headers = headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
       puts downcased_headers
       data.each_with_index do |row, idx|
-        next if idx == 0 || idx == 1
+        next if row.include?(nil) || row[0] == headers[0]
         
         subject_details = Hash[[downcased_headers, row].transpose]
 

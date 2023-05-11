@@ -5,10 +5,16 @@ module Api
 
       def index
         @exam_time_tables = ExamTimeTable.all
+        time_tables =  @exam_time_tables.map do |time_table|
+          time_table.attributes.merge({
+            subject_name: time_table.subject_name,
+            subject_code: time_table.subject_code,
+          })
+        end
         render json: {
           message: "Successfully fetched all the time tables",
           data: {
-            time_tables: @exam_time_tables
+            time_tables: time_tables
           }, status: :ok
         }
       end

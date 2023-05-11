@@ -35,6 +35,6 @@ class ExamTimeTable < ApplicationRecord
   private
 
   def set_day
-    self.update(day: date.strftime("%A"))
+    self.update(day: date.strftime("%A").downcase)
   end
 end

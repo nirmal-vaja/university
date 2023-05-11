@@ -4,7 +4,7 @@ module Api
       before_action :set_time_table, only: [:update, :destroy]
 
       def index
-        @exam_time_tables = ExamTimeTable.all
+        @exam_time_tables = ExamTimeTable.where(name: params[:examination_name], academic_year: params[:acedemic_year])
         time_tables =  @exam_time_tables.map do |time_table|
           time_table.attributes.merge({
             subject_name: time_table.subject_name,

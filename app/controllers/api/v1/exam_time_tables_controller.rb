@@ -13,6 +13,24 @@ module Api
         }
       end
 
+      def get_examination_dates
+        @exam_time_table = ExamTimeTable.find_by_name(params[:examination_name])
+
+        if @exam_time_table
+          render json: {
+            message: "Examination dates are as below",
+            data: {
+              dates: @exam_time_table.pluck(:date),
+            },status: :ok
+          }
+        else
+          render json: {
+            message: "No timetable found for #{params[:examination_name]}",
+            status: :unprocessable_entity
+          }
+        end
+      end
+
       def fetch_details
         subject = Subject.find_by_code(params[:id])
         subject = Subject.find_by_name(params[:id]) unless subject

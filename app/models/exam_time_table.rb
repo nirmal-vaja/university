@@ -4,6 +4,8 @@ class ExamTimeTable < ApplicationRecord
   belongs_to :branch
   belongs_to :course
 
+  after_create :set_day
+
   attr_accessor :subject_code, :subject_name
 
   validates_presence_of :name, :day, :time, :date
@@ -22,4 +24,9 @@ class ExamTimeTable < ApplicationRecord
     evening: "03:00 P.M to 05:30 P.M"
   }
 
+  private
+
+  def set_day
+    self.update(day: date.strftime("%A"))
+  end
 end

@@ -10,13 +10,13 @@ class ExamTimeTable < ApplicationRecord
 
   validates_presence_of :name, :time, :date
   enum day: {
-    monday: 0,
-    tuesday: 1,
-    wednesday: 2,
-    thursday: 3,
-    friday: 4,
-    saturday: 5,
-    sunday: 6
+    sunday: 0,
+    monday: 1,
+    tuesday: 2,
+    wednesday: 3,
+    thursday: 4,
+    firday: 5,
+    saturday: 6
   }
 
   enum time: {
@@ -35,6 +35,7 @@ class ExamTimeTable < ApplicationRecord
   private
 
   def set_day
-    self.update(day: date.strftime("%A").downcase)
+    self.day = date.wday
+    self.save
   end
 end

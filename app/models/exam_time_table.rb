@@ -24,6 +24,14 @@ class ExamTimeTable < ApplicationRecord
     evening: "03:00 P.M to 05:30 P.M"
   }
 
+  def subject_code
+    subject.code
+  end
+
+  def subject_name
+    subject.name
+  end
+
   private
 
   def set_day

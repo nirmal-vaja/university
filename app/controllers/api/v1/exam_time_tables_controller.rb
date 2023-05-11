@@ -88,7 +88,6 @@ module Api
 
       def create
         @exam_time_table = ExamTimeTable.new(time_table_params)
-        @exam_time_table.subject = Subject.find_by_code(time_table_params[:subject_code])
         @exam_time_table.semester = @exam_time_table.subject.semester
         @exam_time_table.branch = @exam_time_table.semester.branch
         @exam_time_table.course = @exam_time_table.branch.course
@@ -145,7 +144,7 @@ module Api
       end
 
       def time_table_params
-        params.require(:time_table).permit(:name, :subject_code, :subject_name, :day, :date, :time, :academic_year)
+        params.require(:time_table).permit(:name, :subject_id, :day, :date, :time, :academic_year)
       end
     end
   end

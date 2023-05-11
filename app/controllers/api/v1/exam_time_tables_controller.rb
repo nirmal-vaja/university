@@ -97,7 +97,7 @@ module Api
         @exam_time_table.semester = @exam_time_table.subject.semester
         @exam_time_table.branch = @exam_time_table.semester.branch
         @exam_time_table.course = @exam_time_table.branch.course
-
+        
         if @exam_time_table.save
           render json: {
             message: "Time table has been created",

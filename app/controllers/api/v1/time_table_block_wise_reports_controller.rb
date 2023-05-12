@@ -7,7 +7,6 @@ module Api
           TimeTableBlockWiseReport.where(exam_time_table: {name: params[:examination_name]})
         ).joins(:exam_time_table)
 
-        @reports = TimeTableBlockWiseReport.joins(:exam_time_table).where()
         render json: {
           message: "These are the reports",
           data: {

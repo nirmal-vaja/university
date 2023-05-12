@@ -7,10 +7,17 @@ module Api
           TimeTableBlockWiseReport.where(exam_time_table: {name: params[:examination_name]})
         ).joins(:exam_time_table)
 
+        reports = @reports.map do |report|
+          report.attributes.merge({
+            subject_name: report.exam_time_table.subject_name,
+            subject_code: report.exam_time_table.subject_code
+          })
+        end
+
         render json: {
           message: "These are the reports",
           data: {
-            reports: @reports
+            reports: reports
           }, status: :ok
         }
       end
@@ -18,7 +25,7 @@ module Api
       def create
         @report = TimeTableBlockWiseReport.new(report_params)
 
-      equation = @report.no_of_students.to_f / 30
+        equation = @report.no_of_students.to_f / 30
         @report.rooms = equation.ceil()
         @report.blocks = equation.ceil()
 

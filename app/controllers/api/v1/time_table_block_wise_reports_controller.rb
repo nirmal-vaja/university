@@ -3,7 +3,9 @@ module Api
     class TimeTableBlockWiseReportsController < ApiController
 
       def index
-        @reports = TimeTableBlockWiseReport.all
+        @reports = TimeTableBlockWiseReport.where(academic_year: params[:academic_year]).or(
+          TimeTableBlockWiseReport.joins(:exam_time_table).where(exam_time_table: {name: params[:examination_name]})
+        )
         render json: {
           message: "These are the reports",
           data: {
@@ -15,7 +17,7 @@ module Api
       def create
         @report = TimeTableBlockWiseReport.new(report_params)
 
-        equation = @report.no_of_students.to_f / 30
+      equation = @report.no_of_students.to_f / 30
         @report.rooms = equation.ceil()
         @report.blocks = equation.ceil()
 

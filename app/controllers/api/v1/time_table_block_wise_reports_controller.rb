@@ -17,7 +17,7 @@ module Api
 
         equation = @report.no_of_students / 30
         @report.rooms = equation.ceil()
-        @report.block = equation.ceil()
+        @report.blocks = equation.ceil()
 
         if @report.save
           render json: {

@@ -50,7 +50,7 @@ module Api
           }
         else
           render json: {
-            message: "No timetable found.",
+            message: "No timetable found for #{subject.name}, create one!",
             status: :unprocessable_entity
           }
         end

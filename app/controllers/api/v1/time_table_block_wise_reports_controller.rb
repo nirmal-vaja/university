@@ -15,7 +15,7 @@ module Api
       def create
         @report = TimeTableBlockWiseReport.new(report_params)
 
-        equation = @report.no_of_students / 30
+        equation = @report.no_of_students.to_f / 30
         @report.rooms = equation.ceil()
         @report.blocks = equation.ceil()
 

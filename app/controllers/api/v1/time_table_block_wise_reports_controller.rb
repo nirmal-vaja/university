@@ -10,7 +10,7 @@ module Api
         reports = @reports.map do |report|
           report.attributes.merge({
             subject_name: report.exam_time_table.subject_name,
-            subject_code: report.exam_time_table.subject_code
+            subject_code: report.exam_time_table.subject_code,
             data: report.exam_time_table.date,
             time: report.exam_time_table.time
           })

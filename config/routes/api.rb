@@ -24,10 +24,13 @@ namespace :api do
 
     resources :exam_time_tables, only: [:index, :create, :update, :destroy] do
       member do
-        get :get_examination_dates
         get :fetch_dates
         get :fetch_details
         get :fetch_subject_codes
+      end
+
+      collection do
+        get :get_examination_dates
       end
     end
     resources :courses, only: [:index]

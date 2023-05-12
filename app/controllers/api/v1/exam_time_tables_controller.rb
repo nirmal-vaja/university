@@ -20,18 +20,18 @@ module Api
       end
 
       def get_examination_dates
-        @exam_time_table = ExamTimeTable.find_by_name(params[:examination_name])
+        @exam_time_tables = ExamTimeTable.where(name: params[:examination_name]).or(ExamTimeTable.where(academic_year: params[:academic_year]))
 
-        if @exam_time_table
+        if @exam_time_tables
           render json: {
             message: "Examination dates are as below",
             data: {
-              dates: @exam_time_table.pluck(:date),
+              dates: @exam_time_tables.pluck(:date),
             },status: :ok
           }
         else
           render json: {
-            message: "No timetable found for #{params[:examination_name]}",
+            message: "No timetable found for #{params[:examination_name] + ' ' + params[:academic_year]} ",
             status: :unprocessable_entity
           }
         end

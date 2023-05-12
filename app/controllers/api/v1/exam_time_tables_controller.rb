@@ -38,9 +38,8 @@ module Api
       end
 
       def fetch_details
-        subject = Subject.find_by_code(params[:id])
-        subject = Subject.find_by_name(params[:id]) unless subject
-        @exam_time_table = ExamTimeTable.find_by(subject_id: subject.id)
+        subject = Subject.find_by_id(params[:id])
+        @exam_time_table = ExamTimeTable.find_by(subject_id: subject.id) if subject.present?
         
         if @exam_time_table
           render json: {

@@ -4,8 +4,10 @@ module Api
 
       def index
         @reports = TimeTableBlockWiseReport.where(academic_year: params[:academic_year]).or(
-          TimeTableBlockWiseReport.joins(:exam_time_table).where(exam_time_table: {name: params[:examination_name]})
-        )
+          TimeTableBlockWiseReport.where(exam_time_table: {name: params[:examination_name]})
+        ).joins(:exam_time_table)
+
+        @reports = TimeTableBlockWiseReport.joins(:exam_time_table).where()
         render json: {
           message: "These are the reports",
           data: {

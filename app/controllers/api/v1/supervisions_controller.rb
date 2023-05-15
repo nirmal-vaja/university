@@ -2,14 +2,11 @@ module Api
   module V1
     class SupervisionsController < ApiController
 
-      def index
-        @supervisions = Supervision.where(list_type: params[:type]).or(
-          Supervision.where(academic_year: params[:academic_year])
-        ).or(
-          Supervision.where(examination_name: params[:examination_name])
-        )
+      def add_index
 
-        supervisions = @supervisions.map do |supervision|
+        @supervisions = Supervision.where(list_type: params[:type]).where(academic_year: params[:academic_year], examination_name: params[:examination_name])
+
+        supervisions = @supervisions&.map do |supervision|
           supervision.attributes.merge({
             faculty_name: supervision.user.name,
             designation: supervision.user.designation,

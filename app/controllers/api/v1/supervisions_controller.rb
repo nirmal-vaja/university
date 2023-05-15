@@ -3,12 +3,23 @@ module Api
     class SupervisionsController < ApiController
 
       def index
-        @supervisions = Supervision.all
+        @supervisions = Supervision.where(type: params[:type]).or(
+          Supervision.where(academic_year: params[:academic_year])
+        ).or(
+          Supervision.where(examination_name: params[:examination_name])
+        )
 
+        supervision = @supervisions.map do |supervision|
+          supervision.attributes.merge({
+            faculty_name: user.name,
+            designation: user.designation,
+            department: user.department
+          })
+        end
         render json: {
           message: "These are all the supervisions",
           data: {
-            supervisions: @supervisions
+            supervisions: supervisions
           }, status: :ok
         }
       end

@@ -11,9 +11,9 @@ module Api
 
         supervision = @supervisions.map do |supervision|
           supervision.attributes.merge({
-            faculty_name: user.name,
-            designation: user.designation,
-            department: user.department
+            faculty_name: supervision.user.name,
+            designation: supervision.user.designation,
+            department: supervision.user.department
           })
         end
         render json: {

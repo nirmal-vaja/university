@@ -3,7 +3,7 @@ module Api
     class SupervisionsController < ApiController
 
       def index
-        @supervisions = Supervision.where(type: params[:type]).or(
+        @supervisions = Supervision.where(list_type: params[:type]).or(
           Supervision.where(academic_year: params[:academic_year])
         ).or(
           Supervision.where(examination_name: params[:examination_name])

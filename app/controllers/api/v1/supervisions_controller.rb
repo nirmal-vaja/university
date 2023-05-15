@@ -4,7 +4,8 @@ module Api
 
       def index
 
-        @supervisions = Supervision.where(list_type: params[:type]).where(academic_year: params[:academic_year], examination_name: params[:examination_name])
+        @supervisions = Supervision.where(academic_year: params[:academic_year]).or(Supervision.where(examination_name: params[:examination_name]))
+        @supervisions = @supervision.where(list_type: params[:type])
 
         supervisions = @supervisions&.map do |supervision|
           supervision.attributes.merge({

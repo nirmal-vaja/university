@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_12_093921) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_15_053513) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -195,6 +195,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_12_093921) do
     t.datetime "updated_at", null: false
     t.string "academic_year"
     t.string "list_type"
+    t.string "examination_name"
     t.index ["user_id"], name: "index_supervisions_on_user_id"
   end
 

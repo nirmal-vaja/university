@@ -9,13 +9,14 @@ module Api
           Supervision.where(examination_name: params[:examination_name])
         )
 
-        supervision = @supervisions.map do |supervision|
+        supervisions = @supervisions.map do |supervision|
           supervision.attributes.merge({
             faculty_name: supervision.user.name,
             designation: supervision.user.designation,
             department: supervision.user.department
           })
         end
+
         render json: {
           message: "These are all the supervisions",
           data: {

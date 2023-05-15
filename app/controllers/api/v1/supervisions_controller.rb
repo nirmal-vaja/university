@@ -46,7 +46,7 @@ module Api
       private
 
       def supervision_params
-        params.require(:supervision).permit(:examination_name, :academic_year, :metadata => {}, :list_type, :user_id ).to_h
+        params.require(:supervision).permit(:examination_name, :academic_year, :metadata, :list_type, :user_id ).to_h
       end
     end
   end

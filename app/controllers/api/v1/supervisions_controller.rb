@@ -2,7 +2,7 @@ module Api
   module V1
     class SupervisionsController < ApiController
 
-      def add_index
+      def index
 
         @supervisions = Supervision.where(list_type: params[:type]).where(academic_year: params[:academic_year], examination_name: params[:examination_name])
 

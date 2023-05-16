@@ -6,6 +6,7 @@ module Api
 
       def index
         @universities = University.all
+
         render json: {
           data: {
             universities: @universities
@@ -35,7 +36,8 @@ module Api
           user = User.create(
             email: university_params[:admin_email],
             password: university_params[:admin_password],
-            status: "true"
+            status: "true",
+            phone_number: "7890098767"
           )
 
           user.add_role :super_admin

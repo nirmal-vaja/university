@@ -35,7 +35,7 @@ class Importer
         user.phone_number = user_data["phone_number"]
         user.designation = user_data["designation"]
         user.password = "password" if user.password.nil?
-        user.date_of_joining = user_data["dateof_joining"]
+        user.date_of_joining = user_data["date_of_joining"]
         user.gender = user_data["gender"]
         user.status = "true"
         user.department = user_data["department"]

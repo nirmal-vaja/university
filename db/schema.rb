@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_15_073044) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_16_063150) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -152,6 +152,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_15_073044) do
     t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
   end
 
+  create_table "other_duties", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "assigned_duties"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "examination_name"
+    t.string "academic_year"
+    t.index ["user_id"], name: "index_other_duties_on_user_id"
+  end
+
   create_table "role_emails", force: :cascade do |t|
     t.string "email"
     t.bigint "role_id", null: false
@@ -271,6 +281,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_15_073044) do
   add_foreign_key "faculty_supervisions", "users"
   add_foreign_key "marks_entries", "subjects"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
+  add_foreign_key "other_duties", "users"
   add_foreign_key "role_emails", "roles"
   add_foreign_key "semesters", "branches"
   add_foreign_key "subjects", "semesters"

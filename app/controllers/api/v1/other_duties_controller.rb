@@ -17,7 +17,6 @@ module Api
       def create
         @other_duty = OtherDuty.new(other_duty_params)
 
-        binding.pry
         if @other_duty.save
           render json: {
             message: "Data saved.",

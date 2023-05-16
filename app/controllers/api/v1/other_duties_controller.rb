@@ -17,6 +17,7 @@ module Api
       def create
         @other_duty = OtherDuty.new(other_duty_params)
 
+        binding.pry
         if @other_duty.save
           render json: {
             message: "Data saved.",
@@ -30,12 +31,12 @@ module Api
             status: :unprocessable_entity
           }
         end
+      end
 
-        private
+      private
 
-        def other_duty_params
-          params(:other_duty).permit(:user_id, :assigned_duties, :examination_name, :academic_year)
-        end
+      def other_duty_params
+        params.require(:other_duty).permit(:user_id, :assigned_duties, :examination_name, :academic_year)
       end
     end
   end

@@ -22,6 +22,8 @@ namespace :api do
       end
     end
 
+    resources :other_duties, only: [:index, :create]
+
     resources :exam_time_tables, only: [:index, :create, :update, :destroy] do
       member do
         get :fetch_dates

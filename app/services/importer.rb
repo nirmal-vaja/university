@@ -9,6 +9,7 @@ class Importer
     excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
 
     if excel_sheet.sheet.attached?
+      data = Array.new
       data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
       headers = Array.new
       i = 0

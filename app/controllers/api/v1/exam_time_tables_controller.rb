@@ -40,12 +40,18 @@ module Api
       def fetch_details
         subject = Subject.find_by_id(params[:id])
         @exam_time_table = ExamTimeTable.find_by(subject_id: subject.id) if subject.present?
+        exam_time_table = @exam_time_table.attributes.merge(
+          {
+            subject_name: subject.name,
+            subject_code: subject.code
+          }
+        )
         
         if @exam_time_table
           render json: {
             message: "Details found",
             data: {
-              time_table: @exam_time_table
+              time_table: exam_time_table
             }, status: :ok
           }
         else

@@ -4,6 +4,8 @@ class ExamTimeTable < ApplicationRecord
   belongs_to :branch
   belongs_to :course
 
+  has_many :time_table_block_wise_reports, dependent: :destroy
+
   after_create :set_day
 
   attr_accessor :subject_code, :subject_name

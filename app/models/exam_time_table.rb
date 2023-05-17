@@ -22,8 +22,8 @@ class ExamTimeTable < ApplicationRecord
   }
 
   enum time: {
-    morning: "10:30 A.M to 01:00 P.M",
-    evening: "03:00 P.M to 05:30 P.M"
+    "10:30 A.M to 01:00 P.M": "morning" ,
+    "03:00 P.M to 05:30 P.M": "evening"
   }
 
   def subject_code

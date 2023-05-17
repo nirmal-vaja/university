@@ -9,7 +9,7 @@ module Api
           time_table.attributes.merge({
             subject_name: time_table.subject_name,
             subject_code: time_table.subject_code,
-          }).sort_by{|e| e[:date]}
+          })
         end
         render json: {
           message: "Successfully fetched all the time tables",

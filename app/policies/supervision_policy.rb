@@ -1,3 +1,0 @@
-class SuperVisionPolicy < ApplicationPolicy
-  
-end

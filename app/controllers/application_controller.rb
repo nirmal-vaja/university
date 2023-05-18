@@ -1,4 +1,21 @@
 class ApplicationController < ActionController::Base
+  include Pundit::Authorization
+  rescue_from Pundit::NotAuthorizedError do |exception|
+    policy = exception.policy
+    policy_name = exception.policy.class.to_s.underscore
+
+    error_key = if policy.respond_to?(:policy_error_key) && policy.policy_error_key
+      policy.policy_error_message
+    else
+      exception.query
+    end
+
+
+    render json: {
+      message: t("#{policy_name}.#{error_key}", scope: "pundit", default: :default),
+      status: :unprocessable_entity
+    }
+  end
   # before_action :authenticate_user!
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_tenant

@@ -31,3 +31,6 @@
 
 en:
   hello: "Hello world"
+  pundit:
+    exam_time_table_policy:
+      create?: "You are not authorized to create Timetable!"

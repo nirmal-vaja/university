@@ -25,6 +25,7 @@ module Api
       def create
         @supervision = Supervision.new(supervision_params)
         @supervision.metadata = params["supervision"]["metadata"]
+        authorize @supervision
         if @supervision.save
           render json: {
             message: "List has been saved.",

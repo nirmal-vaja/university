@@ -18,6 +18,7 @@ module Api
         @excel_sheet = ExcelSheet.find_by_name(excel_sheet_params[:name])
 
         if @excel_sheet
+          authorize @excel_sheet
           if @excel_sheet.update(excel_sheet_params)
             if @excel_sheet.sheet.attached?
               render json: run_creator(@excel_sheet.id)
@@ -35,7 +36,7 @@ module Api
           end
         else
           @excel_sheet = ExcelSheet.new(excel_sheet_params)
-
+          authorize @excel_sheet
           if @excel_sheet.save
             render json: run_creator(@excel_sheet.id)
           else

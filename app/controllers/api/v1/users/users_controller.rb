@@ -11,13 +11,14 @@ module Api
           current_user = User.find_by(id: doorkeeper_token[:resource_owner_id])
 
           render json: {
-            user: current_user, 
+            user: current_user,
             roles: current_user.roles.pluck(:name)
           }
         end
 
         # Fetching Faculty Names in the assign roles page
         def faculty_names
+          @users = User.with_role(:faculty).where(course_id: params[:course_id]) if params[:course_id]
           @users = User.with_role(:faculty)
 
           render json: {

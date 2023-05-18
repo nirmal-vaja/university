@@ -26,19 +26,19 @@ class Importer
         next if  row.include?(nil) || row[0] == headers[0] # skip header and nil rows
         # create hash from headers and cells
         user_data = Hash[[downcased_headers, row].transpose]
-
         user = User.find_or_initialize_by(
           email: user_data["email"]
         )
         user.first_name = user_data["faculty_name"].split(' ')[0]
         user.last_name = user_data["faculty_name"].split(' ')[1]
-        user.phone_number = user_data["phone_number"]
+        user.phone_number = user_data["phone_number"].to_i
         user.designation = user_data["designation"]
         user.password = "password" if user.password.nil?
-        user.date_of_joining = user_data["date_of_joining"]
+        user.date_of_joining = user_data["dateof_joining"]
         user.gender = user_data["gender"]
         user.status = "true"
         user.department = user_data["department"]
+        user.course = Course.find_by_name(user_data["department"])
         user.add_role :faculty
         users += 1
         if user.save
@@ -62,81 +62,57 @@ class Importer
     excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
     if excel_sheet.sheet.attached?
       data = Array.new
-      # excel_sheet.sheet.open do |file|
-        data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
-        headers = Array.new
-        i = 0
-        while headers.compact.empty?
-          headers = data.row(i)
-          i+=1
+      data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
+      headers = Array.new
+      i = 0
+      while headers.compact.empty?
+        headers = data.row(i)
+        i+=1
+      end
+      downcased_headers = headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
+      data.each_with_index do |row, idx|
+        next if row.include?(nil) || row[0] == headers[0]
+
+        cs_data = Hash[[downcased_headers, row].transpose]
+        course = Course.find_or_initialize_by(
+          name: cs_data["course"]
+        )
+
+        if course.save
+        else
+          return { message: course.errors.full_messages.join(', '), status: :unprocessable_entity }
         end
-        downcased_headers = headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
-        data.each_with_index do |row, idx|
-          next if row.include?(nil) || row[0] == headers[0]
 
-          cs_data = Hash[[downcased_headers, row].transpose]
+        branch = Branch.find_or_initialize_by(
+          name: cs_data["branch"]
+        )
+        branch.course = course
 
-          course = Course.find_or_initialize_by(
-            name: cs_data["course"]
-          )
+        if branch.save
+        else
+          return { message: branch.errors.full_messages.join(', '), status: :unprocessable_entity }
+        end
 
-          course.save
-
-          branch = Branch.find_or_initialize_by(
-            name: cs_data["branch"]
-          )
-          branch.course = course
-
-          branch.save
-
-
-          cs_data["semesters"].times do |i|
-            semester = Semester.find_or_initialize_by(name: i+1, branch_id: branch.id)
-            semester.save
+        cs_data["semesters"].to_i.times do |i|
+          semester = Semester.find_or_initialize_by(name: i+1, branch_id: branch.id)
+          if semester.save
+          else
+            return { message: semester.errors.full_messages.join(', '), status: :unprocessable_entity }
           end
         end
-      # end
+      end
+
+      {
+        message: "Excel Sheet has been uploaded successfully!",
+        status: :created
+      }
+    else
+      {
+        message: "Excel Sheet has not been uploaded, try again!",
+        status: :unprocessable_entity
+      }
     end
   end
-
-  # def create_exam_time_table
-  #   excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
-  #   if excel_sheet.sheet.attached?
-  #     data = Roo::SpreadSheet.open(create_temp_file(excel_sheet.id))
-  #     headers = Array.new
-  #     i = 0
-  #     while headers.compact.empty?
-  #       headers = data.row(i)
-  #       i += 1
-  #     end
-  #     user_data = []
-  #     downcased_headers = headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
-  #     puts downcased_headers
-  #     data.each_with_index do |row, idx|
-  #       next if idx == 0 || idx == 1
-
-  #       time_table_details = Hash[[downcased_headers, row].transpose]
-
-  #       course = Course.find_by_name(time_table_details[:department])
-  #       branch = Branch.find_by_name(time_table_details[:branch])
-  #       semester = Semester.find_by_name(time_table_details[:semester])
-  #       subject = Subject.find_by_code(time_table_details[:subject_code])
-
-  #       time_table = ExamTimeTable.new(
-  #         name: time_table_details[:name],
-  #         course_id: course.id,
-  #         branch_id: branch.id,
-  #         semester_id: semester.id,
-  #         subject_id: subject.id,
-  #         day: time_table_details[:day],
-  #         date: time_table_details[:date],
-  #         time: time_table_details[:time]
-  #       )
-
-  #       time_table.save
-  #     end
-  #   end
-  # end
 
   def create_subject
     excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
@@ -155,17 +131,27 @@ class Importer
         next if row.include?(nil) || row[0] == headers[0]
         
         subject_details = Hash[[downcased_headers, row].transpose]
-
         course = Course.find_by_name(subject_details["course"])
         branch = course.branches.find_by_name(subject_details["branch"])
-        semester = branch.semesters.find_by_name(subject_details["semester"])
-
-        subject = Subject.find_or_initialize_by(code: subject_details["subject_code"]).tap do |s|
+        semester = branch.semesters.find_by_name(subject_details["semester"].to_i)
+        subject = Subject.find_or_initialize_by(code: subject_details["subject_code"].to_i).tap do |s|
           s.name = subject_details["subject_name"]
           s.semester_id = semester.id
           s.save
         end
       end
+      {
+        message: "Excel Sheet has been uploaded successfully!",
+        data: {
+          subjects: Subject.all
+        },
+        status: :created
+      }
+    else
+      {
+        messsage: "Excel sheet has not been uploaded, try again!",
+        status: :unprocessable_entity
+      }
     end
   end
 

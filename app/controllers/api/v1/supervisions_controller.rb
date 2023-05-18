@@ -1,10 +1,9 @@
 module Api
   module V1
     class SupervisionsController < ApiController
+      before_action :fetch_supervisions, only: [:index]
 
       def index
-
-        @supervisions = Supervision.where(academic_year: params[:academic_year]).or(Supervision.where(examination_name: params[:examination_name]))
         @supervisions = @supervisions.where(list_type: params[:type])
 
         supervisions = @supervisions&.map do |supervision|
@@ -43,8 +42,20 @@ module Api
 
       private
 
+      def fetch_supervisions
+        @supervisions = Supervision.where(academic_year: params[:academic_year]).or(
+          Supervision.where(examination_name: params[:examination_name])
+        ).or(
+          Supervision.where(course_id: params[:course_id])
+        ).or(
+          Supervision.where(branch_id: params[:branch_id])
+        ).or(
+          Supervision.where(semester_id: params[:semester_id])
+        )
+      end
+
       def supervision_params
-        params.require(:supervision).permit(:examination_name, :academic_year, :metadata, :list_type, :user_id, :no_of_students).to_h
+        params.require(:supervision).permit(:examination_name, :academic_year, :metadata, :list_type, :user_id, :no_of_students, :course_id, :branch_id, :semester_id).to_h
       end
     end
   end

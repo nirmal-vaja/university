@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_17_114909) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_18_064050) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -208,6 +208,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_17_114909) do
     t.string "list_type"
     t.string "examination_name"
     t.integer "no_of_supervisions"
+    t.bigint "course_id", null: false
+    t.bigint "branch_id", null: false
+    t.bigint "semester_id", null: false
+    t.index ["branch_id"], name: "index_supervisions_on_branch_id"
+    t.index ["course_id"], name: "index_supervisions_on_course_id"
+    t.index ["semester_id"], name: "index_supervisions_on_semester_id"
     t.index ["user_id", "academic_year"], name: "index_supervisions_on_user_id_and_academic_year", unique: true
     t.index ["user_id", "examination_name"], name: "index_supervisions_on_user_id_and_examination_name", unique: true
     t.index ["user_id", "list_type"], name: "index_supervisions_on_user_id_and_list_type", unique: true
@@ -254,6 +260,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_17_114909) do
     t.string "department"
     t.string "designation"
     t.datetime "date_of_joining"
+    t.bigint "course_id"
+    t.bigint "branch_id"
+    t.index ["branch_id"], name: "index_users_on_branch_id"
+    t.index ["course_id"], name: "index_users_on_course_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
@@ -287,6 +297,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_17_114909) do
   add_foreign_key "role_emails", "roles"
   add_foreign_key "semesters", "branches"
   add_foreign_key "subjects", "semesters"
+  add_foreign_key "supervisions", "branches"
+  add_foreign_key "supervisions", "courses"
+  add_foreign_key "supervisions", "semesters"
   add_foreign_key "supervisions", "users"
   add_foreign_key "time_table_block_wise_reports", "exam_time_tables"
+  add_foreign_key "users", "branches"
+  add_foreign_key "users", "courses"
 end

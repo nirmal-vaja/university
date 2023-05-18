@@ -8,6 +8,9 @@ class User < ApplicationRecord
   validates :email, format: URI::MailTo::EMAIL_REGEXP
   validates_format_of :phone_number, :with =>  /\+?\d[\d -]{8,12}\d/
 
+  belongs_to :course, optional: true
+  belongs_to :branch, optional: true
+
   has_many :faculty_subjects, dependent: :destroy
   has_many :subjects, through: :faculty_subjects
 

@@ -2,10 +2,10 @@ module Api
   module V1
     class ExamTimeTablesController < ApiController
       before_action :set_time_table, only: [:update, :destroy]
+      before_action :fetch_time_tables, only: [:index, :get_examination_dates]
 
       def index
-        @exam_time_tables = ExamTimeTable.where(name: params[:examination_name]).or(ExamTimeTable.where(academic_year: params[:academic_year]))
-        time_tables =  @exam_time_tables.map do |time_table|
+        time_tables = @exam_time_tables.map do |time_table|
           time_table.attributes.merge({
             subject_name: time_table.subject_name,
             subject_code: time_table.subject_code,
@@ -20,8 +20,6 @@ module Api
       end
 
       def get_examination_dates
-        @exam_time_tables = ExamTimeTable.where(name: params[:examination_name]).or(ExamTimeTable.where(academic_year: params[:academic_year]))
-
         if @exam_time_tables
           render json: {
             message: "Examination dates are as below",
@@ -63,7 +61,7 @@ module Api
       end
 
       def fetch_subjects
-        @exam_time_table = ExamTimeTable.joins(:subject).where(academic_year: params[:id])
+        @exam_time_table = ExamTimeTable.joins(:subject).where(academic_year: params[:id]).or(ExamTimeTable.joins(:subject).where(name: params[:examination_name]))
 
         if @exam_time_table
           render json: {
@@ -152,6 +150,24 @@ module Api
 
       def set_time_table
         @time_table = ExamTimeTable.find_by_id(params[:id])
+      end
+
+      def fetch_time_tables_using_name_and_year
+        @exam_time_tables = ExamTimeTable.where(name: params[:examination_name]).or(
+          ExamTimeTable.where(academic_year: params[:academic_year])
+        )
+      end
+
+      def fetch_time_tables
+        @exam_time_tables = ExamTimeTable.where(name: params[:examination_name]).or(
+          ExamTimeTable.where(academic_year: params[:academic_year])
+        ).or(
+          ExamTimeTable.where(course_id: params[:course_id])
+        ).or(
+          ExamTimeTable.where(branch_id: params[:branch_id])
+        ).or(
+          ExamTimeTable.where(semester_id: params[:semester_id])
+        )
       end
 
       def time_table_params

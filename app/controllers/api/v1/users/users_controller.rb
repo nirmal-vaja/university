@@ -18,13 +18,18 @@ module Api
 
         # Fetching Faculty Names in the assign roles page
         def faculty_names
-          @users = User.with_role(:faculty).where(course_id: params[:course_id]) if params[:course_id]
+
           @users = User.with_role(:faculty)
+          @users = @users.where(course_id: params[:course_id]).or(
+            User.where(branch_id: params[:id])
+          ) if (params[:course_id] || params[:branch_id])
+
 
           users = @users.map do |user|
             user.attributes.merge(
               {
                 course_name: user.course.name
+                branch_name: user.branch&.name
               }
             )
           end

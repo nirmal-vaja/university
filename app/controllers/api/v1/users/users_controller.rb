@@ -21,7 +21,7 @@ module Api
           @users = User.with_role(:faculty).where(course_id: params[:course_id]) if params[:course_id]
           @users = User.with_role(:faculty)
 
-          user = @users.map do |user|
+          users = @users.map do |user|
             user.attributes.merge(
               {
                 course_name: user.course.name

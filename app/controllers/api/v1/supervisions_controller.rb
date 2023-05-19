@@ -41,6 +41,32 @@ module Api
         end
       end
 
+      def fetch_details
+        user = User.find_by_id(params[:id])
+        @supervision = Supervision.find_by(user_id: params[:id])
+        supervision = @supervision.attributes.merge(
+          {
+            user_name: user.name,
+            designation: user.designation,
+            course_name: user.course.name
+          }
+        ) if @supervision.present?
+
+        if supervision
+          render json: {
+            message: "Details found",
+            data: {
+              supervision: supervision
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: "No Supervision data found for #{user.name}, create one!",
+            status: :unprocessable_entity
+          }
+        end
+      end
+
       private
 
       def fetch_supervisions

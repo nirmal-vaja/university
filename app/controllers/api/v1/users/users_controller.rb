@@ -29,12 +29,19 @@ module Api
             )
           end
 
-          render json: {
-            message: "Faculty lists",
-            data: {
-              users: users
+          if users
+            render json: {
+              message: "Faculty lists",
+              data: {
+                users: users
+              },status: :ok
             }
-          }
+          else
+            render json: {
+              message: "No faculty found!",
+              status: :unprocessable_entity
+            }
+          end
         end
 
         def assign_role

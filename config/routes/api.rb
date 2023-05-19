@@ -39,7 +39,11 @@ namespace :api do
     resources :branches, only: [:index]
     resources :semesters, only: [:index]
     resources :subjects, only: [:index]
-    resources :supervisions, only: [:index, :create]
+    resources :supervisions, only: [:index, :create] do
+      member do
+        get :fetch_details
+      end
+    end
     resources :time_table_block_wise_reports, only: [:index, :create] do
       member do
         get :fetch_details

@@ -28,7 +28,7 @@ module Api
           users = @users.map do |user|
             user.attributes.merge(
               {
-                course_name: user.course.name
+                course_name: user.course.name,
                 branch_name: user.branch&.name
               }
             )

@@ -82,7 +82,7 @@ module Api
       end
 
       def supervision_params
-        params.require(:supervision).permit(:examination_name, :academic_year, :metadata, :list_type, :user_id, :no_of_students, :course_id, :branch_id, :semester_id).to_h
+        params.require(:supervision).permit(:examination_name, :academic_year, :metadata, :list_type, :user_id, :no_of_supervisions, :course_id, :branch_id, :semester_id).to_h
       end
     end
   end

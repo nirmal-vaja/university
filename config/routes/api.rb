@@ -40,7 +40,11 @@ namespace :api do
     resources :semesters, only: [:index]
     resources :subjects, only: [:index]
     resources :supervisions, only: [:index, :create]
-    resources :time_table_block_wise_reports, only: [:index, :create]
+    resources :time_table_block_wise_reports, only: [:index, :create] do
+      member do
+        get :fetch_details
+      end
+    end
     resources :excel_sheets, only: [:index, :create, :update, :destroy]
   end
 end

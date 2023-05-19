@@ -24,6 +24,25 @@ module Api
         }
       end
 
+      def fetch_details
+        exam_time_table = ExamTimeTable.find_by_id(params[:id])
+        @report = TimeTableBlockWiseReport.find_by(exam_time_table_id: params[:id])
+
+        if @report
+          render json: {
+            message: "Details found",
+            data: {
+              report: @report
+            },status: :ok
+          }
+        else
+          render json: {
+            message: "No Details found for #{exam_time_table.subject.name} ",
+            status: :unprocessable_entity
+          }
+        end
+      end
+
       def create
         @report = TimeTableBlockWiseReport.new(report_params)
 

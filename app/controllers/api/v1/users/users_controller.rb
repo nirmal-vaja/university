@@ -58,7 +58,7 @@ module Api
           users = @users.flatten.map do |user|
             user.attributes.merge(
               {
-                role_names: user.roles.pluck(:name).reject{ |x| x == "super_admin" || x == "faculty" }
+                role_names: user.roles_name.reject{ |x| x == "super_admin" || x == "faculty" }.join(', ')
               }
             )
           end

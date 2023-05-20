@@ -49,6 +49,35 @@ module Api
           end
         end
 
+        def assigned_role_users
+          role_names = Role.all.pluck(:name).reject{ |x| x == "super_admin" || x == "faculty" }
+          @users = []
+          role_names.each do |name|
+            @users << User.with_any_role(name)
+          end
+          users = @users.flatten.map do |user|
+            user.attributes.merge(
+              {
+                role_names: user.roles.pluck(:name).reject{ |x| x == "super_admin" || x == "faculty" }
+              }
+            )
+          end
+
+          if users
+            render json: {
+              message: "Details found",
+              data: {
+                users: users
+              }, status: :ok
+            }
+          else
+            render json: {
+              message: "No details found",
+              status: :unprocessable_entity
+            }
+          end
+        end
+
         def assign_role
           add_role(params[:id], user_params[:role_name])
           @user = User.find_by_id(params[:id])

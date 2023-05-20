@@ -8,6 +8,7 @@ namespace :api do
         collection do
           get :find_user
           get :faculty_names
+          get :assigned_role_users
         end
         member do
           post :assign_role

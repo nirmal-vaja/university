@@ -38,7 +38,8 @@ class Importer
         user.gender = user_data["gender"]
         user.status = "true"
         user.department = user_data["department"]
-        user.course = Course.find_by_name(user_data["department"])
+        user.course = Course.find_by_name(user_data["course"])
+        user.branch = user.course.branches.find_by_name(user_data["department"])
         user.add_role :faculty
         users += 1
         if user.save
@@ -78,25 +79,21 @@ class Importer
           name: cs_data["course"]
         )
 
-        if course.save
-        else
+        unless course.save
           return { message: course.errors.full_messages.join(', '), status: :unprocessable_entity }
         end
 
-        branch = Branch.find_or_initialize_by(
+        branch = course.branches.find_or_initialize_by(
           name: cs_data["branch"]
         )
-        branch.course = course
 
-        if branch.save
-        else
+        unless branch.save
           return { message: branch.errors.full_messages.join(', '), status: :unprocessable_entity }
         end
 
         cs_data["semesters"].to_i.times do |i|
-          semester = Semester.find_or_initialize_by(name: i+1, branch_id: branch.id)
-          if semester.save
-          else
+          semester = branch.semesters.find_or_initialize_by(name: i+1)
+          unless semester.save
             return { message: semester.errors.full_messages.join(', '), status: :unprocessable_entity }
           end
         end
@@ -129,14 +126,13 @@ class Importer
       puts downcased_headers
       data.each_with_index do |row, idx|
         next if row.include?(nil) || row[0] == headers[0]
-        
+
         subject_details = Hash[[downcased_headers, row].transpose]
         course = Course.find_by_name(subject_details["course"])
         branch = course.branches.find_by_name(subject_details["branch"])
         semester = branch.semesters.find_by_name(subject_details["semester"].to_i)
-        subject = Subject.find_or_initialize_by(code: subject_details["subject_code"].to_i).tap do |s|
+        subject = semester.subjects.find_or_initialize_by(code: subject_details["subject_code"].to_i).tap do |s|
           s.name = subject_details["subject_name"]
-          s.semester_id = semester.id
           s.save
         end
       end

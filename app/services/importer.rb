@@ -133,6 +133,8 @@ class Importer
         semester = branch.semesters.find_by_name(subject_details["semester"].to_i)
         subject = semester.subjects.find_or_initialize_by(code: subject_details["subject_code"].to_i).tap do |s|
           s.name = subject_details["subject_name"]
+          s.course_id = course.id
+          s.branch_id = branch.id
           s.save
         end
       end

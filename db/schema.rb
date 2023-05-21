@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_19_092930) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_21_090408) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -196,6 +196,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_19_092930) do
     t.bigint "semester_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "course_id", null: false
+    t.bigint "branch_id", null: false
+    t.index ["branch_id"], name: "index_subjects_on_branch_id"
+    t.index ["course_id"], name: "index_subjects_on_course_id"
     t.index ["semester_id"], name: "index_subjects_on_semester_id"
   end
 
@@ -296,6 +300,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_19_092930) do
   add_foreign_key "other_duties", "users"
   add_foreign_key "role_emails", "roles"
   add_foreign_key "semesters", "branches"
+  add_foreign_key "subjects", "branches"
+  add_foreign_key "subjects", "courses"
   add_foreign_key "subjects", "semesters"
   add_foreign_key "supervisions", "branches"
   add_foreign_key "supervisions", "courses"

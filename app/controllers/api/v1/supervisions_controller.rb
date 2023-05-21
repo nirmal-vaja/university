@@ -41,6 +41,25 @@ module Api
         end
       end
 
+      def update
+        @supervision = Supervision.find_by_id(params[:id])
+        
+        if @supervision.update(supervision_params)
+          render json: {
+            message: "Supervision Altered",
+            data: {
+              supervision: @supervision
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: @supervision.errors.full_messages.join(', '),
+            status: :unprocessable_entity
+          }
+        end
+
+      end
+
       def fetch_details
         user = User.find_by_id(params[:id])
         @supervision = Supervision.find_by(user_id: params[:id])
@@ -70,15 +89,7 @@ module Api
       private
 
       def fetch_supervisions
-        @supervisions = Supervision.where(academic_year: params[:academic_year]).or(
-          Supervision.where(examination_name: params[:examination_name])
-        ).or(
-          Supervision.where(course_id: params[:course_id])
-        ).or(
-          Supervision.where(branch_id: params[:branch_id])
-        ).or(
-          Supervision.where(semester_id: params[:semester_id])
-        )
+        @supervisions = Supervision.where(supervision_params)
       end
 
       def supervision_params

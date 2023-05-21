@@ -40,7 +40,7 @@ namespace :api do
     resources :branches, only: [:index]
     resources :semesters, only: [:index]
     resources :subjects, only: [:index]
-    resources :supervisions, only: [:index, :create] do
+    resources :supervisions, only: [:index, :create, :update] do
       member do
         get :fetch_details
       end

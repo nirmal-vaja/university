@@ -20,15 +20,14 @@ module Api
         def faculty_names
 
           @users = User.with_role(:faculty)
-          @users = @users.where(course_id: params[:course_id]).or(
-            User.where(branch_id: params[:id])
-          ) if (params[:course_id] || params[:branch_id])
+          @users = @users.where(course_id: params[:course_id]) if params[:course_id]
+          @users = @users.where(branch_id: params[:branch_id]) if params[:branch_id]
 
 
           users = @users.map do |user|
             user.attributes.merge(
               {
-                course_name: user.course.name,
+                course_name: user.course&.name,
                 branch_name: user.branch&.name
               }
             )

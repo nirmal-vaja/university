@@ -9,4 +9,8 @@ class SupervisionPolicy < ApplicationPolicy
   def create?
     @user.has_role? "Examination Controller"
   end
+
+  def update?
+    @user.has_role? "Examination Controller"
+  end
 end

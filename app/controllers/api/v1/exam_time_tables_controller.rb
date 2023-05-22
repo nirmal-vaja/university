@@ -33,7 +33,7 @@ module Api
           render json: {
             message: "Examination dates are as below",
             data: {
-              dates: @exam_time_tables,
+              dates: exam_time_tables,
             },status: :ok
           }
         else

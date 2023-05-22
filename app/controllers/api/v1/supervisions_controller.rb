@@ -47,21 +47,28 @@ module Api
           @supervision.branch_id = @supervision.user.branch.id
         end
         @supervision.metadata = params["supervision"]["metadata"]
+        
         authorize @supervision
-        if @supervision.update(supervision_params)
-          render json: {
-            message: "Supervision Altered",
-            data: {
-              supervision: @supervision
-            }, status: :ok
-          }
+        if @supervision.metadata.first.count <= @supervision.no_of_supervisions
+          if @supervision.update(supervision_params)
+            render json: {
+              message: "Supervision Altered",
+              data: {
+                supervision: @supervision
+              }, status: :ok
+            }
+          else
+            render json: {
+              message: @supervision.errors.full_messages.join(', '),
+              status: :unprocessable_entity
+            }
+          end
         else
           render json: {
-            message: @supervision.errors.full_messages.join(', '),
+            message: "You can't assign more than #{@supervision.no_of_supervisions}!",
             status: :unprocessable_entity
           }
         end
-
       end
 
       def fetch_details

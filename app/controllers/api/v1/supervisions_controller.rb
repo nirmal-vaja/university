@@ -46,6 +46,7 @@ module Api
         unless params["branch_id"]
           @supervision.branch_id = @supervision.user.branch.id
         end
+        @supervision.metadata = params["supervision"]["metadata"]
         authorize @supervision
         if @supervision.update(supervision_params)
           render json: {

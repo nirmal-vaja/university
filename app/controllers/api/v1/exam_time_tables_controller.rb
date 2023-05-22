@@ -24,12 +24,12 @@ module Api
           render json: {
             message: "Examination dates are as below",
             data: {
-              dates: @exam_time_tables.pluck(:date),
+              dates: @exam_time_tables,
             },status: :ok
           }
         else
           render json: {
-            message: "No timetable found for #{params[:examination_name] + ' ' + params[:academic_year]} ",
+            message: "No timetable found",
             status: :unprocessable_entity
           }
         end
@@ -160,19 +160,11 @@ module Api
       end
 
       def fetch_time_tables
-        @exam_time_tables = ExamTimeTable.where(name: params[:examination_name]).or(
-          ExamTimeTable.where(academic_year: params[:academic_year])
-        ).or(
-          ExamTimeTable.where(course_id: params[:course_id])
-        ).or(
-          ExamTimeTable.where(branch_id: params[:branch_id])
-        ).or(
-          ExamTimeTable.where(semester_id: params[:semester_id])
-        )
+        @exam_time_tables = ExamTimeTable.where(time_table_params)
       end
 
       def time_table_params
-        params.require(:time_table).permit(:name, :subject_id, :day, :date, :time, :academic_year)
+        params.require(:time_table).permit(:name, :subject_id, :day, :date, :time, :academic_year, :course_id, :branch_id).to_h
       end
     end
   end

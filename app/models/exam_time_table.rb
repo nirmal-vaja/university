@@ -19,7 +19,7 @@ class ExamTimeTable < ApplicationRecord
     tuesday: 2,
     wednesday: 3,
     thursday: 4,
-    firday: 5,
+    friday: 5,
     saturday: 6
   }
 

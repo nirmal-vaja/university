@@ -21,6 +21,15 @@ module Api
 
       def get_examination_dates
         if @exam_time_tables
+          exam_time_tables = @exam_time_tables.map do |time_table|
+            time_table.attributes.merge(
+              {
+                subject_name: time_table.subject.name,
+                subject_code: time_table.subject.code
+              }
+            )
+          end
+
           render json: {
             message: "Examination dates are as below",
             data: {

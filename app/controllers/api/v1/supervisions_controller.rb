@@ -43,7 +43,9 @@ module Api
 
       def update
         @supervision = Supervision.find_by_id(params[:id])
-        
+        unless params["branch_id"]
+          @supervision.branch_id = @supervision.user.branch.id
+        end
         if @supervision.update(supervision_params)
           render json: {
             message: "Supervision Altered",

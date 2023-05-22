@@ -27,19 +27,12 @@ module Api
       def fetch_details
         exam_time_table = ExamTimeTable.find_by_id(params[:id])
         @report = TimeTableBlockWiseReport.find_by(exam_time_table_id: params[:id])
-        report = @report.map do |report|
-          report.attributes.merge({
-            subject_name: report.exam_time_table.subject_name,
-            subject_code: report.exam_time_table.subject_code,
-            date: report.exam_time_table.date,
-            time: report.exam_time_table.time
-          })
-        end
+
         if @report
           render json: {
             message: "Details found",
             data: {
-              reports: report
+              report: @report
             },status: :ok
           }
         else

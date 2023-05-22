@@ -20,9 +20,7 @@ module Api
         def faculty_names
 
           @users = User.with_role(:faculty)
-          @users = @users.where(course_id: params[:course_id]) if params[:course_id]
-          @users = @users.where(branch_id: params[:branch_id]) if params[:branch_id]
-
+          @users = @users.where(user_params)
 
           users = @users.map do |user|
             user.attributes.merge(
@@ -116,7 +114,7 @@ module Api
         end
 
         def user_params
-          params.require(:user).permit(:role_name)
+          params.require(:user).permit(:role_name, :course_id, :branch_id)
         end
       end
     end

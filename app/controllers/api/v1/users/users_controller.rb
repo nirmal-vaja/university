@@ -114,7 +114,7 @@ module Api
         end
 
         def user_params
-          params.require(:user).permit(:role_name, :course_id, :branch_id)
+          params.require(:user).permit(:role_name, :course_id, :branch_id, :user_type)
         end
       end
     end

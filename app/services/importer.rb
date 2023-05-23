@@ -40,6 +40,8 @@ class Importer
         user.department = user_data["department"]
         user.course = Course.find_by_name(user_data["course"])
         user.branch = user.course.branches.find_by_name(user_data["department"])
+        user.user_type = user_data["type"] == "Junior" ? 0 : 1
+
         user.add_role :faculty
         users += 1
         if user.save

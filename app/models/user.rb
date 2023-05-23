@@ -19,6 +19,11 @@ class User < ApplicationRecord
   has_many :faculty_supervisions, dependent: :destroy
   has_many :subjects_to_supervision, through: :faculty_supervisions, class_name: "Subject", foreign_key: "subject_id"
 
+  enum type: {
+    "Junior": 0,
+    "Senior": 1
+  }
+
   # the authenticate method from devise documentation
   def self.authenticate(subdomain, email, password)
     if Apartment.tenant_names.include?(subdomain)

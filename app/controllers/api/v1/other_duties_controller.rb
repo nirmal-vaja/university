@@ -34,8 +34,12 @@ module Api
 
       private
 
+      def fetch_other_duties
+        @other_duties = OtherDuty.where()
+      end
+
       def other_duty_params
-        params.require(:other_duty).permit(:user_id, :assigned_duties, :examination_name, :academic_year)
+        params.require(:other_duty).permit(:user_id, :assigned_duties, :examination_name, :academic_year, :course_id, :branch_id)
       end
     end
   end

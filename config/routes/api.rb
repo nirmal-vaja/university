@@ -8,6 +8,7 @@ namespace :api do
         collection do
           get :find_user
           get :faculty_names
+          get :faculties_for_other_duties
           get :assigned_role_users
         end
         member do
@@ -45,7 +46,7 @@ namespace :api do
         get :fetch_details
       end
     end
-    
+
     resources :time_table_block_wise_reports, only: [:index, :create] do
       member do
         get :fetch_details

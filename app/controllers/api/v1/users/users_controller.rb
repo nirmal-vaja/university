@@ -75,6 +75,34 @@ module Api
           end
         end
 
+        def faculties_for_other_duties
+          @users = User.with_role(:faculty)
+          @users = @users.where(user_params).reject{ |user| user.supervisions.exist? }
+
+          users = @users.map do |user|
+            user.attributes.merge(
+              {
+                course_name: user.course&.name,
+                branch_name: user.branch&.name
+              }
+            )
+          end
+
+          if users
+            render json: {
+              message: "Faculty lists",
+              data: {
+                users: users
+              },status: :ok
+            }
+          else
+            render json: {
+              message: "No faculty found!",
+              status: :unprocessable_entity
+            }
+          end
+        end
+
         def assign_role
           add_role(params[:id], user_params[:role_name])
           @user = User.find_by_id(params[:id])

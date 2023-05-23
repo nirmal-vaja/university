@@ -77,7 +77,7 @@ module Api
 
         def faculties_for_other_duties
           @users = User.with_role(:faculty)
-          @users = @users.where(user_params).reject{ |user| user.supervisions.exist? }
+          @users = @users.where(user_params).reject{ |user| user.supervisions.exists? }
 
           users = @users.map do |user|
             user.attributes.merge(

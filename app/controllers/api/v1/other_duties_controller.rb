@@ -2,14 +2,22 @@ module Api
   module V1
     class OtherDutiesController < ApiController
       def index
-        @other_duties = OtherDuty.where(academic_year: params[:academic_year]).or(
-          OtherDuty.where(examination_name: params[:examination_name])
-        )
+        @other_duties = OtherDuty.where(other_duty_params)
+
+        other_duties = @other_duties&.map do |duty|
+          duty.attributes.merge(
+            {
+              user_name: duty.user.name,
+              designation: duty.user.designation,
+              course_name: duty.user.course.name
+            }
+          )
+        end
         
         render json: {
           message: "These are the other duties",
           data: {
-            other_duties: @other_duties
+            other_duties: other_duties
           },status: :ok
         }
       end

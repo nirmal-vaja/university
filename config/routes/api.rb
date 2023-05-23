@@ -24,7 +24,11 @@ namespace :api do
       end
     end
 
-    resources :other_duties, only: [:index, :create]
+    resources :other_duties, only: [:index, :create] do
+      member do
+        get :fetch_details
+      end
+    end
 
     resources :exam_time_tables, only: [:index, :create, :update, :destroy] do
       member do

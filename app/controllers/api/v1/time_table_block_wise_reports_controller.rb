@@ -3,9 +3,7 @@ module Api
     class TimeTableBlockWiseReportsController < ApiController
 
       def index
-        @reports = TimeTableBlockWiseReport.where(academic_year: params[:academic_year]).or(
-          TimeTableBlockWiseReport.where(exam_time_table: {name: params[:examination_name]})
-        ).joins(:exam_time_table)
+        @reports = TimeTableBlockWiseReport.where(report_params)
 
         reports = @reports.map do |report|
           report.attributes.merge({
@@ -45,6 +43,8 @@ module Api
 
       def create
         @report = TimeTableBlockWiseReport.new(report_params)
+        @report.branch = @report.exam_time_table.branch
+        @report.semester = @report.exam_time_table.semester
 
         equation = @report.no_of_students.to_f / 30
         @report.rooms = equation.ceil()
@@ -68,7 +68,7 @@ module Api
       private
 
       def report_params
-        params.require(:report).permit(:academic_year, :no_of_students, :exam_time_table_id)
+        params.require(:report).permit(:academic_year, :no_of_students, :exam_time_table_id, :examination_name, :course_id, :branch_id, :semester_id)
       end
     end
   end

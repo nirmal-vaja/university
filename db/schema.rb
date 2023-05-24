@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_23_025219) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_24_105313) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -236,7 +236,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_23_025219) do
     t.datetime "updated_at", null: false
     t.string "academic_year"
     t.float "no_of_students"
+    t.string "examination_name"
+    t.bigint "course_id", null: false
+    t.bigint "branch_id"
+    t.bigint "semester_id"
+    t.index ["branch_id"], name: "index_time_table_block_wise_reports_on_branch_id"
+    t.index ["course_id"], name: "index_time_table_block_wise_reports_on_course_id"
     t.index ["exam_time_table_id"], name: "index_time_table_block_wise_reports_on_exam_time_table_id"
+    t.index ["semester_id"], name: "index_time_table_block_wise_reports_on_semester_id"
   end
 
   create_table "universities", force: :cascade do |t|
@@ -314,7 +321,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_23_025219) do
   add_foreign_key "supervisions", "courses"
   add_foreign_key "supervisions", "semesters"
   add_foreign_key "supervisions", "users"
+  add_foreign_key "time_table_block_wise_reports", "branches"
+  add_foreign_key "time_table_block_wise_reports", "courses"
   add_foreign_key "time_table_block_wise_reports", "exam_time_tables"
+  add_foreign_key "time_table_block_wise_reports", "semesters"
   add_foreign_key "users", "branches"
   add_foreign_key "users", "courses"
 end

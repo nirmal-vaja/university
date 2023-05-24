@@ -43,6 +43,7 @@ module Api
 
       def create
         @report = TimeTableBlockWiseReport.new(report_params)
+        @report.course = @report.exam_time_table.course
         @report.branch = @report.exam_time_table.branch
         @report.semester = @report.exam_time_table.semester
 

@@ -49,7 +49,7 @@ module Api
         @supervision.metadata = params["supervision"]["metadata"]
         
         authorize @supervision
-        if @supervision.metadata.first.count <= @supervision.no_of_supervisions
+        if @supervision.metadata.count <= @supervision.no_of_supervisions
           if @supervision.update(supervision_params)
             render json: {
               message: "Supervision Altered",

@@ -50,7 +50,21 @@ module Api
         
         authorize @supervision
         if @supervision.metadata
-          unless @supervision.metadata.count <= @supervision.no_of_supervisions
+          if @supervision.metadata.count <= @supervision.no_of_supervisions
+            if @supervision.update(supervision_params)
+              render json: {
+                message: "Supervision Altered",
+                data: {
+                  supervision: @supervision
+                }, status: :ok
+              }
+            else
+              render json: {
+                message: @supervision.errors.full_messages.join(', '),
+                status: :unprocessable_entity
+              }
+            end
+          else
             render json: {
               message: "You can't assign more than #{@supervision.no_of_supervisions}!",
               status: :unprocessable_entity

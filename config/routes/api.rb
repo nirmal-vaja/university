@@ -51,7 +51,7 @@ namespace :api do
       end
     end
 
-    resources :time_table_block_wise_reports, only: [:index, :create] do
+    resources :time_table_block_wise_reports, only: [:index, :create, :update, :destroy] do
       member do
         get :fetch_details
       end

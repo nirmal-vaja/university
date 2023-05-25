@@ -24,6 +24,7 @@ module Api
 
       def create
         @other_duty = OtherDuty.new(other_duty_params)
+        @other_duty.branch = @other_duty.user.branch
 
         if @other_duty.save
           render json: {

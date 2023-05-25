@@ -4,8 +4,6 @@ module Api
       before_action :fetch_supervisions, only: [:index]
 
       def index
-        @supervisions = @supervisions.where(list_type: params[:type])
-
         supervisions = @supervisions&.map do |supervision|
           supervision.attributes.merge({
             faculty_name: supervision.user.name,

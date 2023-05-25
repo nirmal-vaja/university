@@ -2,7 +2,7 @@ module Api
   module V1
     class TimeTableBlockWiseReportsController < ApiController
 
-      before_action :set_report, 
+      before_action :set_report, only: [:update]
 
       def index
         @reports = TimeTableBlockWiseReport.where(report_params)

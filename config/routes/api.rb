@@ -24,7 +24,7 @@ namespace :api do
       end
     end
 
-    resources :other_duties, only: [:index, :create] do
+    resources :other_duties, only: [:index, :create, :update] do
       member do
         get :fetch_details
       end

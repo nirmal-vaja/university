@@ -40,6 +40,24 @@ module Api
         end
       end
 
+      def update
+        @other_duty = OtherDuty.find_by_id(params[:id])
+
+        if @other_duty.update(other_duty_params)
+          render json: {
+            message: "Updated!",
+            data: {
+              other_duty: @other_duty
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: @other_duty.errors.full_messages.join(' '),
+            status: :unprocessable_entity
+          }
+        end
+      end
+
       def fetch_details
         @user = User.find_by_id(params[:id])
         @other_duty = OtherDuty.find_by(user_id: params[:id])

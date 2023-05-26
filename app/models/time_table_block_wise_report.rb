@@ -14,5 +14,4 @@ class TimeTableBlockWiseReport < ApplicationRecord
   def time
     exam_time_table.time
   end
-
 end

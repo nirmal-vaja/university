@@ -7,11 +7,4 @@ class TimeTableBlockWiseReport < ApplicationRecord
 
   validates_presence_of :no_of_students
 
-  def date
-    exam_time_table.date
-  end
-
-  def time
-    exam_time_table.time
-  end
 end

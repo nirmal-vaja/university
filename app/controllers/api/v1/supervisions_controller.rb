@@ -116,11 +116,14 @@ module Api
       private
 
       def fetch_supervisions
-        @supervisions = Supervision.where(supervision_params)
+        @supervisions = Supervision.where(supervision_params.except(:date))
+        if(supervision_params[:date].present?)
+          @supervisions = @supervisions.where("metadata ->> LIKE '%#{supervision_params[:date]}%'")
+        end
       end
 
       def supervision_params
-        params.require(:supervision).permit(:examination_name, :academic_year, :metadata, :list_type, :user_id, :no_of_supervisions, :course_id, :branch_id, :semester_id).to_h
+        params.require(:supervision).permit(:examination_name, :academic_year, :metadata, :list_type, :user_id, :no_of_supervisions, :course_id, :branch_id, :semester_id, :date, :time).to_h
       end
     end
   end

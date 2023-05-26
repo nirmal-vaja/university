@@ -96,7 +96,7 @@ module Api
       end
 
       def report_params
-        params.require(:report).permit(:academic_year, :no_of_students, :exam_time_table_id, :examination_name, :course_id, :branch_id, :semester_id)
+        params.require(:report).permit(:academic_year, :no_of_students, :exam_time_table_id, :examination_name, :course_id, :branch_id, :semester_id, :date, :time)
       end
     end
   end

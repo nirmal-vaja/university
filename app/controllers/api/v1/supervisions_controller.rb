@@ -118,7 +118,7 @@ module Api
       def fetch_supervisions
         @supervisions = Supervision.where(supervision_params.except(:date))
         if(supervision_params[:date].present?)
-          @supervisions = @supervisions.where("metadata ->> LIKE '%#{supervision_params[:date]}%'")
+          @supervisions = @supervisions.where("metadata LIKE ?", "%#{supervision_params[:date]}%")
         end
       end
 

@@ -6,8 +6,7 @@ class Supervision < ApplicationRecord
   serialize :metadata, JSON
   attr_accessor :date
 
-  validates :user_id, uniqueness: { scope: [:list_type] }
-  validates :user_id, uniqueness: { scope: [:academic_year, :examination_name] }
+  validates :user_id, uniqueness: { scope: [:list_type, :time] }
 
   enum time: {
     "10:30 A.M to 01:00 P.M": 0 ,

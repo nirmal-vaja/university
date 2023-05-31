@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_29_114215) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_31_060355) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -117,12 +117,28 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_29_114215) do
   end
 
   create_table "marks_entries", force: :cascade do |t|
-    t.string "enrollment_number"
-    t.bigint "subject_id", null: false
-    t.string "marks"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["subject_id"], name: "index_marks_entries_on_subject_id"
+    t.bigint "user_id", null: false
+    t.string "examination_name"
+    t.string "academic_year"
+    t.bigint "course_id", null: false
+    t.bigint "branch_id", null: false
+    t.bigint "semester_id", null: false
+    t.integer "entry_type"
+    t.index ["branch_id"], name: "index_marks_entries_on_branch_id"
+    t.index ["course_id"], name: "index_marks_entries_on_course_id"
+    t.index ["semester_id"], name: "index_marks_entries_on_semester_id"
+    t.index ["user_id"], name: "index_marks_entries_on_user_id"
+  end
+
+  create_table "marks_entry_subjects", force: :cascade do |t|
+    t.bigint "marks_entry_id", null: false
+    t.bigint "subject_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["marks_entry_id"], name: "index_marks_entry_subjects_on_marks_entry_id"
+    t.index ["subject_id"], name: "index_marks_entry_subjects_on_subject_id"
   end
 
   create_table "oauth_access_tokens", force: :cascade do |t|
@@ -305,7 +321,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_29_114215) do
   add_foreign_key "faculty_subjects", "users"
   add_foreign_key "faculty_supervisions", "subjects"
   add_foreign_key "faculty_supervisions", "users"
-  add_foreign_key "marks_entries", "subjects"
+  add_foreign_key "marks_entries", "branches"
+  add_foreign_key "marks_entries", "courses"
+  add_foreign_key "marks_entries", "semesters"
+  add_foreign_key "marks_entries", "users"
+  add_foreign_key "marks_entry_subjects", "marks_entries"
+  add_foreign_key "marks_entry_subjects", "subjects"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "other_duties", "branches"
   add_foreign_key "other_duties", "courses"

@@ -57,6 +57,7 @@ namespace :api do
       end
     end
     resources :excel_sheets, only: [:index, :create, :update, :destroy]
+    resources :marks_entries, only: [:index, :create, :update, :destroy]
   end
 end
 

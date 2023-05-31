@@ -2,7 +2,7 @@ class Subject < ApplicationRecord
   belongs_to :course
   belongs_to :branch
   belongs_to :semester
-  
+
   has_many :faculty_subjects, dependent: :destroy
   has_many :users, through: :faculty_subjects
 

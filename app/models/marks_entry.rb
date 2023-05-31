@@ -4,7 +4,7 @@ class MarksEntry < ApplicationRecord
   belongs_to :branch
   belongs_to :semester
 
-  has_many :marks_entry_subjects, dependent: :dependent
+  has_many :marks_entry_subjects, dependent: :destroy
   has_many :subjects, through: :marks_entry_subjects
 
   enum entry_type: {

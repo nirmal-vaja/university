@@ -38,7 +38,7 @@ module Api
           marks_entry = 
             if @marks_entry.subjects
               @marks_entry.attributes.merge({
-                subjects = subjects
+                subjects: subjects
               })
             else
               @marks_entry

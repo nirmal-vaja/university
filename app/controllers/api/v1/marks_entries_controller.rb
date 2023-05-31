@@ -88,6 +88,34 @@ module Api
         end
       end
 
+      def fetch_details
+        user = User.find_by_id(params[:id])
+        @marks_entry = MarksEntry.where(user_id: user.id )
+        @marks_entry = MarksEntry.find_by(marks_entry_params)
+        marks_entry = @marks_entry.attributes.merge(
+          {
+            user_name: user.name,
+            designation: user.designation,
+            course_name: user.course.name,
+            subjects: @marks_entry.subjects
+          }
+        ) if @marks_entry.present?
+
+        if marks_entry
+          render json: {
+            message: "Details found",
+            data: {
+              marks_entry: marks_entry
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: "Nothing is assigned to #{user.name}",
+            status: :not_found
+          }
+        end
+      end
+
       private
 
       def find_mark_entry

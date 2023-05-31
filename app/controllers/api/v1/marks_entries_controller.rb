@@ -60,10 +60,19 @@ module Api
 
       def update
         if @marks_entry.update(marks_entry_params)
+          marks_entry = 
+            if @marks_entry.subjects
+              @marks_entry.attributes.merge({
+                subjects: @marks_entry.subjects
+              })
+            else
+              @marks_entry
+            end
+            
           render json: {
             message: "Update successful",
             data: {
-              marks_entry: @marks_entry
+              marks_entry: marks_entry
             }, status: :ok
           }
         else

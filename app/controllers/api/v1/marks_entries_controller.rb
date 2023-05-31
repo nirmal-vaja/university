@@ -34,10 +34,20 @@ module Api
         @marks_entry = MarksEntry.new(marks_entry_params)
 
         if @marks_entry.save
+          
+          marks_entry = 
+            if @marks_entry.subjects
+              @marks_entry.attributes.merge({
+                subjects = subjects
+              })
+            else
+              @marks_entry
+            end
+
           render json: {
             message: "Faculty successfully assigned",
             data: {
-              marks_entry: @marks_entry
+              marks_entry: marks_entry
             }, status: :created
           }
         else

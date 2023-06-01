@@ -88,6 +88,7 @@ module Api
       end
 
       def fetch_details
+        subject = Subject.find_by_id(params[:id])
         @exam_time_table = ExamTimeTable.where(time_table_params)
         @exam_time_table = @exam_time_table.find_by(subject_id: params[:id])
         exam_time_table = @exam_time_table.attributes.merge(

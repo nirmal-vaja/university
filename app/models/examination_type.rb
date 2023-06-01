@@ -1,3 +1,3 @@
 class ExaminationType < ApplicationRecord
-  validates :name, presence: true, unique: true
+  validates :name, presence: true, uniqueness: true
 end

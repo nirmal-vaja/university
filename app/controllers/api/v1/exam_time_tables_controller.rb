@@ -89,7 +89,7 @@ module Api
 
       def fetch_details
         subject = Subject.find_by_id(params[:id])
-        @exam_time_table = ExamTimeTable.find_by(subject_id: subject.id) if subject.present?
+        @exam_time_table = ExamTimeTable.find_by(time_table_params) if subject.present?
         exam_time_table = @exam_time_table.attributes.merge(
           {
             subject_name: subject.name,

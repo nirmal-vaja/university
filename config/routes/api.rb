@@ -62,6 +62,9 @@ namespace :api do
         get :fetch_details
       end
     end
+
+    resources :examination_names, only: [:index, :create, :update, :destroy]
+    resources :examination_types, only: [:index, :create, :update, :destroy]
   end
 end
 

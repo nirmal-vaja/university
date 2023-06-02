@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_01_080336) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_02_050919) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -73,7 +73,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_01_080336) do
     t.index ["branch_id"], name: "index_exam_time_tables_on_branch_id"
     t.index ["course_id"], name: "index_exam_time_tables_on_course_id"
     t.index ["semester_id"], name: "index_exam_time_tables_on_semester_id"
-    t.index ["subject_id", "name", "academic_year"], name: "index_exam_time_tables_on_subject_id_and_name_and_academic_year", unique: true
+    t.index ["subject_id", "time_table_type"], name: "index_exam_time_tables_on_subject_id_and_time_table_type", unique: true
     t.index ["subject_id"], name: "index_exam_time_tables_on_subject_id"
   end
 
@@ -267,6 +267,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_01_080336) do
     t.bigint "course_id", null: false
     t.bigint "branch_id"
     t.bigint "semester_id"
+    t.string "report_type"
     t.index ["branch_id"], name: "index_time_table_block_wise_reports_on_branch_id"
     t.index ["course_id"], name: "index_time_table_block_wise_reports_on_course_id"
     t.index ["exam_time_table_id"], name: "index_time_table_block_wise_reports_on_exam_time_table_id"

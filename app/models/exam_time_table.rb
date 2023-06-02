@@ -11,7 +11,7 @@ class ExamTimeTable < ApplicationRecord
   attr_accessor :subject_code, :subject_name
 
   validates_presence_of :name, :time, :date, :time_table_type
-  validates :subject_id,  uniqueness: { scope: [:name, :academic_year] }
+  validates :subject_id,  uniqueness: { scope: [:name, :academic_year, :time_table_type] }
 
   enum day: {
     sunday: 0,

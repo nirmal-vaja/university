@@ -24,7 +24,7 @@ class Student < ApplicationRecord
   end
 
   def generate_qrcode
-    url = Rails.application.routes.url_helpers.update_fees_api_v1_student_url(self, only_path: false) # Replace with the actual URL for updating fees_paid
+    url = Rails.application.routes.url_helpers.update_fees_api_v1_student_url(self.enrollment_number, only_path: false) # Replace with the actual URL for updating fees_paid
     qrcode = RQRCode::QRCode.new(url)
     png_data = qrcode.as_png(
       resize_gte_to: false,

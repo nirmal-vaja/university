@@ -174,6 +174,7 @@ class Importer
         next if row.include?(nil) || row[0] == headers[0]
 
         cs_data = Hash[[downcased_headers, row].transpose]
+
         course = Course.find_by(
           name: cs_data["course"]
         )
@@ -183,7 +184,7 @@ class Importer
         )
 
         semester = branch.semesters.find_by(
-          name: cs_data["semester"]
+          name: cs_data["semester"].to_i
         )
 
         alphabets = ('A'..'Z').take(cs_data["no_of_divisions"].to_i)
@@ -195,7 +196,7 @@ class Importer
           end
         end
       end
-      
+
       {
         message: "Excel Sheet has been uploaded successfully!",
         status: :created

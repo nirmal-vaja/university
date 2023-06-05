@@ -175,17 +175,40 @@ class Importer
 
         cs_data = Hash[[downcased_headers, row].transpose]
 
+        binding.pry
+
         course = Course.find_by(
           name: cs_data["course"]
         )
+        
+        unless course
+          return {
+            message: "#{cs_data["course"]} not found!",
+            status: :unprocessable_entity
+          }
+        end
 
         branch = course.branches.find_by(
           name: cs_data["branch"]
         )
 
+        unless branch
+          return {
+            message: "#{cs_data["branch"]} not found in #{course.name}",
+            status: :unprocessable_entity
+          }
+        end
+
         semester = branch.semesters.find_by(
           name: cs_data["semester"].to_i
         )
+
+        unless semester
+          return {
+            message: "Semester - #{cs_data["semester"]} not found in #{course.name} #{branch.name}",
+            status: :unprocessable_entity
+          }
+        end
 
         alphabets = ('A'..'Z').take(cs_data["no_of_divisions"].to_i)
 

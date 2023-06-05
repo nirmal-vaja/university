@@ -86,3 +86,6 @@ gem "rolify"
 gem "pundit"
 gem 'rack-cors'
 gem 'dotenv-rails', groups: [:development, :test]
+gem 'barby'
+gem 'chunky_png'
+gem 'rqrcode'

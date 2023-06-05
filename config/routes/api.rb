@@ -48,6 +48,11 @@ namespace :api do
     resources :semesters, only: [:index]
     resources :subjects, only: [:index]
     resources :divisions, only: [:index]
+    resources :students, only: [:index] do
+      member do
+        put :update_fees
+      end
+    end
 
 
     resources :supervisions, only: [:index, :create, :update] do

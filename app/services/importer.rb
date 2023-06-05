@@ -175,8 +175,6 @@ class Importer
 
         cs_data = Hash[[downcased_headers, row].transpose]
 
-        binding.pry
-
         course = Course.find_by(
           name: cs_data["course"]
         )

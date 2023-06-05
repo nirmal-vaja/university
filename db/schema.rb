@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_02_055110) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_05_051719) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -55,6 +55,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_02_055110) do
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "divisions", force: :cascade do |t|
+    t.bigint "semester_id", null: false
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["semester_id"], name: "index_divisions_on_semester_id"
   end
 
   create_table "exam_time_tables", force: :cascade do |t|
@@ -324,6 +332,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_02_055110) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "branches", "courses"
+  add_foreign_key "divisions", "semesters"
   add_foreign_key "exam_time_tables", "branches"
   add_foreign_key "exam_time_tables", "courses"
   add_foreign_key "exam_time_tables", "semesters"

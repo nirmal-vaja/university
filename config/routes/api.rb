@@ -41,10 +41,15 @@ namespace :api do
         get :get_examination_dates
       end
     end
+
+
     resources :courses, only: [:index]
     resources :branches, only: [:index]
     resources :semesters, only: [:index]
     resources :subjects, only: [:index]
+    resources :divisions, only: [:index]
+
+
     resources :supervisions, only: [:index, :create, :update] do
       member do
         get :fetch_details

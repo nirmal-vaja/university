@@ -76,6 +76,8 @@ module Api
           Importer.new(excel_sheet.id).create_subject
         when "Division Details"
           Importer.new(excel_sheet.id).create_divisions
+        when "Student Details"
+          Importer.new(excel_sheet.id).create_students
         end
       end
 

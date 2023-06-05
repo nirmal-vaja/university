@@ -230,6 +230,79 @@ class Importer
     end
   end
 
+  def create_students
+    excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
+
+    if excel_sheet.sheet.attached?
+      data = Array.new
+      data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
+
+      headers = Array.new
+      i = 0
+      while headers.compact.empty?
+        headers = data.row(i)
+        i += 1
+      end
+
+      downcased_headers = headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
+      data.each_with_index do |row, idx|
+        next if row.include?(nil) || row[0] == headers[0]
+
+        student_data = Hash[[downcased_headers, row].transpose]
+
+        course = Course.find_by_name(student_data["department"])
+
+        unless course
+          return {
+            message: "#{student_data["department"]} not found!",
+            status: :unprocessable_entity
+          }
+        end
+
+        branch = course.branches.find_by_name(student_data["branch"])
+
+        unless branch
+          return {
+            message: "#{student_data["branch"]} not found in #{course.name}",
+            status: :unprocessable_entity
+          }
+        end
+
+        semester = branch.semesters.find_by_name(student_data["semester"].to_i)
+
+        unless semester
+          return {
+            message: "Semester - #{student_data["semester"].to_i} not found in #{course.name} #{branch.name}",
+            status: :unprocessable_entity
+          }
+        end
+
+        student = Student.find_or_initialize_by(enrollment_number: student_data["enrollment_number"].to_i.to_s)
+
+        student.course = course
+        student.branch = branch
+        student.semester = semester
+        student.name = student_data["name"]
+
+        unless student.save
+          return {
+            message: student.errors.full_messages.join(', '),
+            status: :unprocessable_entity
+          }
+        end
+      end
+      {
+        message: "Excel Sheet has been uploaded successfully!",
+        status: :created
+      }
+    else
+      {
+        message: "Excel Sheet has not been uploaded, try again!",
+        status: :unprocessable_entity
+      }
+    end
+  end
+
   private
 
   def create_temp_file(sheet_id)

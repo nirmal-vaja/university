@@ -38,7 +38,6 @@ class Student < ApplicationRecord
     ).to_s
 
     self.qrcode = Base64.strict_encode64(png_data)
-    binding.pry
   end
 
   def qrcode_url

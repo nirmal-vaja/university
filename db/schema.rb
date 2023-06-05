@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_05_051719) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_05_091121) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -146,9 +146,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_05_051719) do
     t.bigint "course_id", null: false
     t.bigint "branch_id", null: false
     t.bigint "semester_id", null: false
-    t.integer "entry_type"
+    t.string "entry_type"
+    t.bigint "division_id", null: false
     t.index ["branch_id"], name: "index_marks_entries_on_branch_id"
     t.index ["course_id"], name: "index_marks_entries_on_course_id"
+    t.index ["division_id"], name: "index_marks_entries_on_division_id"
     t.index ["semester_id"], name: "index_marks_entries_on_semester_id"
     t.index ["user_id"], name: "index_marks_entries_on_user_id"
   end
@@ -347,6 +349,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_05_051719) do
   add_foreign_key "faculty_supervisions", "users"
   add_foreign_key "marks_entries", "branches"
   add_foreign_key "marks_entries", "courses"
+  add_foreign_key "marks_entries", "divisions"
   add_foreign_key "marks_entries", "semesters"
   add_foreign_key "marks_entries", "users"
   add_foreign_key "marks_entry_subjects", "marks_entries"

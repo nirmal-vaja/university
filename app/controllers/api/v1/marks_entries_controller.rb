@@ -132,7 +132,7 @@ module Api
       end
 
       def marks_entry_params
-        params.require(:marks_entry).permit(:examination_name, :academic_year, :course_id, :branch_id, :semester_id, :user_id, :entry_type, subject_ids: []).to_h
+        params.require(:marks_entry).permit(:examination_name, :academic_year, :course_id, :branch_id, :semester_id, :division_id, :user_id, :entry_type, subject_ids: []).to_h
       end
 
     end

@@ -13,6 +13,7 @@ module Api
           render json: {
             user: current_user,
             roles: current_user.roles.pluck(:name)
+            configuration: current_user.configuration
           }
         end
 

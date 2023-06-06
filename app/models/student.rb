@@ -11,10 +11,12 @@ class Student < ApplicationRecord
   belongs_to :branch
   belongs_to :semester
 
-  before_save :generate_barcode, :generate_qrcode
+  # before_save :generate_barcode, :generate_qrcode
 
   scope :fees_paid, -> {where(fees_paid: true)}
 
+  private
+  
   def generate_barcode
     barcode = Barby::Code128B.new(enrollment_number.to_s)
     outputter = Barby::PngOutputter.new(barcode)

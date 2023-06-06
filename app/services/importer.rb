@@ -283,6 +283,7 @@ class Importer
         student.branch = branch
         student.semester = semester
         student.name = student_data["name"]
+        student.fees_paid = student_data["fees_paid"].to_i === 0 ? false : true
 
         unless student.save
           return {

@@ -11,6 +11,8 @@ class User < ApplicationRecord
   belongs_to :course, optional: true
   belongs_to :branch, optional: true
 
+  has_one :configuration, dependent: :destroy
+
   has_many :faculty_subjects, dependent: :destroy
   has_many :subjects, through: :faculty_subjects
 

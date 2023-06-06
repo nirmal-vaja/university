@@ -8,7 +8,7 @@ class MarksEntry < ApplicationRecord
   has_many :marks_entry_subjects, dependent: :destroy
   has_many :subjects, through: :marks_entry_subjects
 
-  after-update :sanitize_data
+  after_update :sanitize_data
 
   private
 

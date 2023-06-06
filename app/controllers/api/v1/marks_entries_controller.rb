@@ -65,6 +65,7 @@ module Api
           )
 
           if user.save
+            user.add_role("Marks Entry") unless user.has_role?("Marks Entry")
             if configuration.save
               marks_entry = 
                 if @marks_entry.subjects

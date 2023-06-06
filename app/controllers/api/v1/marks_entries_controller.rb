@@ -69,7 +69,7 @@ module Api
               marks_entry = 
                 if @marks_entry.subjects
                   @marks_entry.attributes.merge({
-                    subjects: @marks_entry.subjects
+                    subjects: @marks_entry.subjects,
                     password: password
                   })
                 else

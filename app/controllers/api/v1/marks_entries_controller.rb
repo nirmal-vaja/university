@@ -35,7 +35,7 @@ module Api
 
         if @marks_entry.save
           
-          email = @mark_entry.user.email.split("@").join("_me_#{@marks_entry.entry_type.downcase}@")
+          email = @marks_entry.user.email.split("@").join("_me_#{@marks_entry.entry_type.downcase}@")
           password = SecureRandom.hex
 
           user = User.new(
@@ -105,7 +105,7 @@ module Api
 
       def update
         if @marks_entry.update(marks_entry_params)
-          email = @mark_entry.user.email.split("@").join("_me_#{@marks_entry.entry_type.downcase}@")
+          email = @marks_entry.user.email.split("@").join("_me_#{@marks_entry.entry_type.downcase}@")
 
           user = User.find_by(email: email)
 

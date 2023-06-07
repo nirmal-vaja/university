@@ -10,7 +10,6 @@ module Api
           else
             subject_params
           end
-        binding.pry
         @subjects = Subject.where(params)
 
         render json: {

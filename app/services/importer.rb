@@ -279,9 +279,9 @@ class Importer
 
         student = Student.find_or_initialize_by(enrollment_number: student_data["enrollment_number"].to_i.to_s)
 
-        student.course = course
-        student.branch = branch
-        student.semester = semester
+        student.course_id = course.id
+        student.branch_id = branch.id
+        student.semester_id = semester.id
         student.name = student_data["name"]
         student.fees_paid = student_data["fees_paid"].to_i === 0 ? false : true
 

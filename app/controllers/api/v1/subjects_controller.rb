@@ -14,7 +14,7 @@ module Api
       private
 
       def subject_params
-        params.require(:subject).permit(:course_id, :branch_id, :semester_id, ids: []).to_h
+        params.require(:subject).permit(:course_id, :branch_id, :semester_id, id: []).to_h
       end
     end
   end

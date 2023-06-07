@@ -4,14 +4,7 @@ module Api
 
       def index
         @students = Student.where(student_params)
-
-        students = @students&.map do |student|
-          student.attributes.merge({
-            barcode_url: student.barcode_url,
-            qrcode_url: student.qrcode_url,
-            update_url: Rails.application.routes.url_helpers.update_fees_api_v1_student_url(student.enrollment_number, use_path: false)
-          })
-        end
+        students = @students.fees_paid
 
         if students
           render json: {

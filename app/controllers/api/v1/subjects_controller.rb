@@ -2,7 +2,16 @@ module Api
   module V1
     class SubjectsController < ApiController
       def index
-        @subjects = Subject.where(subject_params)
+        params =
+          if subject_params["id"].present?
+            params = subject_params
+            params["id"] = JSON.parse(subject_params["id"])
+            params
+          else
+            subject_params
+          end
+        binding.pry
+        @subjects = Subject.where(params)
 
         render json: {
           data: {

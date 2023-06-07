@@ -1,4 +1,6 @@
 class Subject < ApplicationRecord
+  attr_accessor :ids
+
   belongs_to :course
   belongs_to :branch
   belongs_to :semester

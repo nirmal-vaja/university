@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_07_105513) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_08_062823) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -265,10 +265,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_07_105513) do
     t.boolean "lock_marks", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "student_id", null: false
     t.index ["branch_id"], name: "index_student_marks_on_branch_id"
     t.index ["course_id"], name: "index_student_marks_on_course_id"
     t.index ["division_id"], name: "index_student_marks_on_division_id"
     t.index ["semester_id"], name: "index_student_marks_on_semester_id"
+    t.index ["student_id"], name: "index_student_marks_on_student_id"
     t.index ["subject_id"], name: "index_student_marks_on_subject_id"
   end
 
@@ -424,6 +426,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_07_105513) do
   add_foreign_key "student_marks", "courses"
   add_foreign_key "student_marks", "divisions"
   add_foreign_key "student_marks", "semesters"
+  add_foreign_key "student_marks", "students"
   add_foreign_key "student_marks", "subjects"
   add_foreign_key "students", "branches"
   add_foreign_key "students", "courses"

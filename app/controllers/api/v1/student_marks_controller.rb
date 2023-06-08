@@ -75,6 +75,24 @@ module Api
         end
       end
 
+      def fetch_details
+        @student_mark = StudentMark.find_by(student_mark_params)
+
+        if @student_mark.present?
+          render json: {
+            message: "Details found",
+            data: {
+              student_mark: @student_mark
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: "Details not found",
+            status: :unprocessable_entity
+          }
+        end
+      end
+
       def lock_marks
         @student_marks = StudentMark.where(student_mark_params)
         subject = Subject.find_by_id(student_mark_params[:subject_id])
@@ -120,7 +138,7 @@ module Api
       end
 
       def student_mark_params
-        params.require(:student_mark).permit(:examination_name, :examination_type, :academic_year, :course_id, :branch_id, :semester_id, :division_id, :subject_id, :marks).to_h
+        params.require(:student_mark).permit(:examination_name, :examination_type, :academic_year, :course_id, :branch_id, :semester_id, :division_id, :subject_id, :marks, :student_id).to_h
       end
     end
   end

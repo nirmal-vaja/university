@@ -46,7 +46,9 @@ module Api
         begin
           StudentMark.transaction do
             student_mark_params_for_create[:student_marks].each do |student_mark|
-              student_mark = StudentMark.find(student_mark[:id].to_i)
+              p student_mark[:id]
+              p student_mark["id"]
+              student_mark = StudentMark.find(student_mark["id"])
               student_mark.update!(student_mark)
             end
             @student_marks = StudentMark.where(id: student_mark_params_for_create[:student_marks].pluck(:id))

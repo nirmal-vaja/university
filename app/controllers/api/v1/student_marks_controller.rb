@@ -46,7 +46,7 @@ module Api
         begin
           StudentMark.transaction do
             student_mark_params_for_create[:student_marks].each do |student_mark|
-              student_mark = StudentMark.find(student_mark[:id])
+              student_mark = StudentMark.find(student_mark[:id].to_i)
               student_mark.update!(student_mark)
             end
             @student_marks = StudentMark.where(id: student_mark_params_for_create[:student_marks].pluck(:id))
@@ -71,6 +71,24 @@ module Api
             data: {
               student_marks: @student_marks
             }, status: :ok
+          }
+        end
+      end
+
+      def fetch_subjects
+        @student_marks = StudentMark.where(student_mark_params)
+
+        if @student_marks
+          render json: {
+            message: "Details found",
+            data: {
+              subject_ids: @student_marks.pluck(:subject_id)
+            },status: :ok
+          }
+        else
+          render json: {
+            message: "You haven't entered any marks yet!",
+            status: :unprocessable_entity
           }
         end
       end

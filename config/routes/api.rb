@@ -79,6 +79,7 @@ namespace :api do
       collection do
         put :lock_marks
         put :unlock_marks
+        get :fetch_subjects
       end
 
       member do

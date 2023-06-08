@@ -75,6 +75,12 @@ namespace :api do
 
     resources :examination_names, only: [:index, :create, :update, :destroy]
     resources :examination_types, only: [:index, :create, :update, :destroy]
+    resources :student_marks, only: [:index, :create] do
+      collection do
+        put :lock_marks
+        put :unlock_marks
+      end
+    end
   end
 end
 

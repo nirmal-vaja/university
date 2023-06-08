@@ -45,9 +45,7 @@ module Api
       def update
         begin
           StudentMark.transaction do
-            student_mark_params_for_create[:student_marks].each do |student_mark|
-              p student_mark[:id]
-              p student_mark["id"]
+            student_mark_params_for_create.each do |student_mark|
               student_mark = StudentMark.find(student_mark["id"])
               student_mark.update!(student_mark)
             end

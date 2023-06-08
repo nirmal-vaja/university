@@ -55,7 +55,7 @@ module Api
           @student_marks = {
             error: {
               status: 404,
-              message: "Band not found"
+              message: "Details not found"
             }
           }
         rescue ActiveRecord::RecordInvalid => exception

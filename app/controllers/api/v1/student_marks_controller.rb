@@ -82,7 +82,7 @@ module Api
           render json: {
             message: "Details found",
             data: {
-              subject_ids: @student_marks.pluck(:subject_id)
+              subject_ids: @student_marks.pluck(:subject_id).uniq
             },status: :ok
           }
         else

@@ -42,6 +42,39 @@ module Api
         end
       end
 
+      def update
+        begin
+          StudentMark.transaction do
+            student_mark_params_for_create[:student_marks].each do |student_mark|
+              student_mark = StudentMark.find(student_mark[:id])
+              student_mark.update!(student_mark)
+            end
+            @student_marks = StudentMark.where(id: student_mark_params_for_create[:student_marks].pluck(:id))
+          end
+        rescue ActiveRecord::RecordNotFound
+          @student_marks = {
+            error: {
+              status: 404,
+              message: "Band not found"
+            }
+          }
+        rescue ActiveRecord::RecordInvalid => exception
+          @student_marks = {
+            error: {
+              status: 422,
+              message: exception
+            }
+          }
+        end
+        if @student_marks
+          render json: {
+            data: {
+              student_marks: @student_marks
+            }, status: :ok
+          }
+        end
+      end
+
       def lock_marks
         @student_marks = StudentMark.where(student_mark_params)
         subject = Subject.find_by_id(student_mark_params[:subject_id])
@@ -83,7 +116,7 @@ module Api
       private
 
       def student_mark_params_for_create
-        params.permit(student_marks: [:examination_name, :examination_type, :academic_year, :course_id, :branch_id, :semester_id, :division_id, :subject_id, :student_id, :marks]).require(:student_marks)
+        params.permit(student_marks: [:id, :examination_name, :examination_type, :academic_year, :course_id, :branch_id, :semester_id, :division_id, :subject_id, :student_id, :marks]).require(:student_marks)
       end
 
       def student_mark_params

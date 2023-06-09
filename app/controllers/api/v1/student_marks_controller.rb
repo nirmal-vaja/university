@@ -95,6 +95,25 @@ module Api
         end
       end
 
+      def fetch_status
+        @student_marks = StudentMark.where(student_mark_params)
+
+        if @student_marks
+          render json: {
+            message: "Details found",
+            data: {
+              locked: @student_marks.pluck(:lock_marks).uniq
+            },
+            status: :ok
+          }
+        else
+          render json: {
+            message: "Details not found",
+            status: :not_found
+          }
+        end
+      end
+
       def fetch_details
         @student_mark = StudentMark.find_by(student_mark_params)
 

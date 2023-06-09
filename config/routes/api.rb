@@ -80,6 +80,7 @@ namespace :api do
         put :lock_marks
         put :unlock_marks
         get :fetch_subjects
+        get :fetch_status
       end
 
       member do

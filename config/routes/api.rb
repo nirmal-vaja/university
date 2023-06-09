@@ -81,6 +81,7 @@ namespace :api do
         put :unlock_marks
         get :fetch_subjects
         get :fetch_status
+        get :fetch_type
       end
 
       member do

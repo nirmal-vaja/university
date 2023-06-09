@@ -95,6 +95,25 @@ module Api
         end
       end
 
+      def fetch_type
+        @student_marks = StudentMark.where(student_marks_params)
+
+        if @student_marks
+          render json: {
+            message: "Details found",
+            data: {
+              type: @student_marks.pluck(:examination_type).uniq.first
+            },
+            status: :ok
+          }
+        else
+          render json: {
+            message: "Details not found",
+            status: :not_found
+          }
+        end
+      end
+
       def fetch_status
         @student_marks = StudentMark.where(student_mark_params)
 

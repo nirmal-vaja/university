@@ -5,6 +5,13 @@ module Api
       def index
         @student_marks = StudentMark.where(student_mark_params)
 
+        @student_marks = @student_marks&.map do |student_mark|
+          student_mark.attributes.merge({
+            student_name: student_mark.student.name,
+            student_enrollment_number: student_mark.student.enrollment_number
+          })
+        end
+
         if @student_marks
           render json: {
             message: "Details found",

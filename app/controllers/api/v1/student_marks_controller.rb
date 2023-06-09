@@ -102,7 +102,7 @@ module Api
           render json: {
             message: "Details found",
             data: {
-              locked: @student_marks.pluck(:lock_marks).uniq
+              locked: @student_marks.pluck(:lock_marks).uniq.first
             },
             status: :ok
           }

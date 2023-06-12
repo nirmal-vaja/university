@@ -8,7 +8,8 @@ module Api
         @student_marks = @student_marks&.map do |student_mark|
           student_mark.attributes.merge({
             student_name: student_mark.student.name,
-            student_enrollment_number: student_mark.student.enrollment_number
+            student_enrollment_number: student_mark.student.enrollment_number,
+            "#{student_mark.examination_type}_marks": student_mark.marks
           })
         end
 
@@ -157,6 +158,32 @@ module Api
           }
         end
       end
+
+      # def fetch_marks
+      #   student = Student.find_by_id(params[:id])
+
+      #   @student_marks = StudentMark.where(student_id: params[:id])
+
+      #   if @student_marks
+      #     student_marks = @student_marks.map do |student_mark|
+      #       student_mark.attributes.merge({
+      #         "#{student_mark.type}_marks": student_mark.marks
+      #       })
+      #     end
+
+      #     render json: {
+      #       message: "Details found",
+      #       data: {
+      #         student_marks: student_marks
+      #       }, status: :ok
+      #     }
+      #   else
+      #     render json: {
+      #       message: "Details not found",
+      #       status: :unprocessable_entity
+      #     }
+      #   end
+      # end
 
       def lock_marks
         @student_marks = StudentMark.where(student_mark_params)

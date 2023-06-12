@@ -161,6 +161,7 @@ module Api
 
       def fetch_marks
         @student_marks = StudentMark.where(student_mark_params)
+        student = Student.find_by_id(student_mark_params[:student_id])
 
         response = 
         if student_mark_params[:examination_type].present?
@@ -175,11 +176,17 @@ module Api
           end
         end
 
+        output = {
+          student_name: student.name,
+          student_enrollment_number: student.enrollment_number,
+          marks: response
+        }
+
         if response.present?
           render json: {
             message: "Details found",
             data: {
-              student_marks: response
+              student_marks: output
             }, status: :ok
           }
         else

@@ -163,31 +163,19 @@ module Api
         @student_marks = StudentMark.where(student_mark_params)
         student = Student.find_by_id(student_mark_params[:student_id])
 
-        response = 
-        if student_mark_params[:examination_type].present?
-          @student_marks
-        else
-          grouped_marks = @student_marks.group_by{ |mark| mark.subject.name }
-
-          grouped_marks.transform_values do |marks_group|
-            marks_group.each_with_object({}) do |mark, result|
-              result[mark.examination_type] = mark.marks
-            end
-          end
+        marks_data = {}
+        @student_marks.each do |mark|
+          subject_name: mark.subject.name
+          examination_type: mark.examination_type
+          marks_data[subject_name] ||= {}
+          marks_data[subject_name][examination_type] = mark.marks
         end
-
-        output = {
-          id: student.id,
-          student_name: student.name,
-          student_enrollment_number: student.enrollment_number,
-          marks: response
-        }
 
         if response.present?
           render json: {
             message: "Details found",
             data: {
-              student_marks: output
+              student_marks: marks_data
             }, status: :ok
           }
         else

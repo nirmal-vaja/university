@@ -177,6 +177,7 @@ module Api
         end
 
         output = {
+          id: student.id,
           student_name: student.name,
           student_enrollment_number: student.enrollment_number,
           marks: response

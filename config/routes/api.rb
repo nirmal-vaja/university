@@ -82,11 +82,11 @@ namespace :api do
         get :fetch_subjects
         get :fetch_status
         get :fetch_type
-        get :fetch_marks
       end
 
       member do
         get :fetch_details
+        get :fetch_marks
       end
     end
   end

@@ -159,6 +159,32 @@ module Api
         end
       end
 
+      def fetch_marks
+        @student_marks = StudentMark.where(student_mark_params)
+
+        grouped_marks = @student_marks.group_by{ |mark| mark.subject.name }
+
+        response = grouped_marks.transform_values do |marks_group|
+          marks_group.each_with_object({}) do |mark, result|
+            result[mark.examination_type] = mark.marks
+          end
+        end
+
+        if response.present?
+          render json: {
+            message: "Details found",
+            data: {
+              student_marks: response
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: "Details not found",
+            status: :unprocessable_entity
+          }
+        end
+      end
+
       # def fetch_marks
       #   student = Student.find_by_id(params[:id])
 

@@ -162,11 +162,16 @@ module Api
       def fetch_marks
         @student_marks = StudentMark.where(student_mark_params)
 
-        grouped_marks = @student_marks.group_by{ |mark| mark.subject.name }
+        response = 
+        if student_mark_params[:examination_type].present?
+          @student_marks
+        else
+          grouped_marks = @student_marks.group_by{ |mark| mark.subject.name }
 
-        response = grouped_marks.transform_values do |marks_group|
-          marks_group.each_with_object({}) do |mark, result|
-            result[mark.examination_type] = mark.marks
+          grouped_marks.transform_values do |marks_group|
+            marks_group.each_with_object({}) do |mark, result|
+              result[mark.examination_type] = mark.marks
+            end
           end
         end
 

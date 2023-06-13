@@ -167,9 +167,10 @@ module Api
         @student_marks.each do |mark|
           subject_name = mark.subject.name
           examination_type = mark.examination_type
-          marks_data[:student_id] = mark.student.id
-          marks_data[subject_name] ||= {}
           student_id = mark.student.id
+          marks_data[:student_id] = mark.student.id
+          marks_data[student_id] ||= {}
+          marks_data[student_id][subject_name] ||= {}
           marks_data[student_id][subject_name][examination_type] = mark.marks
         end
 

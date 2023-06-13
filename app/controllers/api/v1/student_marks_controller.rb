@@ -169,7 +169,8 @@ module Api
           examination_type = mark.examination_type
           marks_data[:student_id] = mark.student.id
           marks_data[subject_name] ||= {}
-          marks_data[mark.student.id][subject_name][examination_type] = mark.marks
+          student_id = mark.student.id
+          marks_data[student_id][subject_name][examination_type] = mark.marks
         end
 
         if response.present?

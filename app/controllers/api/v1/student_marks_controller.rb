@@ -169,6 +169,8 @@ module Api
           examination_type = mark.examination_type
           student_id = mark.student.id
           marks_data[:student_id] = mark.student.id
+          marks_data[:student_name] = mark.student.name
+          marks_data[:student_enrollment_number] = mark.student.enrollment_number
           marks_data[student_id] ||= {}
           marks_data[student_id][subject_name] ||= {}
           marks_data[student_id][subject_name][examination_type] = mark.marks

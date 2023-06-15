@@ -21,10 +21,24 @@ module Api
         end
       end
 
-      def fetch_marks
+      def fetch_subjects
         student = Student.find_by(enrollment_number: params[:id])
 
-        
+        subjects = student.semester.subjects
+
+        if subjects
+          render json: {
+            message: "Details found",
+            data: {
+              subjects: subjects
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: "Details not found",
+            status: :unprocessable_entity
+          }
+        end
       end
 
       def update_fees

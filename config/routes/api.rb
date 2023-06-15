@@ -50,6 +50,7 @@ namespace :api do
     resources :divisions, only: [:index]
     resources :students, only: [:index] do
       member do
+        get :fetch_subjects
         put :update_fees
       end
     end

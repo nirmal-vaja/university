@@ -159,6 +159,38 @@ module Api
         end
       end
 
+      def fetch_marks_through_enrollment_number
+        student = Student.find_by_enrollment_number(params[:enrollment_number])
+
+        @student_marks = StudentMark.where(student_mark_params)
+        @student_marks = @student_marks.where(student_id: student.id)
+
+        marks_data = {}
+        @student_marks.each do |mark|
+          subject_name = mark.subject.name
+          examination_type = mark.examination_type
+          student_id = mark.student.id
+          marks_data[:subject_name] = mark.subject.name
+          marks_data["marks"] ||= {}
+          marks_data["marks"][subject_name] ||= {}
+          marks_data["marks"][subject_name][examination_type] = mark.marks
+        end
+
+        if marks_data.present?
+          render json: {
+            message: "Details found",
+            data: {
+              student_marks: marks_data
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: "Details not found",
+            status: :unprocessable_entity
+          }
+        end
+      end
+
       def fetch_marks
         @student_marks = StudentMark.where(student_mark_params)
         student = Student.find_by_id(student_mark_params[:student_id])
@@ -176,7 +208,7 @@ module Api
           marks_data["marks"][subject_name][examination_type] = mark.marks
         end
 
-        if response.present?
+        if marks_data.present?
           render json: {
             message: "Details found",
             data: {

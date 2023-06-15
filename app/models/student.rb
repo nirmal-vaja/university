@@ -11,6 +11,7 @@ class Student < ApplicationRecord
   belongs_to :branch
   belongs_to :semester
 
+  has_many :student_marks, dependent: :destroy
   # before_save :generate_barcode, :generate_qrcode
 
   scope :fees_paid, -> {where(fees_paid: true)}

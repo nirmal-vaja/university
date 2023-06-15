@@ -21,6 +21,12 @@ module Api
         end
       end
 
+      def fetch_marks
+        student = Student.find_by(enrollment_number: params[:id])
+
+        
+      end
+
       def update_fees
         @student = Student.find_by_enrollment_number(params[:id])
         if @student.update(fees_paid: true)

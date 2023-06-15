@@ -82,6 +82,7 @@ namespace :api do
         get :fetch_subjects
         get :fetch_status
         get :fetch_type
+        get :fetch_marks_through_enrollment_number
       end
 
       member do

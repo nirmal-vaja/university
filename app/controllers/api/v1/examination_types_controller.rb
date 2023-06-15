@@ -76,7 +76,7 @@ module Api
       end
 
       def examination_type_params
-        params.require(:examination_type).permit(:name)
+        params.require(:examination_type).permit(:name, :maximum_marks)
       end
     end
   end

@@ -30,7 +30,8 @@ module Api
           render json: {
             message: "Details found",
             data: {
-              subjects: subjects
+              subjects: subjects,
+              student_id: student.id
             }, status: :ok
           }
         else

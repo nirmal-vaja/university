@@ -6,7 +6,7 @@ class StudentMark < ApplicationRecord
   belongs_to :subject
   belongs_to :student
 
-  validates :marks_within_maximum_marks
+  validate :marks_within_maximum_marks
 
   def marks_within_maximum_marks
     type = ExaminationType.find_by_name(examination_type) 

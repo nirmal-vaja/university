@@ -109,7 +109,7 @@ module Api
 
           user = User.find_by(email: email)
 
-          user.configuration.update(
+          user&.configuration&.update(
             examination_name: @marks_entry.examination_name,
             examination_type: @marks_entry.entry_type,
             academic_year: @marks_entry.academic_year,

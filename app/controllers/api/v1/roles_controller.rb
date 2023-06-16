@@ -3,7 +3,7 @@ module Api
     class RolesController < ApiController
 
       def index
-        @roles = Role.where.not(name: ['super_admin', 'faculty'])
+        @roles = Role.where.not(name: ['super_admin', 'faculty', 'Marks Entry'])
 
         render json: {
           message: "These are the roles",

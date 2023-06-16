@@ -48,7 +48,7 @@ module Api
         end
 
         def assigned_role_users
-          role_names = Role.all.pluck(:name).reject{ |x| x == "super_admin" || x == "faculty" }
+          role_names = Role.all.pluck(:name).reject{ |x| x == "super_admin" || x == "faculty" || x == "Marks Entry" }
           @users = []
           role_names.each do |name|
             @users << User.with_any_role(name)
@@ -56,7 +56,7 @@ module Api
           users = @users.flatten.map do |user|
             user.attributes.merge(
               {
-                role_names: user.roles_name.reject{ |x| x == "super_admin" || x == "faculty" }.join(', ')
+                role_names: user.roles_name.reject{ |x| x == "super_admin" || x == "faculty" || x == "Marks Entry" }.join(', ')
               }
             )
           end

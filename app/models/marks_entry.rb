@@ -8,15 +8,17 @@ class MarksEntry < ApplicationRecord
   has_many :marks_entry_subjects, dependent: :destroy
   has_many :subjects, through: :marks_entry_subjects
 
-  after_update :sanitize_data
+  after_update :sanitize_data, if: :no_marks_entry_subjects_found
 
   private
 
+  def no_marks_entry_subjects_found
+    self.marks_entry_subjects.count == 0
+  end
+
   def sanitize_data
-    unless subjects
       user.configuration.destroy
       user.destroy
       self.destroy
-    end
   end
 end

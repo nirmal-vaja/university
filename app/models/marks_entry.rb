@@ -14,6 +14,8 @@ class MarksEntry < ApplicationRecord
 
   def sanitize_data
     unless subjects
+      user.configuration.destroy
+      user.destroy
       self.destroy
     end
   end

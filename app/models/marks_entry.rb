@@ -17,8 +17,9 @@ class MarksEntry < ApplicationRecord
   end
 
   def sanitize_data
-      user.configuration.destroy
-      user.destroy
+      temp_user = User.find_by(email: user.email.split("@").join("_me_#{@marks_entry.entry_type.downcase}@"))
+      temp_user.configuration.destroy
+      temp_user.destroy
       self.destroy
   end
 end

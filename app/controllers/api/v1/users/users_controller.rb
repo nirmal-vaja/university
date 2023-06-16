@@ -21,7 +21,7 @@ module Api
         def faculty_names
 
           @users = User.with_role(:faculty)
-          @users = @users.where(user_params) if user_params[:user].present?
+          @users = @users.where(user_params) if params[:user].present?
 
           users = @users.map do |user|
             user.attributes.merge(

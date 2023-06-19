@@ -21,6 +21,25 @@ module Api
         end
       end
 
+      def fetch_maximum_marks
+        @examination_type = ExaminationType.find_by_id(params[:id])
+
+        if @examination_type
+          render json: {
+            message: "Type found",
+            status: :ok,
+            data: {
+              maximum_marks: @examination_type.maximum_marks
+            }
+          }
+        else
+          render json: {
+            message: "Type not found",
+            status: :not_found
+          }
+        end
+      end
+
       def create
         @examination_type = ExaminationType.new(examination_type_params)
 

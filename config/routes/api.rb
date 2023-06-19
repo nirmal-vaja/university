@@ -75,7 +75,11 @@ namespace :api do
     end
 
     resources :examination_names, only: [:index, :create, :update, :destroy]
-    resources :examination_types, only: [:index, :create, :update, :destroy]
+    resources :examination_types, only: [:index, :create, :update, :destroy] do
+      member do
+        get :fetch_maximum_marks
+      end
+    end
     resources :student_marks, only: [:index, :create, :update] do
       collection do
         put :lock_marks

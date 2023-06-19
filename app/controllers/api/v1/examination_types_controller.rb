@@ -22,7 +22,7 @@ module Api
       end
 
       def fetch_maximum_marks
-        @examination_type = ExaminationType.find_by_id(params[:id])
+        @examination_type = ExaminationType.find_by_name(params[:id])
 
         if @examination_type
           render json: {

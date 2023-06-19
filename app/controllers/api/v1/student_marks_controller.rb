@@ -249,6 +249,24 @@ module Api
       #   end
       # end
 
+      def publish_marks
+        @student_marks = StudentMark.where(student_mark_params)
+
+        if @student_marks.update_all(publish_marks: true)
+          render json: {
+            message: "Marks has been published",
+            data: {
+              student_marks: @student_marks
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: @student_marks.errors.full_messages.join(', '),
+            status: :unprocessable_entity
+          }
+        end
+      end
+
       def lock_marks
         @student_marks = StudentMark.where(student_mark_params)
         subject = Subject.find_by_id(student_mark_params[:subject_id])

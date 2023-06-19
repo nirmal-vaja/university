@@ -83,11 +83,13 @@ namespace :api do
     resources :student_marks, only: [:index, :create, :update] do
       collection do
         get :eligible_for_publish
+        put :unpublish_marks
         put :publish_marks
         put :lock_marks
         put :unlock_marks
         get :fetch_subjects
         get :fetch_status
+        get :fetch_publish_status
         get :fetch_type
         get :fetch_marks_through_enrollment_number
       end

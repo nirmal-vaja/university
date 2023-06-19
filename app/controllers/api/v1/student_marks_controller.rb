@@ -238,6 +238,43 @@ module Api
         end
       end
 
+      def fetch_publish_status
+        @student_marks = StudentMark.where(student_mark_params)
+
+        if @student_marks
+          render json: {
+            message: "Details found",
+            data: {
+              published_marks: @student_marks.pluck(:publish_marks).uniq.first
+            },
+            status: :ok
+          }
+        else
+          render json: {
+            message: "Details not found",
+            status: :not_found
+          }
+        end
+      end
+
+      def unpublish_marks
+        @student_marks = StudentMark.where(student_mark_params)
+
+        if @student_marks.update_all(publish_marks: false)
+          render json: {
+            message: "Marks has been set to unpublished",
+            data: {
+              unpublish_marks: true
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: @student_marks.errors.full_messages.join(', '),
+            status: :unprocessable_entity
+          }
+        end
+      end
+
       def publish_marks
         @student_marks = StudentMark.where(student_mark_params)
 
@@ -245,7 +282,7 @@ module Api
           render json: {
             message: "Marks has been published",
             data: {
-              student_marks: @student_marks
+              published: true
             }, status: :ok
           }
         else

@@ -122,6 +122,21 @@ module Api
         end
       end
 
+      def eligible_for_publish
+        @student_marks = StudentMark.where(student_mark_params)
+
+        eligible = @student_marks&.pluck(:lock_marks).uniq == [true]
+
+        if eligible
+          render json: {
+            message: "Here is the status",
+            data: {
+              eligible: eligible
+            },status: :ok
+          }
+        end
+      end
+
       def fetch_status
         @student_marks = StudentMark.where(student_mark_params)
 
@@ -222,32 +237,6 @@ module Api
           }
         end
       end
-
-      # def fetch_marks
-      #   student = Student.find_by_id(params[:id])
-
-      #   @student_marks = StudentMark.where(student_id: params[:id])
-
-      #   if @student_marks
-      #     student_marks = @student_marks.map do |student_mark|
-      #       student_mark.attributes.merge({
-      #         "#{student_mark.type}_marks": student_mark.marks
-      #       })
-      #     end
-
-      #     render json: {
-      #       message: "Details found",
-      #       data: {
-      #         student_marks: student_marks
-      #       }, status: :ok
-      #     }
-      #   else
-      #     render json: {
-      #       message: "Details not found",
-      #       status: :unprocessable_entity
-      #     }
-      #   end
-      # end
 
       def publish_marks
         @student_marks = StudentMark.where(student_mark_params)

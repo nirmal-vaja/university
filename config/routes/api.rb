@@ -82,6 +82,7 @@ namespace :api do
     end
     resources :student_marks, only: [:index, :create, :update] do
       collection do
+        get :eligible_for_publish
         put :publish_marks
         put :lock_marks
         put :unlock_marks

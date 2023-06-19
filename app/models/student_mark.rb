@@ -11,7 +11,7 @@ class StudentMark < ApplicationRecord
   def marks_within_maximum_marks
     type = ExaminationType.find_by_name(examination_type) 
     if marks.present? && marks > type.maximum_marks
-      errors.add(:marks, "cannot exceed maximum marks for #{examination_type.name}")
+      errors.add(:marks, "cannot exceed maximum marks for #{examination_type}")
     end
   end
 end

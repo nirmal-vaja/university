@@ -211,7 +211,7 @@ module Api
         @student_marks = @student_marks.where(publish_marks: true)
 
         marks_data = {}
-        if @student_marks
+        if @student_marks.present?
           @student_marks.each do |mark|
             subject_name = mark.subject.name
             examination_type = mark.examination_type

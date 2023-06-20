@@ -87,7 +87,7 @@ module Api
 
       def fetch_student_marks
         @student_marks = StudentMark.where(student_mark_params)
-        @student_marks = @student_marks.where(published: true)
+        @student_marks = @student_marks.where(publish_marks: true)
 
         if @student_marks
           student_marks = @student_marks.map do |student_mark|

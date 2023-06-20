@@ -58,7 +58,7 @@ module Api
               student_mark = StudentMark.find(student_mark[:id])
               ids << student_mark[:id]
               student_mark.update!(
-                marks: student_mark[:marks]
+                marks: student_mark["marks"]
               )
             end
             @student_marks = StudentMark.where(id: ids)

@@ -2,6 +2,8 @@ module Api
   module V1
     class StudentsController < ApiController
 
+      skip_before_action :doorkeeper_authorize!, only: [:find_student]
+
       def index
         @students = Student.where(student_params)
         students = @students.fees_paid

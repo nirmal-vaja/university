@@ -2,6 +2,8 @@ module Api
   module V1
     class StudentMarksController < ApiController
 
+      skip_before_action :doorkeeper_authorize!, only: [:fetch_student_marks, :fetch_marks_through_enrollment_number]
+
       def index
         @student_marks = StudentMark.where(student_mark_params)
 
@@ -206,28 +208,36 @@ module Api
 
         @student_marks = StudentMark.where(student_mark_params)
         @student_marks = @student_marks.where(student_id: student.id)
+        @student_marks = @student_marks.where(published: true)
 
         marks_data = {}
-        @student_marks.each do |mark|
-          subject_name = mark.subject.name
-          examination_type = mark.examination_type
-          student_id = mark.student.id
-          marks_data[:subject_name] = mark.subject.name
-          marks_data["marks"] ||= {}
-          marks_data["marks"][subject_name] ||= {}
-          marks_data["marks"][subject_name][examination_type] = mark.marks
-        end
-
-        if marks_data.present?
-          render json: {
-            message: "Details found",
-            data: {
-              student_marks: marks_data
-            }, status: :ok
-          }
+        if @student_marks
+          @student_marks.each do |mark|
+            subject_name = mark.subject.name
+            examination_type = mark.examination_type
+            student_id = mark.student.id
+            marks_data[:subject_name] = mark.subject.name
+            marks_data["marks"] ||= {}
+            marks_data["marks"][subject_name] ||= {}
+            marks_data["marks"][subject_name][examination_type] = mark.marks
+          end
+  
+          if marks_data.present?
+            render json: {
+              message: "Details found",
+              data: {
+                student_marks: marks_data
+              }, status: :ok
+            }
+          else
+            render json: {
+              message: "Details not found",
+              status: :unprocessable_entity
+            }
+          end
         else
           render json: {
-            message: "Details not found",
+            message: "Please wait for your result to be declared by administrator!",
             status: :unprocessable_entity
           }
         end

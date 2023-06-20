@@ -64,18 +64,14 @@ module Api
             @student_marks = StudentMark.where(id: ids)
           end
         rescue ActiveRecord::RecordNotFound
-          @student_marks = {
-            error: {
-              status: 404,
-              message: "Details not found"
-            }
+          render json: {
+            message: "Details not found",
+            status: 404
           }
         rescue ActiveRecord::RecordInvalid => exception
-          @student_marks = {
-            error: {
-              status: 422,
-              message: exception
-            }
+          render json: {
+            message: exception,
+            status: :unprocessable_entity
           }
         end
         if @student_marks

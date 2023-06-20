@@ -53,13 +53,15 @@ module Api
       def update
         begin
           StudentMark.transaction do
+            ids = []
             student_mark_params_for_create.each do |student_mark|
               student_mark = StudentMark.find(student_mark[:id])
+              ids << student_mark[:id]
               student_mark.update!(
                 marks: student_mark[:marks]
               )
             end
-            @student_marks = StudentMark.where(id: student_mark_params_for_create[:student_marks].pluck(:id))
+            @student_marks = StudentMark.where(id: ids)
           end
         rescue ActiveRecord::RecordNotFound
           @student_marks = {
@@ -125,14 +127,19 @@ module Api
       def eligible_for_publish
         @student_marks = StudentMark.where(student_mark_params)
 
-        eligible = @student_marks&.pluck(:lock_marks).uniq == [true]
+        eligible = @student_marks&.pluck(:lock_marks).uniq === [true]
 
-        if eligible
+        if @student_marks
           render json: {
-            message: "Here is the status",
+            message: "Status found",
             data: {
               eligible: eligible
             },status: :ok
+          }
+        else
+          render json: {
+            message: "No Marks entered for the selected filters",
+            status: :unprocessable_entity
           }
         end
       end

@@ -83,6 +83,30 @@ module Api
         end
       end
 
+      def fetch_student_marks
+        @student_marks = StudentMark.where(student_mark_params)
+        @student_marks = @student_marks.where(published: true)
+
+        if @student_marks
+          student_marks = @student_marks.map do |student_mark|
+            student_mark.attributes.merge({
+              subject_name: student_mark.subject.name
+            })
+          end
+          render json: {
+            message: "Details found",
+            data: {
+              student_marks: student_marks
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: "Please wait for the result to be published by administrator.",
+            status: :unprocessable_entity
+          }
+        end
+      end
+
       def fetch_subjects
         @student_marks = StudentMark.where(student_mark_params)
 

@@ -21,6 +21,24 @@ module Api
         end
       end
 
+      def find_student
+        student = Student.find_by_enrollment_number(params[:id])
+
+        if student
+          render json: {
+            message: "Student found",
+            data: {
+              student: student
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: "Student not found",
+            status: :not_found
+          }
+        end
+      end
+
       def fetch_subjects
         student = Student.find_by(enrollment_number: params[:id])
 

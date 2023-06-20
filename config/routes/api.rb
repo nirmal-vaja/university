@@ -50,6 +50,7 @@ namespace :api do
     resources :divisions, only: [:index]
     resources :students, only: [:index] do
       member do
+        get :find_student
         get :fetch_subjects
         put :update_fees
       end
@@ -84,6 +85,7 @@ namespace :api do
       collection do
         get :eligible_for_publish
         put :unpublish_marks
+        get :fetch_student_marks
         put :publish_marks
         put :lock_marks
         put :unlock_marks

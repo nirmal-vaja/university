@@ -55,10 +55,10 @@ module Api
           StudentMark.transaction do
             ids = []
             student_mark_params_for_create.each do |student_mark|
-              student_mark = StudentMark.find(student_mark[:id])
+              student_mark = StudentMark.find_by_id(student_mark[:id])
               ids << student_mark[:id]
               student_mark.update!(
-                marks: student_mark["marks"]
+                marks: student_mark[:marks]
               )
             end
             @student_marks = StudentMark.where(id: ids)

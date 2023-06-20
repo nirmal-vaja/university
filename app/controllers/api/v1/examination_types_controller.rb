@@ -1,6 +1,7 @@
 module Api
   module V1
     class ExaminationTypesController < ApiController
+      skip_before_action :doorkeeper_authorize!
       before_action :find_examination_type, only: [:update, :destroy]
 
       def index

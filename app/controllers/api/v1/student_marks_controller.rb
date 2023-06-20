@@ -208,7 +208,7 @@ module Api
 
         @student_marks = StudentMark.where(student_mark_params)
         @student_marks = @student_marks.where(student_id: student.id)
-        @student_marks = @student_marks.where(published: true)
+        @student_marks = @student_marks.where(publish_marks: true)
 
         marks_data = {}
         if @student_marks

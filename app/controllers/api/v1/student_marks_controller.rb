@@ -210,11 +210,11 @@ module Api
         @student_marks = @student_marks.where(student_id: student.id)
         
         is_published = 
-          if(student_mark_params[:examination_type].present?){
+          if(student_mark_params[:examination_type].present?)
             @student_marks.pluck(:publish_marks).uniq === [true]
-          } else {
+          else 
             @student_marks.pluck(:publish_marks).uniq === [true] && @student_marks.pluck(:examination_type).uniq === types
-          }
+          end
 
         marks_data = {}
         if is_published

@@ -205,11 +205,16 @@ module Api
 
       def fetch_marks_through_enrollment_number
         student = Student.find_by_enrollment_number(params[:enrollment_number])
-
+        types = ExaminationType.pluck(:name)
         @student_marks = StudentMark.where(student_mark_params)
         @student_marks = @student_marks.where(student_id: student.id)
         
-        is_published = @student_marks.pluck(:publish_marks).uniq === [true]
+        is_published = 
+          if(student_mark_params[:examination_type].present?){
+            @student_marks.pluck(:publish_marks).uniq === [true]
+          } else {
+            @student_marks.pluck(:publish_marks).uniq === [true] && @student_marks.pluck(:examination_type).uniq === types
+          }
 
         marks_data = {}
         if is_published

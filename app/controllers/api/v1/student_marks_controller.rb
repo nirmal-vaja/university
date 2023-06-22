@@ -208,10 +208,11 @@ module Api
 
         @student_marks = StudentMark.where(student_mark_params)
         @student_marks = @student_marks.where(student_id: student.id)
-        @student_marks = @student_marks.where(publish_marks: true)
+        
+        is_published = @student_marks.pluck(:publish_marks).uniq === [true]
 
         marks_data = {}
-        if @student_marks.present?
+        if is_published
           @student_marks.each do |mark|
             subject_name = mark.subject.name
             examination_type = mark.examination_type

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_23_102849) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_23_114227) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -301,6 +301,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_23_102849) do
     t.datetime "updated_at", null: false
     t.bigint "course_id", null: false
     t.bigint "branch_id", null: false
+    t.string "category"
+    t.string "lecture"
+    t.string "tutorial"
+    t.string "practical"
     t.index ["branch_id"], name: "index_subjects_on_branch_id"
     t.index ["course_id"], name: "index_subjects_on_course_id"
     t.index ["semester_id"], name: "index_subjects_on_semester_id"
@@ -328,10 +332,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_23_102849) do
 
   create_table "syllabuses", force: :cascade do |t|
     t.bigint "subject_id", null: false
-    t.string "category"
-    t.string "lecture"
-    t.string "tutorial"
-    t.string "practical"
     t.bigint "course_id", null: false
     t.bigint "branch_id", null: false
     t.bigint "semester_id", null: false

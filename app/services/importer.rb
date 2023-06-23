@@ -133,13 +133,45 @@ class Importer
 
         subject_details = Hash[[downcased_headers, row].transpose]
         course = Course.find_by_name(subject_details["course"])
+
+        unless course
+          return {
+            message: "#{subject_details["department"]} not found!",
+            status: :unprocessable_entity
+          }
+        end
+
         branch = course.branches.find_by_name(subject_details["branch"])
+
+        unless branch
+          return {
+            message: "#{subject_details["branch"]} not found in #{course.name}",
+            status: :unprocessable_entity
+          }
+        end
         semester = branch.semesters.find_by_name(subject_details["semester"].to_i)
+
+        unless semester
+          return {
+            message: "Semester - #{subject_details["semester"].to_i} not found #{course.name} #{branch.name}",
+            status: :unprocessable_entity
+          }
+        end
+
         subject = semester.subjects.find_or_initialize_by(code: subject_details["subject_code"].to_i).tap do |s|
           s.name = subject_details["subject_name"]
           s.course_id = course.id
           s.branch_id = branch.id
-          s.save
+          s.category = subject_details["category"]
+          s.tutorial = subject_details["tutorial"]
+          s.practical = subject_details["practical"]
+
+          unless s.save
+            return {
+              message: s.errors.full_messages.join(', '),
+              status: :unprocessable_entity
+            }
+          end
         end
       end
       {
@@ -367,10 +399,6 @@ class Importer
         syllabus.course_id = course.id
         syllabus.branch_id = branch.id
         syllabus.semester_id = semester.id
-        syllabus.category = syllabus_data["category"]
-        syllabus.tutorial = syllabus_data["tutorial"]
-        syllabus.lecture = syllabus_data["lecture"]
-        syllabus.practical = syllabus_data["practical"]
 
         unless syllabus.save
           return {

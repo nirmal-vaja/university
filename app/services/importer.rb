@@ -89,7 +89,7 @@ class Importer
           name: cs_data["branch"]
         )
 
-        branch.code = cs_data["branch"]
+        branch.code = cs_data["branch_code"]
 
         unless branch.save
           return { message: branch.errors.full_messages.join(', '), status: :unprocessable_entity }
@@ -401,7 +401,7 @@ class Importer
         syllabus.semester_id = semester.id
 
         unless syllabus.save
-          return {
+   +       return {
             message: syllabus.errors.full_messages.join(', '),
             status: :unprocessable_entity
           }

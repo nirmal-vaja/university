@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_19_103136) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_23_102849) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -47,6 +47,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_19_103136) do
     t.bigint "course_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "code"
     t.index ["course_id"], name: "index_branches_on_course_id"
   end
 
@@ -325,6 +326,23 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_19_103136) do
     t.index ["user_id"], name: "index_supervisions_on_user_id"
   end
 
+  create_table "syllabuses", force: :cascade do |t|
+    t.bigint "subject_id", null: false
+    t.string "category"
+    t.string "lecture"
+    t.string "tutorial"
+    t.string "practical"
+    t.bigint "course_id", null: false
+    t.bigint "branch_id", null: false
+    t.bigint "semester_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["branch_id"], name: "index_syllabuses_on_branch_id"
+    t.index ["course_id"], name: "index_syllabuses_on_course_id"
+    t.index ["semester_id"], name: "index_syllabuses_on_semester_id"
+    t.index ["subject_id"], name: "index_syllabuses_on_subject_id"
+  end
+
   create_table "time_table_block_wise_reports", force: :cascade do |t|
     t.bigint "exam_time_table_id", null: false
     t.integer "rooms"
@@ -440,6 +458,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_19_103136) do
   add_foreign_key "supervisions", "courses"
   add_foreign_key "supervisions", "semesters"
   add_foreign_key "supervisions", "users"
+  add_foreign_key "syllabuses", "branches"
+  add_foreign_key "syllabuses", "courses"
+  add_foreign_key "syllabuses", "semesters"
+  add_foreign_key "syllabuses", "subjects"
   add_foreign_key "time_table_block_wise_reports", "branches"
   add_foreign_key "time_table_block_wise_reports", "courses"
   add_foreign_key "time_table_block_wise_reports", "exam_time_tables"

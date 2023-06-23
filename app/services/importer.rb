@@ -89,6 +89,8 @@ class Importer
           name: cs_data["branch"]
         )
 
+        branch.code = cs_data["branch"]
+
         unless branch.save
           return { message: branch.errors.full_messages.join(', '), status: :unprocessable_entity }
         end
@@ -299,6 +301,91 @@ class Importer
     else
       {
         message: "Excel Sheet has not been uploaded, try again!",
+        status: :unprocessable_entity
+      }
+    end
+  end
+
+  def create_syllabus
+    excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
+
+    if excel_sheet.sheet.attached?
+      data = Array.new
+      data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
+
+      headers = Array.new
+      i = 0
+      while headers.compact.empty?
+        headers = data.row(i)
+        i += 1
+      end
+
+      downcased_headers = headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
+      data.each_with_index do |row, idx|
+        next if row[0] == headers[0]
+
+        syllabus_data = Hash[[downcased_headers, row].transpose]
+
+        course = Course.find_by_name(syllabus_data["department"])
+
+        unless course
+          return {
+            message: "#{syllabus_data["department"]} not found!",
+            status: :unprocessable_entity
+          }
+        end
+
+        branch = course.branches.find_by_name(syllabus_data["branch"])
+
+        unless branch
+          return {
+            message: "#{syllabus_data["branch"]} not found in #{course.name}",
+            status: :unprocessable_entity
+          }
+        end
+
+        semester = branch.semesters.find_by_name(syllabus_data["semester"])
+
+        unless semester
+          return {
+            message: "Semester - #{syllabus_data["semester"].to_i} not found #{course.name} #{branch.name}",
+            status: :unprocessable_entity
+          }
+        end
+
+        subject = semester.subjects.find_by_code(syllabus_data["subject_code"]) || semester.subjects.find_by_name(syllabus_data["subject_name"])
+
+        unless subject
+          return {
+            message: "#{syllabus_data["subject_name"]} not found",
+            status: :unprocessable_entity
+          }
+        end
+
+        syllabus = Syllabus.find_or_initialize_by(subject_id: subject.id)
+        
+        syllabus.course_id = course.id
+        syllabus.branch_id = branch.id
+        syllabus.semester_id = semester.id
+        syllabus.category = syllabus_data["category"]
+        syllabus.tutorial = syllabus_data["tutorial"]
+        syllabus.lecture = syllabus_data["lecture"]
+        syllabus.practical = syllabus_data["practical"]
+
+        unless syllabus.save
+          return {
+            message: syllabus.errors.full_messages.join(', '),
+            status: :unprocessable_entity
+          }
+        end
+      end
+      {
+        message: "Excel sheet has been uploaded successfully!",
+        status: :created
+      }
+    else
+      {
+        message: "Excel sheet has not been uploaded, try again!",
         status: :unprocessable_entity
       }
     end

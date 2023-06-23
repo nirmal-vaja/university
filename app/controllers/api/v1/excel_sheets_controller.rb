@@ -78,6 +78,8 @@ module Api
           Importer.new(excel_sheet.id).create_divisions
         when "Student Details"
           Importer.new(excel_sheet.id).create_students
+        when "Syllabus Details"
+          Importer.new(excel_sheet.id).create_syllabus
         end
       end
 

@@ -7,6 +7,6 @@ class ExcelSheetPolicy < ApplicationPolicy
   end
 
   def create?
-    @user.has_role?("super_admin", "Academic Head")
+    @user.has_role?("super_admin")
   end
 end

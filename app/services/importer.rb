@@ -89,7 +89,7 @@ class Importer
           name: cs_data["branch"]
         )
 
-        branch.code = cs_data["branch_code"]
+        branch.code = cs_data["branch_code"].to_i
 
         unless branch.save
           return { message: branch.errors.full_messages.join(', '), status: :unprocessable_entity }

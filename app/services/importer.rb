@@ -401,7 +401,7 @@ class Importer
         syllabus.semester_id = semester.id
 
         unless syllabus.save
-   +       return {
+          return {
             message: syllabus.errors.full_messages.join(', '),
             status: :unprocessable_entity
           }

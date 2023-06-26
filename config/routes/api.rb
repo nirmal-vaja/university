@@ -56,6 +56,8 @@ namespace :api do
       end
     end
 
+    resources :syllabus, only: [:index, :show, :create, :update]
+
 
     resources :supervisions, only: [:index, :create, :update] do
       member do

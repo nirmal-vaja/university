@@ -20,6 +20,8 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_tenant
 
+  skip_before_action :verify_authenticity_token
+
   protected
 
   def configure_permitted_parameters
@@ -30,7 +32,6 @@ class ApplicationController < ActionController::Base
 
   def set_tenant
     subdomain = params[:subdomain]
-
     subdomain.present? ? Apartment::Tenant.switch!(subdomain) : Apartment::Tenant.switch!
   end
 end

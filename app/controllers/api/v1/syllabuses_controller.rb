@@ -23,6 +23,8 @@ module Api
       def create
         @syllabus = Syllabus.new(syllabus_params)
 
+        binding.pry
+
         if @syllabus.save
           render json: {
             message: "Syllabus has been uploaded",

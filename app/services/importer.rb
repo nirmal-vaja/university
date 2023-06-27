@@ -162,9 +162,10 @@ class Importer
           s.name = subject_details["subject_name"]
           s.course_id = course.id
           s.branch_id = branch.id
-          s.category = subject_details["category"]
-          s.tutorial = subject_details["tutorial"]
-          s.practical = subject_details["practical"]
+          s.lecture = subject_details["lecture"].to_i
+          s.category = subject_details["category"].to_i
+          s.tutorial = subject_details["tutorial"].to_i
+          s.practical = subject_details["practical"].to_i
 
           unless s.save
             return {

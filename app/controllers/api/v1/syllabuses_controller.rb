@@ -38,6 +38,24 @@ module Api
         end
       end
 
+      def fetch_details
+        @syllabus = Syllabus.find_by(syllabus_params)
+
+        if @syllabus
+          render json: {
+            message: "Details found",
+            data: {
+              syllabus: @syllabus
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: "No syllabus found",
+            status: :not_found
+          }
+        end
+      end
+
       def show
         @syllabus = Syllabus.find_by_id(params[:id])
         

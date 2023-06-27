@@ -163,7 +163,7 @@ class Importer
           s.course_id = course.id
           s.branch_id = branch.id
           s.lecture = subject_details["lecture"].to_i
-          s.category = subject_details["category"].to_i
+          s.category = subject_details["category"]
           s.tutorial = subject_details["tutorial"].to_i
           s.practical = subject_details["practical"].to_i
 

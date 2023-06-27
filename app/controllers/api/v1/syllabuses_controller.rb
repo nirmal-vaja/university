@@ -23,7 +23,7 @@ module Api
       def create
         @syllabus = Syllabus.new(syllabus_params)
 
-        if @syllabus.save && @syllabus.syllabus_pdf.attached?
+        if @syllabus.save
           render json: {
             message: "Syllabus has been uploaded",
             data: {

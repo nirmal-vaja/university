@@ -24,6 +24,9 @@ module Api
         @syllabus = Syllabus.new(syllabus_params)
 
         if @syllabus.save
+          @syllabus = @syllabus.attributes.merge({
+            syllabus_pdf: @syllabus.syllabus_pdf
+          })
           render json: {
             message: "Syllabus has been uploaded",
             data: {
@@ -42,6 +45,9 @@ module Api
         @syllabus = Syllabus.find_by(syllabus_params)
 
         if @syllabus
+          @syllabus = @syllabus.attributes.merge({
+            syllabus_pdf: @syllabus.syllabus_pdf
+          })
           render json: {
             message: "Details found",
             data: {
@@ -60,6 +66,9 @@ module Api
         @syllabus = Syllabus.find_by_id(params[:id])
         
         if @syllabus
+          @syllabus = @syllabus.attributes.merge({
+            syllabus_pdf: @syllabus.syllabus_pdf
+          })
           render json: {
             message: "Details found",
             data: {
@@ -78,6 +87,9 @@ module Api
         @syllabus = Syllabus.find_by_id(params[:id])
 
         if @syllabus.update(syllabus_params)
+          @syllabus = @syllabus.attributes.merge({
+            syllabus_pdf: @syllabus.syllabus_pdf
+          })
           render json: {
             message: "Syllabus has been updated",
             data: {

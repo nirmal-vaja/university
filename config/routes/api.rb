@@ -56,7 +56,7 @@ namespace :api do
       end
     end
 
-    resources :syllabus, only: [:index, :show, :create, :update] do
+    resources :syllabuses, only: [:index, :show, :create, :update] do
       member do
         get :fetch_details
       end

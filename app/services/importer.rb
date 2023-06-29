@@ -39,7 +39,21 @@ class Importer
         user.status = "true"
         user.department = user_data["department"]
         user.course = Course.find_by_name(user_data["course"])
+
+        unless user.course
+          return { 
+            message: "#{user_data["course"]} not found",
+            status: :unprocessable_entity
+           }
+        end
         user.branch = user.course.branches.find_by_name(user_data["department"])
+        
+        unless user.branch 
+          return {
+            message: "#{user_data["department"]} not found",
+            status: :unprocessable_entity
+          }
+        end
         user.user_type = user_data["type"] == "Junior" ? 0 : 1
 
         user.add_role :faculty

@@ -1,6 +1,8 @@
 module Api
   module V1
     class SubjectsController < ApiController
+      skip_before_action :doorkeeper_authorize!
+
       def index
         params =
           if subject_params["id"].present?

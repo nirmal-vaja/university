@@ -2,6 +2,8 @@ module Api
   module V1
     class SyllabusesController < ApplicationController
 
+      skip_before_action :doorkeeper_authorize!, only: [:index, :show]
+
       def index
         @syllabuses = Syllabus.where(syllabus_params)
 

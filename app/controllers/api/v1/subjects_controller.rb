@@ -20,7 +20,7 @@ module Api
           end
         @subjects = Subject.where(params)
 
-        @subjects = @subjects.map do |subject|
+        @subjects = @subjects&.map do |subject|
           subject.attributes.merge({
             branch_code: subject.semester.branch.code,
             semester_name: subject.semester.name,
@@ -30,12 +30,20 @@ module Api
             m: m,
           })
         end
-
-        render json: {
-          data: {
-            subjects: @subjects
-          }, status: :ok
-        }
+        
+        if @subjects
+          render json: {
+            message: "Details found",
+            data: {
+              subjects: @subjects
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: "Details not found",
+            status: :not_found
+          }
+        end
       end
 
       private

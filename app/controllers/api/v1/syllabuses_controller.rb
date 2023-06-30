@@ -7,6 +7,11 @@ module Api
         @syllabuses = Syllabus.where(syllabus_params)
 
         if @syllabuses
+          @syllabuses = @syllabuses.map do |syllabus|
+            syllabus.attributes.merge({
+              pdf_url: url_for(syllabus.syllabus_pdf)
+            })
+          end
           render json: {
             message: "Details found",
             data: {
@@ -26,7 +31,8 @@ module Api
 
         if @syllabus.save
           @syllabus = @syllabus.attributes.merge({
-            syllabus_pdf: @syllabus.syllabus_pdf
+            syllabus_pdf: @syllabus.syllabus_pdf,
+            pdf_url: url_for(@syllabus.syllabus_pdf)
           })
           render json: {
             message: "Syllabus has been uploaded",
@@ -47,7 +53,8 @@ module Api
 
         if @syllabus
           @syllabus = @syllabus.attributes.merge({
-            syllabus_pdf: @syllabus.syllabus_pdf
+            syllabus_pdf: @syllabus.syllabus_pdf,
+            pdf_url: url_for(@syllabus.syllabus_pdf)
           })
           render json: {
             message: "Details found",
@@ -68,7 +75,8 @@ module Api
         
         if @syllabus
           @syllabus = @syllabus.attributes.merge({
-            syllabus_pdf: @syllabus.syllabus_pdf
+            syllabus_pdf: @syllabus.syllabus_pdf,
+            pdf_url: url_for(@syllabus.syllabus_pdf)
           })
           render json: {
             message: "Details found",
@@ -89,7 +97,8 @@ module Api
 
         if @syllabus.update(syllabus_params)
           @syllabus = @syllabus.attributes.merge({
-            syllabus_pdf: @syllabus.syllabus_pdf
+            syllabus_pdf: @syllabus.syllabus_pdf,
+            pdf_url: url_for(@syllabus.syllabus_pdf)
           })
           render json: {
             message: "Syllabus has been updated",

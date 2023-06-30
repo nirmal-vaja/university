@@ -33,7 +33,7 @@ module Api
           @syllabus = @syllabus.attributes.merge({
             syllabus_pdf: @syllabus.syllabus_pdf,
             pdf_url: url_for(@syllabus.syllabus_pdf)
-          })
+          }) if @syllabus.syllabus_pdf.attached?
           render json: {
             message: "Syllabus has been uploaded",
             data: {
@@ -55,7 +55,7 @@ module Api
           @syllabus = @syllabus.attributes.merge({
             syllabus_pdf: @syllabus.syllabus_pdf,
             pdf_url: url_for(@syllabus.syllabus_pdf)
-          })
+          }) if @syllabus.syllabus_pdf.attached?
           render json: {
             message: "Details found",
             data: {
@@ -99,7 +99,7 @@ module Api
           @syllabus = @syllabus.attributes.merge({
             syllabus_pdf: @syllabus.syllabus_pdf,
             pdf_url: url_for(@syllabus.syllabus_pdf)
-          })
+          }) if @syllabus.syllabus_pdf.attached?
           render json: {
             message: "Syllabus has been updated",
             data: {

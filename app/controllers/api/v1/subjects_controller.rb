@@ -17,7 +17,8 @@ module Api
 
         @subjects = @subjects.map do |subject|
           subject.attributes.merge({
-            branch_code: subject.semester.branch.code
+            branch_code: subject.semester.branch.code,
+            semester_name: subject.semester.name
           })
         end
 

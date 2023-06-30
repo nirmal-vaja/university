@@ -117,7 +117,7 @@ module Api
       private
 
       def syllabus_params
-        params.require(:syllabus).permit(:course_id, :branch_id, :semester_id, :subject_id, :syllabus_pdf, :academic_year)
+        params.require(:syllabus).permit(:course_id, :branch_id, :semester_id, :subject_id, :syllabus_pdf, :academic_year, :subject_code, :subject_name)
       end
     end
   end

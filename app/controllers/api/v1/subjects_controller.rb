@@ -5,6 +5,11 @@ module Api
       skip_before_action :doorkeeper_authorize!
     
       def index
+        i = ExaminationType.find_by_name("Internal")&.maximum_marks
+        v = ExaminationType.find_by_name("Viva")&.maximum_marks
+        e = ExaminationType.find_by_name("External")&.maximum_marks
+        m = ExaminationType.find_by_name("Mid")&.maximum_marks
+
         params =
           if subject_params["id"].present?
             params = subject_params
@@ -18,7 +23,11 @@ module Api
         @subjects = @subjects.map do |subject|
           subject.attributes.merge({
             branch_code: subject.semester.branch.code,
-            semester_name: subject.semester.name
+            semester_name: subject.semester.name,
+            e: e,
+            i: i,
+            v: v,
+            m: m,
           })
         end
 

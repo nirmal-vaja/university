@@ -15,6 +15,12 @@ module Api
           end
         @subjects = Subject.where(params)
 
+        @subjects = @subjects.map do |subject|
+          subject.attributes.merge({
+            branch_code: subject.semester.branch.code
+          })
+        end
+
         render json: {
           data: {
             subjects: @subjects

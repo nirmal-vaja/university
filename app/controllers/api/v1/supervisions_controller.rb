@@ -26,6 +26,7 @@ module Api
           @supervision.branch_id = @supervision.user.branch.id
         end
 
+        @dates = ExamTimeTable.where(time_table_params).pluck(:date).uniq
         
         authorize @supervision
         if @supervision.save
@@ -127,6 +128,10 @@ module Api
 
       def supervision_params
         params.require(:supervision).permit(:examination_name, :academic_year, :metadata, :list_type, :user_id, :no_of_supervisions, :course_id, :branch_id, :semester_id, :date, :time, :supervision_type).to_h
+      end
+
+      def time_table_params
+        params.require(:time_table).permit(:name, :subject_id, :day, :date, :time, :academic_year, :course_id, :branch_id, :semester_id, :time_table_type).to_h
       end
     end
   end

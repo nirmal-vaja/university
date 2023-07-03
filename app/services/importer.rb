@@ -11,6 +11,7 @@ class Importer
     if excel_sheet.sheet.attached?
       data = Array.new
       data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
+      binding.pry
       headers = Array.new
       i = 0
       while headers.compact.empty?
@@ -23,13 +24,13 @@ class Importer
       success = 0
       users = 0
       data.each_with_index do |row, idx|
-        next if  row.include?(nil) || row[0] == headers[0] # skip header and nil rows
+        next if row.include?(nil) || row[0] == headers[0] # skip header and nil rows
         # create hash from headers and cells
         user_data = Hash[[downcased_headers, row].transpose]
         user = User.find_or_initialize_by(
           email: user_data["email"]
-        )
-        course = Course.find_by_name(user_data["course"])
+        ).load_async
+        course = Course.find_by_name(user_data["course"]).load_async
 
         unless course
           return {
@@ -38,7 +39,7 @@ class Importer
            }
         end
 
-        branch = course.branches.find_by_name(user_data["department"])
+        branch = course.branches.find_by_name(user_data["department"]).load_async
 
         unless branch
           return { 
@@ -47,8 +48,10 @@ class Importer
            }
         end
 
-        user.first_name = user_data["faculty_name"].split(' ')[0]
-        user.last_name = user_data["faculty_name"].split(' ')[1]
+        name = user_data["faculty_name"].split(' ')
+
+        user.first_name = name[0]
+        user.last_name = name[1]
         user.phone_number = user_data["phone_number"].to_i
         user.designation = user_data["designation"]
         user.password = "password" if user.password.nil?

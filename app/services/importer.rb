@@ -11,7 +11,6 @@ class Importer
     if excel_sheet.sheet.attached?
       data = Array.new
       data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
-      binding.pry
       headers = Array.new
       i = 0
       while headers.compact.empty?

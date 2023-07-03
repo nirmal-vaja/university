@@ -6,13 +6,15 @@ module Api
     
       def index
         params =
-          if subject_params["id"].present?
+          if subject_params.present? && subject_params["id"].present?
             params = subject_params
             params["id"] = JSON.parse(subject_params["id"])
             params
           else
             subject_params
           end
+
+        binding.pry
         @subjects = Subject.where(params)
         
         if @subjects.present?

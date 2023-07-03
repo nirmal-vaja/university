@@ -46,7 +46,11 @@ namespace :api do
     resources :courses, only: [:index]
     resources :branches, only: [:index]
     resources :semesters, only: [:index]
-    resources :subjects, only: [:index]
+    resources :subjects, only: [:index] do
+      collection do
+        get :fetch_subjects
+      end
+    end
     resources :divisions, only: [:index]
     resources :students, only: [:index] do
       member do

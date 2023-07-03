@@ -27,7 +27,22 @@ module Api
         end
 
         @dates = ExamTimeTable.where(time_table_params).pluck(:date).uniq
-        
+        @dates_to_assign = @dates&.sample(@supervision.no_of_supervisions)
+        metadata = {}
+        if @dates_to_assign.present?
+          @dates_to_assign.each do |date|
+            date = date.strftime("%d-%m-%Y")
+            no_of_blocks = ExamTimeTable.where(date: date).map{|x| x.time_table_block_wise_reports&.pluck(:blocks).compact.sum}.compact.sum
+            supervision = Supervision.where("metadata LIKE ?", "%#{date}%")
+  
+            if supervision.count < no_of_blocks
+              metadata[date] = true
+            else
+              @dates_to_assign = @dates.sample(@supervision.no_of_supervisions)
+            end
+          end
+        end
+        @supervision.metadata = metadata
         authorize @supervision
         if @supervision.save
           render json: {

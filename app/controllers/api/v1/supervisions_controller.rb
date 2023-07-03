@@ -31,7 +31,7 @@ module Api
         metadata = {}
         if @dates_to_assign.present?
           @dates_to_assign.each do |date|
-            date = date.strftime("%d-%m-%Y")
+            date = date.strftime("%Y-%m-%d")
             no_of_blocks = ExamTimeTable.where(date: date).map{|x| x.time_table_block_wise_reports&.pluck(:blocks).compact.sum}.compact.sum
             supervision = Supervision.where("metadata LIKE ?", "%#{date}%")
   

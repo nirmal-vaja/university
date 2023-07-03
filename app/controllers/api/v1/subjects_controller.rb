@@ -5,7 +5,6 @@ module Api
       skip_before_action :doorkeeper_authorize!
     
       def index
-        subject_params.delete(:name)
         params =
           if subject_params.present? && subject_params["id"].present?
             params = subject_params
@@ -37,15 +36,7 @@ module Api
         e = ExaminationType.find_by_name("External")&.maximum_marks
         m = ExaminationType.find_by_name("Mid")&.maximum_marks
 
-        params =
-          if subject_params["id"].present?
-            params = subject_params
-            params["id"] = JSON.parse(subject_params["id"])
-            params
-          else
-            subject_params
-          end
-        @subjects = Subject.where(params)
+        @subjects = Subject.where(subject_params_for_syllabus)
 
         @subjects = @subjects&.map do |subject|
           subject.attributes.merge({
@@ -76,6 +67,10 @@ module Api
       private
 
       def subject_params
+        params.require(:subject).permit(:course_id, :branch_id, :semester_id, :id).to_h
+      end
+
+      def subject_params_for_syllabus
         params.require(:subject).permit(:course_id, :branch_id, :semester_id, :id, :code, :name).to_h
       end
     end

@@ -19,65 +19,65 @@ class Importer
       end
       user_data = []
       downcased_headers = headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
-      puts downcased_headers
-      success = 0
-      users = 0
       data.each_with_index do |row, idx|
         next if row.include?(nil) || row[0] == headers[0] # skip header and nil rows
         # create hash from headers and cells
         user_data = Hash[[downcased_headers, row].transpose]
-        user = User.find_or_initialize_by(
-          email: user_data["email"]
-        ).load_async
-        course = Course.find_by_name(user_data["course"]).load_async
-
-        unless course
-          return {
-            message: "#{user_data["course"]} not found",
-            status: :unprocessable_entity
-           }
-        end
-
-        branch = course.branches.find_by_name(user_data["department"]).load_async
-
-        unless branch
-          return { 
-            message: "#{user_data["department"]} not found in #{course.name}!",
-            status: :unprocessable_entity
-           }
-        end
-
-        name = user_data["faculty_name"].split(' ')
-
-        user.first_name = name[0]
-        user.last_name = name[1]
-        user.phone_number = user_data["phone_number"].to_i
-        user.designation = user_data["designation"]
-        user.password = "password" if user.password.nil?
-        user.date_of_joining = user_data["dateof_joining"]
-        user.gender = user_data["gender"]
-        user.status = "true"
-        user.department = user_data["department"]
-        user.course = course
-        user.branch = branch
-        user.user_type = user_data["type"] == "Junior" ? 0 : 1
-
-        user.add_role :faculty
-        users += 1
-        if user.save
-          success += 1
-        else
-          return { message: "#{user.first_name}'s " + user.errors.full_messages.join(' '), status: :unprocessable_entity }
+        ActiveRecord::Base.transaction do
+          user = User.find_or_initialize_by(
+            email: user_data["email"]
+          )
+          course = Course.find_by_name(user_data["course"])
+  
+          unless course
+            return {
+              message: "#{user_data["course"]} not found",
+              status: :unprocessable_entity
+             }
+          end
+  
+          branch = course.branches.find_by_name(user_data["department"])
+  
+          unless branch
+            return { 
+              message: "#{user_data["department"]} not found in #{course.name}!",
+              status: :unprocessable_entity
+             }
+          end
+  
+          name = user_data["faculty_name"].split(' ')
+  
+          user.first_name = name[0]
+          user.last_name = name[1]
+          user.phone_number = user_data["phone_number"].to_i
+          user.designation = user_data["designation"]
+          user.password = "password" if user.password.nil?
+          user.date_of_joining = user_data["dateof_joining"]
+          user.gender = user_data["gender"]
+          user.status = "true"
+          user.department = user_data["department"]
+          user.course = course
+          user.branch = branch
+          user.user_type = user_data["type"] == "Junior" ? 0 : 1
+  
+          user.add_role :faculty
+          user.save
+        rescue ActiveRecord::RecordInvalid
+            return { message: "#{user.first_name}'s " + user.errors.full_messages.join(' '), status: :unprocessable_entity }
+            raise ActiveRecord::Rollback
+            break
+        rescue StandardError => e
+          return {message: e, status: :unprocessable_entity}
+          raise ActiveRecord::Rollback
+          break
         end
       end
-      if success == users
-        {
-          message: "Excel Sheet has been uploaded successfully",
-          data: {
-            users: User.with_role(:faculty)
-          }, status: :created
-        }
-      end
+      {
+        message: "Excel Sheet has been uploaded successfully",
+        data: {
+          users: User.with_role(:faculty)
+        }, status: :created
+      }
     end
   end
 

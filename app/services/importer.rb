@@ -29,6 +29,24 @@ class Importer
         user = User.find_or_initialize_by(
           email: user_data["email"]
         )
+        course = Course.find_by_name(user_data["course"])
+
+        unless course
+          return {
+            message: "#{user_data["course"]} not found",
+            status: :unprocessable_entity
+           }
+        end
+
+        branch = course.branches.find_by_name(user_data["department"])
+
+        unless branch
+          return { 
+            message: "#{user_data["department"]} not found in #{course.name}!",
+            status: :unprocessable_entity
+           }
+        end
+
         user.first_name = user_data["faculty_name"].split(' ')[0]
         user.last_name = user_data["faculty_name"].split(' ')[1]
         user.phone_number = user_data["phone_number"].to_i
@@ -38,22 +56,8 @@ class Importer
         user.gender = user_data["gender"]
         user.status = "true"
         user.department = user_data["department"]
-        user.course = Course.find_by_name(user_data["course"])
-
-        unless user.course
-          return { 
-            message: "#{user_data["course"]} not found",
-            status: :unprocessable_entity
-           }
-        end
-        user.branch = user.course.branches.find_by_name(user_data["department"])
-        
-        unless user.branch 
-          return {
-            message: "#{user_data["department"]} not found",
-            status: :unprocessable_entity
-          }
-        end
+        user.course = course
+        user.branch = branch
         user.user_type = user_data["type"] == "Junior" ? 0 : 1
 
         user.add_role :faculty

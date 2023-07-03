@@ -7,4 +7,6 @@ class TimeTableBlockWiseReport < ApplicationRecord
 
   validates_presence_of :no_of_students
 
+  
+
 end

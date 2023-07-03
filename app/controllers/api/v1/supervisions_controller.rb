@@ -25,6 +25,8 @@ module Api
         unless supervision_params["branch_id"]
           @supervision.branch_id = @supervision.user.branch.id
         end
+
+        
         authorize @supervision
         if @supervision.save
           render json: {

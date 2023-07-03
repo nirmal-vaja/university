@@ -5,6 +5,32 @@ module Api
       skip_before_action :doorkeeper_authorize!
     
       def index
+        params =
+          if subject_params["id"].present?
+            params = subject_params
+            params["id"] = JSON.parse(subject_params["id"])
+            params
+          else
+            subject_params
+          end
+        @subjects = Subject.where(params)
+        
+        if @subjects.present?
+          render json: {
+            message: "Details found",
+            data: {
+              subjects: @subjects
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: "Details not found",
+            status: :not_found
+          }
+        end
+      end
+
+      def fetch_subjects
         i = ExaminationType.find_by_name("Internal")&.maximum_marks
         v = ExaminationType.find_by_name("Viva")&.maximum_marks
         e = ExaminationType.find_by_name("External")&.maximum_marks

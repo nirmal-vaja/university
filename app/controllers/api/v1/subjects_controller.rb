@@ -5,6 +5,7 @@ module Api
       skip_before_action :doorkeeper_authorize!
     
       def index
+        subject_params.delete(:name)
         params =
           if subject_params.present? && subject_params["id"].present?
             params = subject_params

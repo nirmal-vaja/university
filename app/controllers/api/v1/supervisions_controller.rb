@@ -70,34 +70,25 @@ module Api
 
       def update
         @supervision = Supervision.find_by_id(params[:id])
-        unless params["branch_id"]
-          @supervision.branch_id = @supervision.user.branch.id
-        end
-        @supervision.metadata = params["supervision"]["metadata"]
-        
-        authorize @supervision
-        if @supervision.metadata
-          if @supervision.metadata.count <= @supervision.no_of_supervisions
-            if @supervision.update(supervision_params)
-              render json: {
-                message: "Supervision Altered",
-                data: {
-                  supervision: @supervision
-                }, status: :ok
-              }
+
+        @dates = ExamTimeTable.where(time_table_params).pluck(:date).uniq
+        @dates_to_assign = @dates&.sample(supervision_params[:no_of_supervisions].to_i)
+        metadata = {}
+        if @dates_to_assign.present?
+          @dates_to_assign.each do |date|
+            date = date.strftime("%Y-%m-%d")
+            no_of_blocks = ExamTimeTable.where(date: date).map{|x| x.time_table_block_wise_reports&.pluck(:blocks).compact.sum}.compact.sum
+            supervisions = Supervision.where("metadata LIKE ?", "%#{date}%")
+            if supervisions.count < no_of_blocks || supervisions.pluck(:id).include?(@supervision.id)
+              metadata[date] = true
             else
-              render json: {
-                message: @supervision.errors.full_messages.join(', '),
-                status: :unprocessable_entity
-              }
+              @dates_to_assign = @dates.sample(supervision_params[:no_of_supervisions].to_i)
             end
-          else
-            render json: {
-              message: "You can't assign more than #{@supervision.no_of_supervisions}!",
-              status: :unprocessable_entity
-            }
           end
-        else
+        end
+        
+        if metadata.present?
+          @supervision.metadata = metadata
           if @supervision.update(supervision_params)
             render json: {
               message: "Supervision Altered",
@@ -111,8 +102,59 @@ module Api
               status: :unprocessable_entity
             }
           end
+        else
+          render json: {
+            message: "You cant assign more supervisions",
+            status: :unprocessable_entity
+          }
         end
       end
+
+      # def update
+      #   @supervision = Supervision.find_by_id(params[:id])
+      #   unless params["branch_id"]
+      #     @supervision.branch_id = @supervision.user.branch.id
+      #   end
+      #   @supervision.metadata = params["supervision"]["metadata"]
+        
+      #   authorize @supervision
+      #   if @supervision.metadata
+      #     if @supervision.metadata.count <= @supervision.no_of_supervisions
+      #       if @supervision.update(supervision_params)
+      #         render json: {
+      #           message: "Supervision Altered",
+      #           data: {
+      #             supervision: @supervision
+      #           }, status: :ok
+      #         }
+      #       else
+      #         render json: {
+      #           message: @supervision.errors.full_messages.join(', '),
+      #           status: :unprocessable_entity
+      #         }
+      #       end
+      #     else
+      #       render json: {
+      #         message: "You can't assign more than #{@supervision.no_of_supervisions}!",
+      #         status: :unprocessable_entity
+      #       }
+      #     end
+      #   else
+      #     if @supervision.update(supervision_params)
+      #       render json: {
+      #         message: "Supervision Altered",
+      #         data: {
+      #           supervision: @supervision
+      #         }, status: :ok
+      #       }
+      #     else
+      #       render json: {
+      #         message: @supervision.errors.full_messages.join(', '),
+      #         status: :unprocessable_entity
+      #       }
+      #     end
+      #   end
+      # end
 
       def fetch_details
         user = User.find_by_id(params[:id])

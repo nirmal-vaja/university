@@ -7,79 +7,152 @@ class Importer
 
   def create_faculty_details
     excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
-
-    if excel_sheet.sheet.attached?
-      data = Array.new
-      data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
-      headers = Array.new
-      i = 0
-      while headers.compact.empty?
-        headers = data.row(i)
-        i+=1
-      end
-      user_data = []
-      downcased_headers = headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
-      data.each_with_index do |row, idx|
-        next if row.include?(nil) || row[0] == headers[0] # skip header and nil rows
-        # create hash from headers and cells
-        user_data = Hash[[downcased_headers, row].transpose]
-        ActiveRecord::Base.transaction do
-          user = User.find_or_initialize_by(
-            email: user_data["email"]
-          )
-          course = Course.find_by_name(user_data["course"])
   
-          unless course
-            return {
-              message: "#{user_data["course"]} not found",
-              status: :unprocessable_entity
-             }
+    return { message: "Excel sheet not found", status: :unprocessable_entity } unless excel_sheet&.sheet.attached?
+  
+    data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
+    headers = []
+    i = 0
+    while headers.compact.empty?
+      headers = data.row(i).compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
+      i += 1
+    end
+    users = []
+  
+    data.each_with_index do |row, idx|
+      next if row.include?(nil) || row[1].gsub(/\s+/, '').underscore == headers[1] # Skip header and nil rows
+  
+      user_data = Hash[[headers, row].transpose]
+  
+      begin
+        ActiveRecord::Base.transaction do
+          user = User.find_or_initialize_by(email: user_data["email"])
+          course = Course.find_by_name(user_data["course"])
+          branch = course&.branches&.find_by_name(user_data["department"])
+  
+          if course.nil?
+            users << { message: "#{user_data['course']} not found", status: :unprocessable_entity }
           end
   
-          branch = course.branches.find_by_name(user_data["department"])
-  
-          unless branch
-            return { 
-              message: "#{user_data["department"]} not found in #{course.name}!",
-              status: :unprocessable_entity
-             }
+          if branch.nil?
+            users << { message: "#{user_data['department']} not found in #{course.name}!", status: :unprocessable_entity }
+            next
           end
   
           name = user_data["faculty_name"].split(' ')
   
-          user.first_name = name[0]
-          user.last_name = name[1]
-          user.phone_number = user_data["phone_number"].to_i
-          user.designation = user_data["designation"]
-          user.password = "password" if user.password.nil?
-          user.date_of_joining = user_data["dateof_joining"]
-          user.gender = user_data["gender"]
-          user.status = "true"
-          user.department = user_data["department"]
-          user.course = course
-          user.branch = branch
-          user.user_type = user_data["type"] == "Junior" ? 0 : 1
+          user.assign_attributes(
+            first_name: name[0],
+            last_name: name[1],
+            phone_number: user_data["phone_number"].to_i,
+            designation: user_data["designation"],
+            password: "password",
+            date_of_joining: user_data["dateof_joining"],
+            gender: user_data["gender"],
+            status: "true",
+            department: user_data["department"],
+            course: course,
+            branch: branch,
+            user_type: user_data["type"] == "Junior" ? 0 : 1
+          )
   
-          user.add_role :faculty
-          user.save
-        rescue ActiveRecord::RecordInvalid
-            return { message: "#{user.first_name}'s " + user.errors.full_messages.join(' '), status: :unprocessable_entity }
-            raise ActiveRecord::Rollback
-            break
-        rescue StandardError => e
-          return {message: e, status: :unprocessable_entity}
-          raise ActiveRecord::Rollback
-          break
+          user.add_role(:faculty)
+          user.save!
+  
+          users << user
         end
+      rescue ActiveRecord::RecordInvalid => e
+        return { message: "#{user.first_name}'s " + user.errors.full_messages.join(' '), status: :unprocessable_entity }
+      rescue StandardError => e
+        return { message: e.to_s, status: :unprocessable_entity }
       end
-      {
-        message: "Excel Sheet has been uploaded successfully",
-        data: {
-          users: User.with_role(:faculty)
-        }, status: :created
-      }
     end
+  
+    {
+      message: "Excel Sheet has been uploaded successfully",
+      data: {
+        users: users.compact
+      },
+      status: :created
+    }
   end
+  
+
+  # def create_faculty_details
+  #   excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
+
+  #   if excel_sheet.sheet.attached?
+  #     data = Array.new
+  #     data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
+  #     headers = Array.new
+  #     i = 0
+  #     while headers.compact.empty?
+  #       headers = data.row(i)
+  #       i+=1
+  #     end
+  #     user_data = []
+  #     downcased_headers = headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
+  #     data.each_with_index do |row, idx|
+  #       next if row.include?(nil) || row[0] == headers[0] # skip header and nil rows
+  #       # create hash from headers and cells
+  #       user_data = Hash[[downcased_headers, row].transpose]
+  #       ActiveRecord::Base.transaction do
+  #         user = User.find_or_initialize_by(
+  #           email: user_data["email"]
+  #         )
+  #         course = Course.find_by_name(user_data["course"])
+  
+  #         unless course
+  #           return {
+  #             message: "#{user_data["course"]} not found",
+  #             status: :unprocessable_entity
+  #            }
+  #         end
+  
+  #         branch = course.branches.find_by_name(user_data["department"])
+  
+  #         unless branch
+  #           return { 
+  #             message: "#{user_data["department"]} not found in #{course.name}!",
+  #             status: :unprocessable_entity
+  #            }
+  #         end
+  
+  #         name = user_data["faculty_name"].split(' ')
+  
+  #         user.first_name = name[0]
+  #         user.last_name = name[1]
+  #         user.phone_number = user_data["phone_number"].to_i
+  #         user.designation = user_data["designation"]
+  #         user.password = "password" if user.password.nil?
+  #         user.date_of_joining = user_data["dateof_joining"]
+  #         user.gender = user_data["gender"]
+  #         user.status = "true"
+  #         user.department = user_data["department"]
+  #         user.course = course
+  #         user.branch = branch
+  #         user.user_type = user_data["type"] == "Junior" ? 0 : 1
+  
+  #         user.add_role :faculty
+  #         user.save
+  #       rescue ActiveRecord::RecordInvalid
+  #           return { message: "#{user.first_name}'s " + user.errors.full_messages.join(' '), status: :unprocessable_entity }
+  #           raise ActiveRecord::Rollback
+  #           break
+  #       rescue StandardError => e
+  #         return {message: e, status: :unprocessable_entity}
+  #         raise ActiveRecord::Rollback
+  #         break
+  #       end
+  #     end
+  #     {
+  #       message: "Excel Sheet has been uploaded successfully",
+  #       data: {
+  #         users: User.with_role(:faculty)
+  #       }, status: :created
+  #     }
+  #   end
+  # end
 
   def create_course_and_semester
     excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)

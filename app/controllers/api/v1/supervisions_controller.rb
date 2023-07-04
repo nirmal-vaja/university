@@ -41,6 +41,11 @@ module Api
               @dates_to_assign = @dates.sample(@supervision.no_of_supervisions)
             end
           end
+        else
+          render json: {
+            message: "You cant assign more supervisions",
+            status: :unprocessable_entity
+          }
         end
         @supervision.metadata = metadata
         authorize @supervision

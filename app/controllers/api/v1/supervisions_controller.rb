@@ -42,23 +42,27 @@ module Api
             end
           end
         else
-          render json: {
-            message: "You cant assign more supervisions",
-            status: :unprocessable_entity
-          }
+          
         end
         @supervision.metadata = metadata
         authorize @supervision
-        if @supervision.save
-          render json: {
-            message: "List has been saved.",
-            data: {
-              supervision: @supervision
-            }, status: :created
-          }
+        if @supervision.metadata.present?
+          if @supervision.save
+            render json: {
+              message: "List has been saved.",
+              data: {
+                supervision: @supervision
+              }, status: :created
+            }
+          else
+            render json: {
+              message: @supervision.errors.full_messages,
+              status: :unprocessable_entity
+            }
+          end
         else
           render json: {
-            message: @supervision.errors.full_messages,
+            message: "You cant assign more supervisions",
             status: :unprocessable_entity
           }
         end

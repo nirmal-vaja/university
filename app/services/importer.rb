@@ -31,12 +31,11 @@ class Importer
           branch = course&.branches&.find_by_name(user_data["department"])
   
           if course.nil?
-            users << { message: "#{user_data['course']} not found", status: :unprocessable_entity }
+            return { message: "#{user_data['course']} not found", status: :unprocessable_entity }
           end
   
           if branch.nil?
-            users << { message: "#{user_data['department']} not found in #{course.name}!", status: :unprocessable_entity }
-            next
+            return { message: "#{user_data['department']} not found in #{course.name}!", status: :unprocessable_entity }
           end
   
           name = user_data["faculty_name"].split(' ')

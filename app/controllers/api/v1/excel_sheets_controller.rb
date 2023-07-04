@@ -20,14 +20,7 @@ module Api
         if @excel_sheet
           authorize @excel_sheet
           if @excel_sheet.update(excel_sheet_params)
-            if @excel_sheet.sheet.attached?
               render json: run_creator(@excel_sheet.id)
-            else
-              render json: {
-                message: "The excel sheet has not been uploaded properly, kindly upload it again!",
-                status: :unprocessable_entity
-              }
-            end
           else
             render json: {
               message: @excel_sheet.errors.full_messages.join(' '),

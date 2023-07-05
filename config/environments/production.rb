@@ -102,7 +102,6 @@ Rails.application.configure do
     authentication: :plain,
     enable_starttls_auto: true
   }
- end
 end
 
 Rails.application.routes.default_url_options[:host] = 'http://ec2-13-234-111-241.ap-south-1.compute.amazonaws.com'

@@ -59,3 +59,10 @@
 #     auth_methods: %w(publickey password)
 #     # password: "please use keys"
 #   }
+
+set :smtp_address, 'smtp.gmail.com'
+set :smtp_port, 587
+set :smtp_user_name, ENV['GMAIL_USERNAME']
+set :smtp_password, ENV['GMAIL_PASSWORD']
+set :smtp_authentication, :plain
+set :smtp_enable_starttls_auto, true

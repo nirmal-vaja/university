@@ -54,9 +54,11 @@ class Importer
             branch: branch,
             user_type: user_data["type"] == "Junior" ? 0 : 1
           )
-  
+
           user.add_role(:faculty)
-          user.save!
+          if user.save!
+            UserMailer.send_password_change_mail(user).deliver_later
+          end
   
           users << user
         end

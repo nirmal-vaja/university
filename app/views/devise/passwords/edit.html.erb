@@ -1,0 +1,65 @@
+<div class="container max-w-screen-md mx-auto">
+  <div>
+    <h2 class="font-semibold text-xl p-5 text-white"></h2>
+
+    <div class="bg-white rounded shadow-lg p-4 px-4 md:p-8 mb-6 mt-20">
+      <div class="flex justify-center mb-3">
+        <h2 class="font-semibold text-xl text-slate-900">
+          Change your password
+        </h2>
+      </div>
+
+      <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
+        <div class="lg:col-span-9">
+          <div class="grid gap-4 gap-y-2 text-sm grid-cols-2 md:grid-cols-9">
+            <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: "md:col-span-9" },) do |f| %>
+              <%= f.hidden_field :reset_password_token %>
+              <div class="md:col-span-9">
+                <%= f.label :password, "New Password" %><br />
+                <% if @minimum_password_length %>
+                  <em>(<%= @minimum_password_length %> characters minimum)</em><br />
+                <% end %>
+                <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: "h-10 border mt-1 rounded px-4 w-full bg-gray-50" %>
+              </div>
+
+              <div class="md:col-span-9">
+                <%= f.label :password_confirmation, "Confirm new password" %><br />
+                <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "h-10 border mt-1 rounded px-4 w-full bg-gray-50" %>
+              </div>
+
+              <div class="md:col-span-9">
+                <%= f.submit "Change my password" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+  <%= render "devise/shared/error_messages", resource: resource %>
+  <%= f.hidden_field :reset_password_token %>
+  <input type="hidden" value="" name="subdomain">
+
+  <div class="div">
+    <%= f.label :password, "New Password" %><br />
+    <% if @minimum_password_length %>
+      <em>(<%= @minimum_password_length %> characters minimum)</em><br />
+    <% end %>
+    <%= f.password_field :password, autofocus: true, autocomplete: "new-password" %>
+  </div>
+
+  <div class="div field">
+    <%= f.label :password_confirmation, "Confirm new password" %><br />
+    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Change my password" %>
+  </div>
+<% end %>
+

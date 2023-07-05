@@ -89,3 +89,5 @@ gem 'dotenv-rails', groups: [:development, :test]
 gem 'barby'
 gem 'chunky_png'
 gem 'rqrcode'
+
+gem "tailwindcss-rails", "~> 2.0"

@@ -1,5 +1,7 @@
 class User < ApplicationRecord
   rolify
+
+  attr_accessor :subdomain
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,

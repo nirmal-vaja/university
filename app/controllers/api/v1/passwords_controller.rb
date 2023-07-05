@@ -1,13 +1,17 @@
 module Api
   module V1
     class PasswordsController < ApiController
+      skip_before_action :doorkeeper_authorize!
 
       def forgot_password
         user = User.find_by_email(params[:email])
         if user
-          user.send_reset_password_instruction
+          token = user.send_reset_password_instructions
           render json: {
             message: "Password reset instructions sent.",
+            data: {
+              token: token
+            },
             status: :ok
           }
         else
@@ -18,7 +22,7 @@ module Api
         end
       end
 
-      def reset_passsword
+      def reset_password
         user = User.reset_password_by_token(reset_password_params)
         if user.errors.empty?
           render json: {

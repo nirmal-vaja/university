@@ -42,12 +42,8 @@ namespace :api do
       end
     end
 
-    namespace :api do
-      namespace :v1 do
-        post 'forgot_password', to: 'passwords#forgot_password'
-        put 'reset_password', to: 'passwords#reset_password'
-      end
-    end
+    post 'forgot_password', to: 'passwords#forgot_password'
+    put 'reset_password', to: 'passwords#reset_password'
 
     resources :courses, only: [:index]
     resources :branches, only: [:index]

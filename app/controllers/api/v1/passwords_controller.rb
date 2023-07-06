@@ -5,8 +5,10 @@ module Api
 
       def forgot_password
         user = User.find_by_email(params[:email])
+        url = params[:url]
+        binding.pry
         if user
-          token = user.send_reset_password_instructions
+          token = user.send_reset_password_instructions(url: url)
           render json: {
             message: "Password reset instructions sent.",
             data: {

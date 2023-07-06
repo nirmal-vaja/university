@@ -28,6 +28,12 @@ class User < ApplicationRecord
     "Senior": 1
   }
 
+  def send_reset_password_instructions(extra_params = {})
+    token = set_reset_password_token
+    send_devise_notification(:reset_password_instructions, token, extra_params)
+    token
+  end
+
   # the authenticate method from devise documentation
   def self.authenticate(subdomain, email, password)
     if Apartment.tenant_names.include?(subdomain)

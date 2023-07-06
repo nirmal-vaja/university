@@ -63,5 +63,4 @@ class User < ApplicationRecord
   def hod?
     self.has_role? :hod
   end
-  
 end

@@ -27,13 +27,7 @@ module Api
         end
 
         @dates = ExamTimeTable.where(time_table_params).pluck(:date).uniq
-        if @dates.empty?
-          render json: {
-            message: "No TimeTable found for selected criteria",
-            status: :unprocessable_entity
-          }
-          break
-        end
+
         @dates_to_assign = @dates&.sample(@supervision.no_of_supervisions)
         metadata = {}
         if @dates_to_assign.present?

@@ -28,6 +28,11 @@ class User < ApplicationRecord
     "Senior": 1
   }
 
+  def remove_role_without_deletion(role_name)
+    role = Role.find_by_name(role_name)
+    roles.delete(role)
+  end
+
   def send_reset_password_instructions(extra_params = {})
     token = set_reset_password_token
     send_devise_notification(:reset_password_instructions, token, extra_params)

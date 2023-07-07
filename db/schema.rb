@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_27_080819) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_07_113729) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -106,6 +106,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_27_080819) do
   end
 
   create_table "examination_names", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "examination_times", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -288,8 +294,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_27_080819) do
     t.boolean "fees_paid", default: false
     t.string "barcode"
     t.string "qrcode"
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
     t.index ["branch_id"], name: "index_students_on_branch_id"
     t.index ["course_id"], name: "index_students_on_course_id"
+    t.index ["email"], name: "index_students_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_students_on_reset_password_token", unique: true
     t.index ["semester_id"], name: "index_students_on_semester_id"
   end
 

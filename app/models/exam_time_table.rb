@@ -23,11 +23,6 @@ class ExamTimeTable < ApplicationRecord
     saturday: 6
   }
 
-  enum time: {
-    "10:30 A.M to 01:00 P.M": "morning" ,
-    "03:00 P.M to 05:30 P.M": "evening"
-  }
-
   def subject_code
     subject.code
   end

@@ -11,4 +11,6 @@ class Role < ApplicationRecord
             :allow_nil => true
 
   scopify
+
+  resourcify remove_role_if_empty: false
 end

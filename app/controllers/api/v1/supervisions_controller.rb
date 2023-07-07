@@ -42,8 +42,6 @@ module Api
               @dates_to_assign = @dates.sample(@supervision.no_of_supervisions)
             end
           end
-        else
-          
         end
         @supervision.metadata = metadata
         authorize @supervision
@@ -62,10 +60,17 @@ module Api
             }
           end
         else
-          render json: {
-            message: "You cant assign more supervisions",
-            status: :unprocessable_entity
-          }
+          if @dates.empty?
+            render json: {
+              message: "No Exam Dates found for the selected criteria",
+              status: :unprocessable_entity
+            }
+          else
+            render json: {
+              message: "You cant assign more supervisions",
+              status: :unprocessable_entity
+            }
+          end
         end
       end
 

@@ -7,6 +7,10 @@ require 'rqrcode'
 
 
 class Student < ApplicationRecord
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable
   belongs_to :course
   belongs_to :branch
   belongs_to :semester
@@ -15,6 +19,15 @@ class Student < ApplicationRecord
   # before_save :generate_barcode, :generate_qrcode
 
   scope :fees_paid, -> {where(fees_paid: true)}
+
+  def self.authenticate(subdomain, email, password)
+    if Apartment.tenant_names.include?(subdomain)
+      Apartment::Tenant.switch!(subdomain)
+      puts "tenant switched"
+      student = Student.find_for_authentication(email: email)
+      student&.valid_password?(password) && student&.status == "true" ? student : nil
+    end
+  end
 
   private
   

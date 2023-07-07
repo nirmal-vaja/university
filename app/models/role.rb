@@ -12,5 +12,5 @@ class Role < ApplicationRecord
 
   scopify
 
-  resourcify remove_role_if_empty: false
+  # resourcify remove_role_if_empty: false
 end

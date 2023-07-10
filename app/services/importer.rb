@@ -1,6 +1,5 @@
 class Importer
   attr_reader :excel_sheet_id
-  require 'activerecord-import'
 
   def initialize(excel_sheet_id)
     @excel_sheet_id = excel_sheet_id
@@ -8,7 +7,6 @@ class Importer
 
   def create_faculty_details
     excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
-
   
     return { message: "Excel sheet not found", status: :unprocessable_entity } unless excel_sheet&.sheet.attached?
   
@@ -19,9 +17,7 @@ class Importer
       headers = data.row(i).compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
       i += 1
     end
-
     users = []
-    users_data = []
   
     data.each_with_index do |row, idx|
       next if row.include?(nil) || row[1].gsub(/\s+/, '').underscore == headers[1] # Skip header and nil rows
@@ -31,7 +27,7 @@ class Importer
       begin
         ActiveRecord::Base.transaction do
           user = User.find_or_initialize_by(email: user_data["email"])
-          course = Course.includes(:branches).find_by_name(user_data["course"])
+          course = Course.find_by_name(user_data["course"])
           branch = course&.branches&.find_by_name(user_data["department"])
   
           if course.nil?
@@ -43,8 +39,8 @@ class Importer
           end
   
           name = user_data["faculty_name"].split(' ')
-
-          user_details = {
+  
+          user.assign_attributes(
             first_name: name[0],
             last_name: name[1],
             phone_number: user_data["phone_number"].to_i,
@@ -57,14 +53,10 @@ class Importer
             course: course,
             branch: branch,
             user_type: user_data["type"] == "Junior" ? 0 : 1
-          }
+          )
 
-          if user.id.present?
-            user.update(user_details)
-          else
-            user_details[:email] = user_data["email"]
-            users_data << user_details
-          end
+          user.save!
+          users << user
         end
       rescue ActiveRecord::RecordInvalid => e
         return { message: "#{user.first_name}'s " + user.errors.full_messages.join(' '), status: :unprocessable_entity }
@@ -72,12 +64,8 @@ class Importer
         return { message: e.to_s, status: :unprocessable_entity }
       end
     end
-
-    User.import(users_data)
-
-    users = User.where(email: users_data.map { |data| data["email"] })
     users.each { |user| user.add_role(:faculty) }
-  
+
     {
       message: "Excel Sheet has been uploaded successfully",
       data: {

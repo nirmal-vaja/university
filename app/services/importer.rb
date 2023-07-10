@@ -56,9 +56,7 @@ class Importer
           )
 
           user.add_role(:faculty)
-          if user.save!
-            UserMailer.send_password_change_mail(user).deliver_later
-          end
+          user.save!
   
           users << user
         end

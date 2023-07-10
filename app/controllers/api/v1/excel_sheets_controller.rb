@@ -42,14 +42,24 @@ module Api
       end
 
       def destroy
-        if @excel_sheet.destroy
-          render json: {
-            message: "Excel has been destroyed",
-            status: :ok
-          }
+
+        @excel_sheet = ExcelSheet.find_by_id(params[:id])
+
+        if @excel_sheet
+          if @excel_sheet.destroy
+            render json: {
+              message: "Excel has been destroyed",
+              status: :ok
+            }
+          else
+            render json: {
+              message: @excel_sheet.errors.full_messages.join(', '),
+              status: :unprocessable_entity
+            }
+          end
         else
           render json: {
-            message: @excel_sheet.errors.full_messages.join(', '),
+            message: "No excel sheet found",
             status: :unprocessable_entity
           }
         end

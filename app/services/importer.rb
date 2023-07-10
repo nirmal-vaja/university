@@ -56,6 +56,8 @@ class Importer
           )
 
           user.save!
+          user.add_role(:faculty)
+
           users << user
         end
       rescue ActiveRecord::RecordInvalid => e

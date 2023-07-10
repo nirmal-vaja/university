@@ -58,7 +58,20 @@ class Importer
           if user.id.present?
             user.update(user_details)
           else
-            user.assign_attributes(user_details)
+            user.assign_attributes(
+              first_name: name[0],
+              last_name: name[1],
+              phone_number: user_data["phone_number"].to_i,
+              designation: user_data["designation"],
+              password: "password",
+              date_of_joining: user_data["dateof_joining"],
+              gender: user_data["gender"],
+              status: "true",
+              department: user_data["department"],
+              course: course,
+              branch: branch,
+              user_type: user_data["type"] == "Junior" ? 0 : 1
+            )
             user.save!
             user.add_role(:faculty)
             users << user

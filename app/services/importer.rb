@@ -1,5 +1,6 @@
 class Importer
   attr_reader :excel_sheet_id
+  require 'activerecord-import'
 
   def initialize(excel_sheet_id)
     @excel_sheet_id = excel_sheet_id
@@ -7,6 +8,7 @@ class Importer
 
   def create_faculty_details
     excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
+
   
     return { message: "Excel sheet not found", status: :unprocessable_entity } unless excel_sheet&.sheet.attached?
   
@@ -17,7 +19,13 @@ class Importer
       headers = data.row(i).compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
       i += 1
     end
+    User.skip_callback(:save, :before)
+    User.skip_callback(:save, :after)
+    User.skip_callback(:create, :before)
+    User.skip_callback(:create, :after)
+    User.skip_callback(:validation, :before)
     users = []
+    users_data = []
   
     data.each_with_index do |row, idx|
       next if row.include?(nil) || row[1].gsub(/\s+/, '').underscore == headers[1] # Skip header and nil rows
@@ -58,23 +66,8 @@ class Importer
           if user.id.present?
             user.update(user_details)
           else
-            user.assign_attributes(
-              first_name: name[0],
-              last_name: name[1],
-              phone_number: user_data["phone_number"].to_i,
-              designation: user_data["designation"],
-              password: "password",
-              date_of_joining: user_data["dateof_joining"],
-              gender: user_data["gender"],
-              status: "true",
-              department: user_data["department"],
-              course: course,
-              branch: branch,
-              user_type: user_data["type"] == "Junior" ? 0 : 1
-            )
-            user.save!
-            user.add_role(:faculty)
-            users << user
+            user_data[:user_details] = user_details
+            users_data << user_data
           end
         end
       rescue ActiveRecord::RecordInvalid => e
@@ -83,6 +76,17 @@ class Importer
         return { message: e.to_s, status: :unprocessable_entity }
       end
     end
+
+    User.import(users_data.map { |data| data[:user_details] })
+
+    User.set_callback(:save, :before)
+    User.set_callback(:save, :after)
+    User.set_callback(:create, :before)
+    User.set_callback(:create, :after)
+    User.set_callback(:validation, :before)
+
+    users = User.where(email: users_data.map { |data| data["email"] })
+    users.each { |user| user.add_role(:faculty) }
   
     {
       message: "Excel Sheet has been uploaded successfully",

@@ -77,7 +77,7 @@ module Api
         end
 
         def examination_time_params
-          params.require(:examination_time).permit(:name)
+          params.require(:examination_time).permit(:name).to_h
         end
       end
 

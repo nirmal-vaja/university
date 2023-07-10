@@ -521,6 +521,6 @@ class Importer
       @tmp = Tempfile.new([file_name.base, file_name.extension_with_delimiter], binmode: true)
       @tmp.write(excel_sheet.sheet.download)
       @tmp.rewind
-      @tmp
+      @tmp 
   end
 end

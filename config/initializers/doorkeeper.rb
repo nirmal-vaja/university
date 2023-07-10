@@ -18,9 +18,8 @@ Doorkeeper.configure do
   end
 
   # enable grant flows
-  grant_flows %w[password]
 
-  skip_client_authentication_for_password_grant true
+  skip_client_authentication [:password]
 
   # If you didn't skip applications controller from Doorkeeper routes in your application routes.rb
   # file then you need to declare this block in order to restrict access to the web interface for
@@ -357,6 +356,7 @@ Doorkeeper.configure do
   #   https://datatracker.ietf.org/doc/html/rfc6819#section-4.4.3
   #
   # grant_flows %w[authorization_code client_credentials]
+  grant_flows %w[password]
 
   # Allows to customize OAuth grant flows that +each+ application support.
   # You can configure a custom block (or use a class respond to `#call`) that must

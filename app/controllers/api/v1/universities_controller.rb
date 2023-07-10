@@ -43,7 +43,7 @@ module Api
           user.add_role :super_admin
           Apartment::Tenant.switch!(current_tenant)
           render json: {
-            message: "University has been created",
+            message: "University has been registered",
             status: :created,
             data: {
               university: @university,

@@ -42,7 +42,7 @@ module Api
       end
 
       def destroy
-
+        Apartment::Tenant.switch!(params[:subdomain])
         @excel_sheet = ExcelSheet.find_by_id(params[:id])
 
         if @excel_sheet

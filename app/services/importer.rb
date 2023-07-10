@@ -19,11 +19,7 @@ class Importer
       headers = data.row(i).compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
       i += 1
     end
-    User.skip_callback(:save, :before)
-    User.skip_callback(:save, :after)
-    User.skip_callback(:create, :before)
-    User.skip_callback(:create, :after)
-    User.skip_callback(:validation, :before)
+
     users = []
     users_data = []
   
@@ -66,7 +62,7 @@ class Importer
           if user.id.present?
             user.update(user_details)
           else
-            user_data[:user_details] = user_details
+            user_data[:email] = user_data["email"]
             users_data << user_data
           end
         end
@@ -77,13 +73,7 @@ class Importer
       end
     end
 
-    User.import(users_data.map { |data| data[:user_details] })
-
-    User.set_callback(:save, :before)
-    User.set_callback(:save, :after)
-    User.set_callback(:create, :before)
-    User.set_callback(:create, :after)
-    User.set_callback(:validation, :before)
+    User.import(users_data)
 
     users = User.where(email: users_data.map { |data| data["email"] })
     users.each { |user| user.add_role(:faculty) }

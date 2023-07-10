@@ -19,7 +19,7 @@ Doorkeeper.configure do
 
   # enable grant flows
 
-  skip_client_authentication [:password]
+  skip_client_authentication_for_password_grant true
 
   # If you didn't skip applications controller from Doorkeeper routes in your application routes.rb
   # file then you need to declare this block in order to restrict access to the web interface for

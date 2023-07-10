@@ -62,8 +62,8 @@ class Importer
           if user.id.present?
             user.update(user_details)
           else
-            user_data[:email] = user_data["email"]
-            users_data << user_data
+            user_details[:email] = user_data["email"]
+            users_data << user_details
           end
         end
       rescue ActiveRecord::RecordInvalid => e

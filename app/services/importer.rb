@@ -27,7 +27,7 @@ class Importer
       begin
         ActiveRecord::Base.transaction do
           user = User.find_or_initialize_by(email: user_data["email"])
-          course = Course.find_by_name(user_data["course"])
+          course = Course.find_by_name(user_data["course"]).includes(:branches)
           branch = course&.branches&.find_by_name(user_data["department"])
   
           if course.nil?
@@ -39,8 +39,8 @@ class Importer
           end
   
           name = user_data["faculty_name"].split(' ')
-  
-          user.assign_attributes(
+
+          user_details = {
             first_name: name[0],
             last_name: name[1],
             phone_number: user_data["phone_number"].to_i,
@@ -53,12 +53,16 @@ class Importer
             course: course,
             branch: branch,
             user_type: user_data["type"] == "Junior" ? 0 : 1
-          )
+          }
 
-          user.add_role(:faculty)
-          user.save!
-  
-          users << user
+          if user.id.present?
+            user.update(user_details)
+          else
+            user.assign_attributes(user_details)
+            user.save!
+            user.add_role(:faculty)
+            users << user
+          end
         end
       rescue ActiveRecord::RecordInvalid => e
         return { message: "#{user.first_name}'s " + user.errors.full_messages.join(' '), status: :unprocessable_entity }

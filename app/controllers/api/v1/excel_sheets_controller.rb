@@ -44,7 +44,7 @@ module Api
       def destroy
         if @excel_sheet.destroy
           render json: {
-            message: "Excel has been destroy",
+            message: "Excel has been destroyed",
             status: :ok
           }
         else

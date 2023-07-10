@@ -27,7 +27,7 @@ class Importer
       begin
         ActiveRecord::Base.transaction do
           user = User.find_or_initialize_by(email: user_data["email"])
-          course = Course.find_by_name(user_data["course"]).includes(:branches)
+          course = Course.includes(:branches).find_by_name(user_data["course"])
           branch = course&.branches&.find_by_name(user_data["department"])
   
           if course.nil?

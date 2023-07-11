@@ -69,16 +69,16 @@ module Api
             status: :unprocessable_entity
           }
         end
+      end
 
-        private
+      private
 
-        def find_examination_time
-          @examination_time = ExaminationTime.find_by(params[:id])
-        end
+      def find_examination_time
+        @examination_time = ExaminationTime.find_by(params[:id])
+      end
 
-        def examination_time_params
-          params.require(:examination_time).permit(:name).to_h
-        end
+      def examination_time_params
+        params.require(:examination_time).permit(:name).to_h
       end
 
     end

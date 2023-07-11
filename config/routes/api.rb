@@ -69,7 +69,7 @@ namespace :api do
     end
 
 
-    resources :supervisions, only: [:index, :create, :update] do
+    resources :supervisions, only: [:index, :create, :update, :destroy] do
       member do
         get :fetch_details
       end

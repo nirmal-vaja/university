@@ -48,7 +48,7 @@ module Api
         if @supervision.metadata.present?
           if @supervision.save
             render json: {
-              message: "List has been saved.",
+              message: "Supervision successfully assigned!",
               data: {
                 supervision: @supervision
               }, status: :created
@@ -97,7 +97,7 @@ module Api
           @supervision.metadata = metadata
           if @supervision.update(supervision_params)
             render json: {
-              message: "Supervision Altered",
+              message: "Successfully Updated!",
               data: {
                 supervision: @supervision
               }, status: :ok
@@ -184,6 +184,22 @@ module Api
         else
           render json: {
             message: "No Supervision data found for #{user.name}, create one!",
+            status: :unprocessable_entity
+          }
+        end
+      end
+
+      def destroy
+        @supervision = Supervision.find_by_id(params[:id])
+
+        if @supervision.destroy
+          render json: {
+            message: "Successfully deleted!",
+            status: :ok
+          }
+        else
+          render json: {
+            message: @supervision.errors.full_messages.join(', '),
             status: :unprocessable_entity
           }
         end

@@ -63,7 +63,7 @@ module Api
 
         if @report.save
           render json: {
-            message: "Report created",
+            message: "Created Successfully!",
             data: {
               report: @report
             }, status: :created
@@ -84,7 +84,7 @@ module Api
 
         if @report.save
           render json: {
-            message: "Updated!",
+            message: "Successfully Updated!",
             data: {
               report: @report,
             }, status: :ok

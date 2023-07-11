@@ -77,24 +77,22 @@ module Api
       def update
         @supervision = Supervision.find_by_id(params[:id])
 
-        @dates = ExamTimeTable.where(time_table_params).pluck(:date).uniq
+        @dates = ExamTimeTable.where(time_table_params).pluck(:date).uniq.map{|date| date.strftime("%Y-%m-%d")}.reject{ |x| @supervision.metadata.keys.include?(x) }
         @dates_to_assign = @dates&.sample(supervision_params[:no_of_supervisions].to_i)
         metadata = {}
         if @dates_to_assign.present?
           @dates_to_assign.each do |date|
-            date = date.strftime("%Y-%m-%d")
             no_of_blocks = ExamTimeTable.where(date: date).map{|x| x.time_table_block_wise_reports&.pluck(:blocks).compact.sum}.compact.sum
             supervisions = Supervision.where("metadata LIKE ?", "%#{date}%")
             if supervisions.count < no_of_blocks || supervisions.pluck(:id).include?(@supervision.id)
-              metadata[date] = true
+              @supervision.metadata[date] = true
             else
               @dates_to_assign = @dates.sample(supervision_params[:no_of_supervisions].to_i)
             end
           end
         end
         
-        if metadata.present?
-          @supervision.metadata = metadata
+        if @supervision.metadata.present?
           if @supervision.update(supervision_params)
             render json: {
               message: "Successfully Updated!",

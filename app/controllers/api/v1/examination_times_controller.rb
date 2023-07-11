@@ -74,7 +74,7 @@ module Api
       private
 
       def find_examination_time
-        @examination_time = ExaminationTime.find_by(params[:id])
+        @examination_time = ExaminationTime.find_by_id(params[:id])
       end
 
       def examination_time_params

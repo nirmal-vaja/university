@@ -77,6 +77,8 @@ module Api
       def update
         @supervision = Supervision.find_by_id(params[:id])
 
+        time_tables.pluck(:date).uniq.map{|date| date.strftime("%Y-%m-%d")}.reject{ |x| Supervision.first.metadata.keys.include?(x) }
+
         @dates = ExamTimeTable.where(time_table_params).pluck(:date).uniq.map{|date| date.strftime("%Y-%m-%d")}.reject{ |x| @supervision.metadata.keys.include?(x) }
         @dates_to_assign = @dates&.sample(supervision_params[:no_of_supervisions].to_i)
         metadata = {}
@@ -162,8 +164,8 @@ module Api
 
       def fetch_details
         user = User.find_by_id(params[:id])
-        @supervision = Supervision.where(user_id: user.id )
-        @supervision = Supervision.find_by(supervision_params)
+        # @supervision = Supervision.where(user_id: user.id )
+        @supervision = Supervision.find_by(supervision_params.merge(user_id: user.id))
         supervision = @supervision.attributes.merge(
           {
             user_name: user.name,

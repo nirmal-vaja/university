@@ -28,7 +28,7 @@ module Api
 
         if @examination_time.save
           render json: {
-            message: "Created",
+            message: "Created Successfully!",
             data: {
               examination_time: @examination_time
             }, status: :created 
@@ -44,7 +44,7 @@ module Api
       def update
         if @examination_time.update(examination_time_params)
           render json:{
-            message: "Updated",
+            message: "Successfully Updated!",
             data: {
               examination_time: @examination_time
             }, status: :ok
@@ -60,7 +60,7 @@ module Api
       def destroy
         if @examination_time.destroy
           render json: {
-            message: "Deleted",
+            message: "Successfully Deleted!",
             status: :ok
           }
         else

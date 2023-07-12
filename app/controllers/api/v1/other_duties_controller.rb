@@ -83,7 +83,7 @@ module Api
             render json: {
               message: "No Other Duty data found for #{@user.name}, create one!",
               status: :unprocessable_entity
-            }
+            } 
           end
         end
       end

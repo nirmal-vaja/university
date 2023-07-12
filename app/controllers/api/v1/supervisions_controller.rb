@@ -161,6 +161,7 @@ module Api
       # end
 
       def fetch_details
+        user = User.find_by_id(params[:id])
         @supervision = Supervision.find_by(supervision_params.merge(user_id: params[:id]))
         supervision = @supervision.attributes.merge(
           {
@@ -178,10 +179,12 @@ module Api
             }, status: :ok
           }
         else
-          render json: {
-            message: "No Supervision data found for #{user.name}, create one!",
-            status: :unprocessable_entity
-          }
+          if user
+            render json: {
+              message: "No Supervision data found for #{user.name}, create one!",
+              status: :unprocessable_entity
+            }
+          end
         end
       end
 

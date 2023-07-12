@@ -1,6 +1,9 @@
 module Api
   module V1
     class OtherDutiesController < ApiController
+
+      before_action :set_other_duty, only: [:update, :destroy]
+
       def index
         @other_duties = OtherDuty.where(other_duty_params)
 
@@ -28,7 +31,7 @@ module Api
 
         if @other_duty.save
           render json: {
-            message: "Data saved.",
+            message: "Duty successfully assigned!",
             data: {
               other_duty: @other_duty
             }, status: :created
@@ -42,11 +45,10 @@ module Api
       end
 
       def update
-        @other_duty = OtherDuty.find_by_id(params[:id])
 
         if @other_duty.update(other_duty_params)
           render json: {
-            message: "Updated!",
+            message: "Successfully updated!",
             data: {
               other_duty: @other_duty
             }, status: :ok
@@ -60,8 +62,7 @@ module Api
       end
 
       def fetch_details
-        @user = User.find_by_id(params[:id])
-        @other_duty = OtherDuty.find_by(user_id: params[:id])
+        @other_duty = OtherDuty.find_by(other_duty_params.merge(user_id: params[:id]))
 
         other_duty = @other_duty.attributes.merge({
           user_name: @user.name,
@@ -84,14 +85,28 @@ module Api
         end
       end
 
+      def destroy
+        if @other_duty.destroy
+          render json: {
+            message: "Successfully deleted!",
+            status: :ok
+          }
+        else
+          render json: {
+            message: @other_duty.errors.full_messages.join(', '),
+            status: :unprocessable_entity
+          }
+        end
+      end
+
       private
 
-      def fetch_other_duties
-        @other_duties = OtherDuty.where()
+      def set_other_duty
+        @other_duty = OtherDuty.find_by_id(params[:id])
       end
 
       def other_duty_params
-        params.require(:other_duty).permit(:user_id, :assigned_duties, :examination_name, :academic_year, :course_id, :branch_id)
+        params.require(:other_duty).permit(:user_id, :assigned_duties, :examination_name, :academic_year, :course_id, :branch_id, :time, :other_duty_type)
       end
     end
   end

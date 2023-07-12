@@ -161,9 +161,7 @@ module Api
       # end
 
       def fetch_details
-        user = User.find_by_id(params[:id])
-        # @supervision = Supervision.where(user_id: user.id )
-        @supervision = Supervision.find_by(supervision_params.merge(user_id: user.id))
+        @supervision = Supervision.find_by(supervision_params.merge(user_id: params[:id]))
         supervision = @supervision.attributes.merge(
           {
             user_name: user.name,

@@ -62,6 +62,7 @@ module Api
       end
 
       def fetch_details
+        @user = User.find_by_id(params[:id])
         @other_duty = OtherDuty.find_by(other_duty_params.merge(user_id: params[:id]))
 
         other_duty = @other_duty.attributes.merge({
@@ -78,10 +79,12 @@ module Api
             }, status: :ok
           }
         else
-          render json: {
-            message: "No Other Duty data found for #{@user.name}, create one!",
-            status: :unprocessable_entity
-          }
+          if @user
+            render json: {
+              message: "No Other Duty data found for #{@user.name}, create one!",
+              status: :unprocessable_entity
+            }
+          end
         end
       end
 

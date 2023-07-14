@@ -5,7 +5,7 @@ module Api
       before_action :set_report, only: [:update, :destroy]
 
       def index
-        @reports = TimeTableBlockWiseReport.where(report_params.except(:date, :time)).joins(:exam_time_table).order('exam_time_table.date')
+        @reports = TimeTableBlockWiseReport.joins(:exam_time_tables).where(report_params.except(:date, :time)).order('exam_time_tables.date')
 
         if report_params[:date].present?
           @reports = @reports.joins(:exam_time_table).where('exam_time_table.date' => report_params[:date])

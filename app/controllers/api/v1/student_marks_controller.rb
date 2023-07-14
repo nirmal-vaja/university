@@ -358,7 +358,7 @@ module Api
       def unlock_marks
         @student_marks = StudentMark.where(student_mark_params)
         subject = Subject.find_by_id(student_mark_params[:subject_id])
-        if @student_marks.update_all(lock_marks: false)
+        if @student_marks.update_all(lock_marks: false, publish_marks: false)
           render json: {
             message: " Marks has been unlocked for #{subject.name}",
             data: {

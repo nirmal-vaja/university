@@ -17,8 +17,6 @@ class Student < ApplicationRecord
   has_one :parent_detail, dependent: :destroy
   has_one :guardian_detail, dependent: :destroy
   has_many :student_marks, dependent: :destroy
-  # before_save :generate_barcode, :generate_qrcode
-
 
   scope :fees_paid, -> {where(fees_paid: true)}
 

@@ -22,6 +22,12 @@ class Student < ApplicationRecord
 
   scope :fees_paid, -> {where(fees_paid: true)}
 
+  def generate_otp
+    self.otp = [1,2,3,4,5,6,7,8,9].sample(6).join("")
+    self.otp_generated_at = Time.current
+    save
+  end
+
   private
   
   def generate_barcode

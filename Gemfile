@@ -92,3 +92,4 @@ gem 'rqrcode'
 gem 'activerecord-import'
 
 gem "tailwindcss-rails", "~> 2.0"
+gem 'twilio-ruby'

@@ -60,6 +60,11 @@ namespace :api do
         get :fetch_subjects
         put :update_fees
       end
+
+      collection do
+        post :otp_login
+        post :validate_otp
+      end
     end
 
     resources :syllabuses, only: [:index, :show, :create, :update] do

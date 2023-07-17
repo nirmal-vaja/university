@@ -2,7 +2,8 @@ module Api
   module V1
     class StudentsController < ApiController
 
-      skip_before_action :doorkeeper_authorize!, only: [:find_student, :fetch_subjects]
+      skip_before_action :doorkeeper_authorize!, only: [:find_student, :fetch_subjects, :otp_login, :validate_otp]
+      before_action :find_student_with_mobile_number, only: [:otp_login, :validate_otp]
 
       def index
         @students = Student.where(student_params)
@@ -91,7 +92,48 @@ module Api
         end
       end
 
+      def otp_login
+        if @student.nil?
+          render json: {
+            message: "Entered Mobile Number is incorrect.",
+            status: :unprocessable_entity
+          }
+        else
+          @student.generate_otp
+          OtpSender.new(params[:mobile_number], @student.otp).call
+          render json: {
+            message: "OTP Sent Successfully",
+            status: :ok
+          }
+        end
+      end
+
+      def validate_otp
+        if @student.nil?
+          render json: {
+            message: "Entered Mobile Number is incorrect.",
+            status: :unprocessable_entity
+          }
+        else
+          if @student.otp === params[:otp] && @student.otp_generated_at >= 5.minutes.ago
+            render json: {
+              message: "Verified successfully",
+              status: :ok
+            }
+          else
+            render json: {
+              message: "Invalid OTP, please try again!",
+              status: :unprocessable_entity
+            }
+          end
+        end
+      end
+
       private
+
+      def find_student_with_mobile_number
+        @student = ContactDetail.find_by_mobile_number(params[:mobile_number])&.student
+      end
 
       def render_success_response(message, student)
         student_details = build_student_details(student)

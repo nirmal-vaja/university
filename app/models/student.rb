@@ -7,12 +7,18 @@ require 'rqrcode'
 
 
 class Student < ApplicationRecord
+
   belongs_to :course
   belongs_to :branch
   belongs_to :semester
 
+  has_one :contact_detail, dependent: :destroy
+  has_one :address_detail, dependent: :destroy
+  has_one :parent_detail, dependent: :destroy
+  has_one :guardian_detail, dependent: :destroy
   has_many :student_marks, dependent: :destroy
   # before_save :generate_barcode, :generate_qrcode
+
 
   scope :fees_paid, -> {where(fees_paid: true)}
 

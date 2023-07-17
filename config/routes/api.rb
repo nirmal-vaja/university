@@ -54,7 +54,7 @@ namespace :api do
       end
     end
     resources :divisions, only: [:index]
-    resources :students, only: [:index] do
+    resources :students, only: [:index, :update, :destroy] do
       member do
         get :find_student
         get :fetch_subjects

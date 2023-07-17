@@ -79,10 +79,78 @@ module Api
         end
       end
 
+      def update
+        @student = Student.find_by_id(params[:id])
+
+        save_student = SaveStudentDetails.new(params[:id], contact_detail_params, address_detail_params, parent_detail_params, guardian_detail_params).call
+
+        if save_student.valid? && @student.update(student_params)
+          render_success_response("Successfully Updated!", @student)
+        else
+          render_error_response(save_student.errors.full_messages.join(', '))
+        end
+      end
+
       private
 
+      def render_success_response(message, student)
+        student_details = build_student_details(student)
+      
+        render json: {
+          message: message,
+          data: {
+            student: student_details
+          },
+          status: :ok
+        }
+      end
+      
+      def render_error_response(message)
+        render json: {
+          message: message,
+          status: :unprocessable_entity
+        }
+      end
+      
+      def build_student_details(student)
+        student.attributes.merge(
+          contact_details: student.contact_detail,
+          address_details: student.address_detail,
+          parent_details: student.parent_detail,
+          guardian_details: student.guardian_detail
+        )
+      end
+
       def student_params
-        params.require(:student).permit(:course_id, :branch_id, :semester_id, :name, :enrollment_number, :barcode, :qrcode).to_h
+        if params["student"].present?
+          params.require(:student).permit(:course_id, :branch_id, :semester_id, :name, :enrollment_number, :barcode, :qrcode, :gender, :father_name, :mother_name, :date_of_birth, :religion, :caste, :nationality, :mother_tongue, :marrital_status, :blood_group, :physically_handicapped).to_h
+        else 
+          {}
+        end
+      end
+
+      def contact_detail_params
+        if params["contact_detail"].present?
+          params.require(:contact_detail)&.permit(:mobile_number, :emergency_mobile_number, :residence_phone_number, :personal_email_address, :university_email_address, :fathers_mobile_number, :fathers_personal_email, :mothers_mobile_number, :mothers_personal_email).to_h
+        end
+      end
+
+      def address_detail_params
+        if params["address_detail"].present?
+          params.require(:address_detail)&.permit(:current_address_1, :current_address_2, :current_address_area, :current_address_city, :current_address_country, :current_address_pincode, :current_address_state, :permanent_address_1, :permanent_address_2, :permanent_address_area, :permanent_address_city, :permanent_address_country, :permanent_address_pincode, :permanent_address_state).to_h
+        end
+      end
+
+      def parent_detail_params
+        if params["parent_detail"].present?
+          params.require(:parent_detail)&.permit(:qualification_of_father, :occupation_of_father, :father_company_name, :father_designation, :father_office_address, :father_annual_income, :father_professional_email, :qualification_of_mother, :occupation_of_mother, :mother_company_name, :mother_designation, :mother_office_address, :mother_annual_income, :mother_professional_email, :date_of_marriage).to_h
+        end
+      end
+
+      def guardian_detail_params
+        if params["guardian_detail"].present?
+          params.require(:guardian_detail)&.permit(:name, :relation, :mobile_number, :personal_email, :professional_email, :address_1, :address_2, :area, :country, :state, :city, :pincode).to_h
+        end
       end
     end
   end

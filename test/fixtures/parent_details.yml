@@ -1,0 +1,37 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  qualification_of_father: MyString
+  occupation_of_father: MyString
+  father_company_name: MyString
+  father_designation: MyString
+  father_office_address: MyString
+  father_annual_income: MyString
+  father_professional_email: MyString
+  qualification_of_mother: MyString
+  occupation_of_mother: MyString
+  mother_company_name: MyString
+  mother_designation: MyString
+  mother_office_address: MyString
+  mother_annual_income: MyString
+  mother_professional_email: MyString
+  date_of_marriage: MyString
+  student: one
+
+two:
+  qualification_of_father: MyString
+  occupation_of_father: MyString
+  father_company_name: MyString
+  father_designation: MyString
+  father_office_address: MyString
+  father_annual_income: MyString
+  father_professional_email: MyString
+  qualification_of_mother: MyString
+  occupation_of_mother: MyString
+  mother_company_name: MyString
+  mother_designation: MyString
+  mother_office_address: MyString
+  mother_annual_income: MyString
+  mother_professional_email: MyString
+  date_of_marriage: MyString
+  student: two

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_12_055924) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_17_055856) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -42,6 +42,27 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_12_055924) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "address_details", force: :cascade do |t|
+    t.text "current_address_1"
+    t.text "current_address_2"
+    t.string "current_address_area"
+    t.string "current_address_country"
+    t.string "current_address_state"
+    t.string "current_address_city"
+    t.string "current_address_pincode"
+    t.text "permanent_address_1"
+    t.text "permanent_address_2"
+    t.string "permanent_address_area"
+    t.string "permanent_address_country"
+    t.string "permanent_address_state"
+    t.string "permanent_address_city"
+    t.string "permanent_address_pincode"
+    t.bigint "student_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["student_id"], name: "index_address_details_on_student_id"
+  end
+
   create_table "branches", force: :cascade do |t|
     t.string "name"
     t.bigint "course_id", null: false
@@ -68,6 +89,22 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_12_055924) do
     t.index ["division_id"], name: "index_configurations_on_division_id"
     t.index ["semester_id"], name: "index_configurations_on_semester_id"
     t.index ["user_id"], name: "index_configurations_on_user_id"
+  end
+
+  create_table "contact_details", force: :cascade do |t|
+    t.string "mobile_number"
+    t.string "emergency_mobile_number"
+    t.string "residence_phone_number"
+    t.string "personal_email_address"
+    t.string "university_email_address"
+    t.string "fathers_mobile_number"
+    t.string "fathers_personal_email"
+    t.string "mothers_mobile_number"
+    t.string "mothers_personal_email"
+    t.bigint "student_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["student_id"], name: "index_contact_details_on_student_id"
   end
 
   create_table "courses", force: :cascade do |t|
@@ -164,6 +201,25 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_12_055924) do
     t.index ["user_id"], name: "index_faculty_supervisions_on_user_id"
   end
 
+  create_table "guardian_details", force: :cascade do |t|
+    t.string "name"
+    t.string "relation"
+    t.string "mobile_number"
+    t.string "personal_email"
+    t.string "professional_email"
+    t.text "address_1"
+    t.text "address_2"
+    t.string "area"
+    t.string "country"
+    t.string "state"
+    t.string "city"
+    t.string "pincode"
+    t.bigint "student_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["student_id"], name: "index_guardian_details_on_student_id"
+  end
+
   create_table "marks_entries", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -235,6 +291,28 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_12_055924) do
     t.index ["user_id"], name: "index_other_duties_on_user_id"
   end
 
+  create_table "parent_details", force: :cascade do |t|
+    t.string "qualification_of_father"
+    t.string "occupation_of_father"
+    t.string "father_company_name"
+    t.string "father_designation"
+    t.string "father_office_address"
+    t.string "father_annual_income"
+    t.string "father_professional_email"
+    t.string "qualification_of_mother"
+    t.string "occupation_of_mother"
+    t.string "mother_company_name"
+    t.string "mother_designation"
+    t.string "mother_office_address"
+    t.string "mother_annual_income"
+    t.string "mother_professional_email"
+    t.string "date_of_marriage"
+    t.bigint "student_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["student_id"], name: "index_parent_details_on_student_id"
+  end
+
   create_table "role_emails", force: :cascade do |t|
     t.string "email"
     t.bigint "role_id", null: false
@@ -296,6 +374,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_12_055924) do
     t.boolean "fees_paid", default: false
     t.string "barcode"
     t.string "qrcode"
+    t.string "gender"
+    t.string "father_name"
+    t.string "mother_name"
+    t.string "date_of_birth"
+    t.string "birth_place"
+    t.string "religion"
+    t.string "caste"
+    t.string "nationality"
+    t.string "mother_tongue"
+    t.string "marrital_status"
+    t.string "blood_group"
+    t.boolean "physically_handicapped", default: false
     t.index ["branch_id"], name: "index_students_on_branch_id"
     t.index ["course_id"], name: "index_students_on_course_id"
     t.index ["semester_id"], name: "index_students_on_semester_id"
@@ -419,12 +509,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_12_055924) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "address_details", "students"
   add_foreign_key "branches", "courses"
   add_foreign_key "configurations", "branches"
   add_foreign_key "configurations", "courses"
   add_foreign_key "configurations", "divisions"
   add_foreign_key "configurations", "semesters"
   add_foreign_key "configurations", "users"
+  add_foreign_key "contact_details", "students"
   add_foreign_key "divisions", "semesters"
   add_foreign_key "exam_time_tables", "branches"
   add_foreign_key "exam_time_tables", "courses"
@@ -438,6 +530,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_12_055924) do
   add_foreign_key "faculty_subjects", "users"
   add_foreign_key "faculty_supervisions", "subjects"
   add_foreign_key "faculty_supervisions", "users"
+  add_foreign_key "guardian_details", "students"
   add_foreign_key "marks_entries", "branches"
   add_foreign_key "marks_entries", "courses"
   add_foreign_key "marks_entries", "divisions"
@@ -449,6 +542,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_12_055924) do
   add_foreign_key "other_duties", "branches"
   add_foreign_key "other_duties", "courses"
   add_foreign_key "other_duties", "users"
+  add_foreign_key "parent_details", "students"
   add_foreign_key "role_emails", "roles"
   add_foreign_key "semesters", "branches"
   add_foreign_key "student_marks", "branches"

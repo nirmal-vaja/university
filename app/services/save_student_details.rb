@@ -26,6 +26,7 @@ class SaveStudentDetails
       @student.guardian_detail.nil? ? @student.build_guardian_detail(@guardian_params) : @student.guardian_detail.update(@guardian_params)
     end
 
+    @student.save
     @student
   end
 end

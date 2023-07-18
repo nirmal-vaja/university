@@ -17,16 +17,19 @@ class University < ApplicationRecord
     current_tenant = Apartment::Tenant.current
     Apartment::Tenant.switch!(subdomain)
     Role.find_or_create_by(name: "Examination Controller").tap do |role|
-      role.update!(default_email: self.examination_controller_email)
+      role.update!(default_email: self.examination_controller_email, abbr: "coe")
     end
     Role.find_or_create_by(name: "Assistant Exam Controller").tap do |role|
-      role.update!(default_email: self.assistant_exam_controller_email)
+      role.update!(default_email: self.assistant_exam_controller_email, abbr: "assistant_coe")
     end
     Role.find_or_create_by(name: "Academic Head").tap do |role|
-      role.update!(default_email: self.academic_head_email)
+      role.update!(default_email: self.academic_head_email, abbr: "academic_head")
     end
     Role.find_or_create_by(name: "HOD").tap do |role|
-      role.update!(default_email: self.hod_email)
+      role.update!(default_email: self.hod_email, abbr: "hod")
+    end
+    Role.find_or_create_by(name: "Student Coordinator").tap do |role|
+      role.update!(abbr: "student_coordinator")
     end
     Apartment::Tenant.switch!(current_tenant)
   end

@@ -4,7 +4,7 @@ module Api
       class UsersController < ApiController
 
         def index
-          @user = User.all
+          @user = User.where(show: true)
         end
 
         def find_user
@@ -20,7 +20,7 @@ module Api
         # Fetching Faculty Names in the assign roles page
         def faculty_names
 
-          @users = User.with_role(:faculty)
+          @users = User.where(show: true).with_role(:faculty)
           @users = @users.where(user_params) if params[:user].present?
 
           users = @users.map do |user|
@@ -51,7 +51,7 @@ module Api
           role_names = Role.all.pluck(:name).reject{ |x| x == "super_admin" || x == "faculty" || x == "Marks Entry" }
           @users = []
           role_names.each do |name|
-            @users << User.with_any_role(name)
+            @users << User.where(show: true).with_any_role(name)
           end
           users = @users.flatten.map do |user|
             user.attributes.merge(
@@ -77,7 +77,7 @@ module Api
         end
 
         def faculties_for_other_duties
-          @users = User.with_role(:faculty)
+          @users = User.where(show: true).with_role(:faculty)
           @users = @users.where(user_params).reject{ |user| user.supervisions.exists? }
 
           users = @users.map do |user|
@@ -105,8 +105,11 @@ module Api
         end
 
         def assign_role
-          add_role(params[:id], user_params[:role_name])
+          @role = add_role(params[:id], user_params[:role_name])
           @user = User.find_by_id(params[:id])
+          subdomain = params[:subdomain]
+          role_email = @user.course.name.delete(".").downcase + "_" + @role.abbr + "@" + subdomain.tr("_", "") + ".com"
+          @user.send_role_assigned_notification(role_name: user_params[:role_name], url: params[:url], role_email: role_email)
           role_name = user_params[:role_name]
           render json: {
             message: "Role assigned",
@@ -130,6 +133,38 @@ module Api
           }
         end
 
+        def send_otp
+          user = User.find_by_email(params[:email])
+          role = user.roles.last
+
+          @user = User.where(
+            course_id: user.course.id,
+            show: true
+          ).with_role(role.name).last
+
+          if user.present?
+            if @user.present?
+              @user.generate_otp
+              @user.send_otp_mail
+  
+              render json: {
+                message: "OTP has been sent to your email, please check your mail and come back!",
+                status: :ok
+              }
+            else
+              render json:{
+                message: "No faculties has been assigned as #{role.name}",
+                status: :unprocessable_entity
+              }
+            end
+          else
+            render json: {
+              message: "Invalid Email Address",
+              status: :unprocessable_entity
+            }
+          end
+        end
+
         private
 
         def remove_role(user_id, role_name)
@@ -139,7 +174,7 @@ module Api
 
         def add_role(user_id, role_name)
           @user = User.find_by_id(user_id)
-          @user.add_role(role_name) unless @user.has_role? role_name
+          @user.add_role(role_name)
         end
 
         def user_params

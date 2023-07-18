@@ -288,6 +288,8 @@ GEM
       nokogiri (>= 1.6, < 2.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
+    validates_email_format_of (1.7.2)
+      i18n
     warden (1.2.9)
       rack (>= 2.0.9)
     web-console (4.2.0)
@@ -346,6 +348,7 @@ DEPENDENCIES
   turbo-rails
   twilio-ruby
   tzinfo-data
+  validates_email_format_of
   web-console
   webdrivers
 

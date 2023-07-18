@@ -14,7 +14,10 @@ Doorkeeper.configure do
   # end
 
   resource_owner_from_credentials do
-    User.authenticate(params[:subdomain], params[:email], params[:password])
+    user = User.authenticate(params[:subdomain], params[:email], params[:password])
+    user = User.authenticate(params[:subdomain], params[:email], params[:password], params[:otp]) if (params[:email].present? && params[:otp].present? )
+    user ||= Student.authenticate(params[:subdomain], params[:mobile_number], params[:otp])
+    user
   end
 
   # enable grant flows
@@ -356,7 +359,7 @@ Doorkeeper.configure do
   #   https://datatracker.ietf.org/doc/html/rfc6819#section-4.4.3
   #
   # grant_flows %w[authorization_code client_credentials]
-  grant_flows %w[password]
+  grant_flows %w[password otp]
 
   # Allows to customize OAuth grant flows that +each+ application support.
   # You can configure a custom block (or use a class respond to `#call`) that must

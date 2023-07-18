@@ -10,6 +10,7 @@ namespace :api do
           get :faculty_names
           get :faculties_for_other_duties
           get :assigned_role_users
+          post :send_otp
         end
         member do
           post :assign_role

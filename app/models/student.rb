@@ -26,6 +26,32 @@ class Student < ApplicationRecord
     save
   end
 
+  def contact_details
+    self.contact_detail
+  end
+
+  def as_json(options = {})
+    super(options).merge(
+      contact_details: contact_detail,
+      address_details: address_detail,
+      parent_details: parent_detail,
+      guardian_details: guardian_detail
+    )
+  end
+
+  def self.authenticate(subdomain, mobile_number, otp)
+    if Apartment.tenant_names.include?(subdomain)
+      Apartment::Tenant.switch!(subdomain)
+      puts "tenant switched"
+      student = ContactDetail.find_by_mobile_number(mobile_number)&.student 
+      student.valid_otp?(otp) ? student : nil
+    end
+  end
+
+  def valid_otp?(otp)
+    self.otp == otp
+  end
+
   private
   
   def generate_barcode

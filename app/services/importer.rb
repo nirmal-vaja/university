@@ -76,86 +76,10 @@ class Importer
       status: :created
     }
   end
-  
-
-  # def create_faculty_details
-  #   excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
-
-  #   if excel_sheet.sheet.attached?
-  #     data = Array.new
-  #     data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
-  #     headers = Array.new
-  #     i = 0
-  #     while headers.compact.empty?
-  #       headers = data.row(i)
-  #       i+=1
-  #     end
-  #     user_data = []
-  #     downcased_headers = headers.compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
-  #     data.each_with_index do |row, idx|
-  #       next if row.include?(nil) || row[0] == headers[0] # skip header and nil rows
-  #       # create hash from headers and cells
-  #       user_data = Hash[[downcased_headers, row].transpose]
-  #       ActiveRecord::Base.transaction do
-  #         user = User.find_or_initialize_by(
-  #           email: user_data["email"]
-  #         )
-  #         course = Course.find_by_name(user_data["course"])
-  
-  #         unless course
-  #           return {
-  #             message: "#{user_data["course"]} not found",
-  #             status: :unprocessable_entity
-  #            }
-  #         end
-  
-  #         branch = course.branches.find_by_name(user_data["department"])
-  
-  #         unless branch
-  #           return { 
-  #             message: "#{user_data["department"]} not found in #{course.name}!",
-  #             status: :unprocessable_entity
-  #            }
-  #         end
-  
-  #         name = user_data["faculty_name"].split(' ')
-  
-  #         user.first_name = name[0]
-  #         user.last_name = name[1]
-  #         user.phone_number = user_data["phone_number"].to_i
-  #         user.designation = user_data["designation"]
-  #         user.password = "password" if user.password.nil?
-  #         user.date_of_joining = user_data["dateof_joining"]
-  #         user.gender = user_data["gender"]
-  #         user.status = "true"
-  #         user.department = user_data["department"]
-  #         user.course = course
-  #         user.branch = branch
-  #         user.user_type = user_data["type"] == "Junior" ? 0 : 1
-  
-  #         user.add_role :faculty
-  #         user.save
-  #       rescue ActiveRecord::RecordInvalid
-  #           return { message: "#{user.first_name}'s " + user.errors.full_messages.join(' '), status: :unprocessable_entity }
-  #           raise ActiveRecord::Rollback
-  #           break
-  #       rescue StandardError => e
-  #         return {message: e, status: :unprocessable_entity}
-  #         raise ActiveRecord::Rollback
-  #         break
-  #       end
-  #     end
-  #     {
-  #       message: "Excel Sheet has been uploaded successfully",
-  #       data: {
-  #         users: User.with_role(:faculty)
-  #       }, status: :created
-  #     }
-  #   end
-  # end
 
   def create_course_and_semester
     excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
+    subdomain = Apartment::Tenant.current
     if excel_sheet.sheet.attached?
       data = Array.new
       data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
@@ -177,6 +101,10 @@ class Importer
         unless course.save
           return { message: course.errors.full_messages.join(', '), status: :unprocessable_entity }
         end
+
+        create_coe_user(course)
+        create_academic_head_user(course)
+        create_student_coordination_user(course)
 
         branch = course.branches.find_or_initialize_by(
           name: cs_data["branch"]
@@ -514,6 +442,39 @@ class Importer
   end
 
   private
+
+  def create_coe_user(course)
+    user = User.find_or_create_by(email: "#{course.name.delete(".").downcase}_coe@#{Apartment::Tenant.current.tr("_", "")}.com")
+    user.password = SecureRandom.hex(4)
+    user.phone_number = "91" + [1,2,3,4,5,6,7,8,9,0].sample(8).join("")
+    user.course = course
+    user.add_role("Examination Controller")
+    user.show = false
+    user.status = "true"
+    user.save
+  end
+
+  def create_academic_head_user(course)
+    user = User.find_or_create_by(email: "#{course.name.delete(".").downcase}_academic_head@#{Apartment::Tenant.current.tr("_", "")}.com")
+    user.password = SecureRandom.hex(4)
+    user.phone_number = "92" + [1,2,3,4,5,6,7,8,9,0].sample(8).join("")
+    user.course = course
+    user.add_role("Academic Head")
+    user.show = false
+    user.status = "true"
+    user.save
+  end
+
+  def create_student_coordination_user(course)
+    user = User.find_or_create_by(email: "#{course.name.delete(".").downcase}_student_coordinator@#{Apartment::Tenant.current.tr("_", "")}.com")
+    user.password = SecureRandom.hex(4)
+    user.phone_number = "93" + [1,2,3,4,5,6,7,8,9].sample(8).join("")
+    user.course = course
+    user.add_role("Student Coordinator")
+    user.show = false
+    user.status = "true"
+    user.save
+  end
 
   def create_temp_file(sheet_id)
     excel_sheet = ExcelSheet.find_by_id(sheet_id)

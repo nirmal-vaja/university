@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_17_103235) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_18_093707) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -328,6 +328,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_17_103235) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "default_email"
+    t.string "abbr"
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource"
   end
@@ -495,6 +496,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_17_103235) do
     t.bigint "course_id"
     t.bigint "branch_id"
     t.integer "user_type", default: 0
+    t.string "otp"
+    t.datetime "otp_generated_at"
+    t.boolean "show", default: true
     t.index ["branch_id"], name: "index_users_on_branch_id"
     t.index ["course_id"], name: "index_users_on_course_id"
     t.index ["email"], name: "index_users_on_email", unique: true

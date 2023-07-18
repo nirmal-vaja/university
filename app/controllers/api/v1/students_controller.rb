@@ -136,12 +136,10 @@ module Api
       end
 
       def render_success_response(message, student)
-        student_details = build_student_details(student)
-      
         render json: {
           message: message,
           data: {
-            student: student_details
+            student: student
           },
           status: :ok
         }
@@ -153,19 +151,10 @@ module Api
           status: :unprocessable_entity
         }
       end
-      
-      def build_student_details(student)
-        student.attributes.merge(
-          contact_details: student.contact_detail,
-          address_details: student.address_detail,
-          parent_details: student.parent_detail,
-          guardian_details: student.guardian_detail
-        )
-      end
 
       def student_params
         if params["student"].present?
-          params.require(:student).permit(:course_id, :branch_id, :semester_id, :name, :enrollment_number, :barcode, :qrcode, :gender, :father_name, :mother_name, :date_of_birth, :religion, :caste, :nationality, :mother_tongue, :marrital_status, :blood_group, :physically_handicapped).to_h
+          params.require(:student).permit(:course_id, :branch_id, :semester_id, :name, :enrollment_number, :barcode, :qrcode, :gender, :father_name, :mother_name, :date_of_birth, :birth_place, :religion, :caste, :nationality, :mother_tongue, :marrital_status, :blood_group, :physically_handicapped).to_h
         else 
           {}
         end

@@ -40,6 +40,29 @@ module Api
         end
       end
 
+      def fetch_details
+        @fee_detail = FeeDetail.find_by(fee_detail_params)
+        semester = Semester.find_by_id(params[:id])
+
+        fee_detail = @fee_detail.attributes.merge({
+          semester_name: semester.name
+        }) if @fee_detail.present?
+
+        if fee_detail
+          render json: {
+            message: "Details found",
+            data: {
+              fee_detail: fee_detail
+            }, status: :ok
+          }
+        else 
+          render json: {
+            message: "Details not found",
+            status: :not_found
+          }
+        end
+      end
+
       def update
         if @fee_detail.update(fee_detail_params)
           render json: {
@@ -77,7 +100,7 @@ module Api
       end
 
       def fee_detail_params
-        params.require(:fee_detail).permit(:amount, :course_id, :branch_id, :semester_id)
+        params.require(:fee_detail).permit(:amount, :course_id, :branch_id, :semester_id, :academic_year).to_h
       end
     end
   end

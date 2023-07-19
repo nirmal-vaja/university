@@ -107,7 +107,11 @@ namespace :api do
       end
     end
 
-    resources :fee_details, only: [:index, :create, :update, :destroy]
+    resources :fee_details, only: [:index, :create, :update, :destroy] do
+      member do
+        get :fetch_details
+      end
+    end
 
     resources :student_marks, only: [:index, :create, :update] do
       collection do

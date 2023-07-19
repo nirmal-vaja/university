@@ -2,6 +2,14 @@
 
 namespace :api do
   namespace :v1 do
+
+    resources :roles, only: [:index,:create, :destroy]
+    resources :universities, only: [:index, :create] do
+      member do
+        get :get_authorization_details
+      end
+    end
+
     scope :users, module: :users do
       post '/', to: 'registrations#create', as: :user_registration
       resources :users, only: [:index] do
@@ -18,18 +26,31 @@ namespace :api do
         end
       end
     end
-    resources :roles, only: [:index,:create, :destroy]
-    resources :universities, only: [:index, :create] do
+
+    post 'forgot_password', to: 'passwords#forgot_password'
+    put 'reset_password', to: 'passwords#reset_password'
+
+    resources :excel_sheets, only: [:index, :create, :update, :destroy]
+
+    #Examination Details
+
+    resources :examination_names, only: [:index, :create, :update, :destroy]
+    resources :examination_times, only: [:index, :create, :update, :destroy]
+    resources :examination_types, only: [:index, :create, :update, :destroy] do
       member do
-        get :get_authorization_details
+        get :fetch_maximum_marks
       end
     end
 
-    resources :other_duties, only: [:index, :create, :update, :destroy] do
-      member do
-        get :fetch_details
+    resources :courses, only: [:index]
+    resources :branches, only: [:index]
+    resources :semesters, only: [:index]
+    resources :subjects, only: [:index] do
+      collection do
+        get :fetch_subjects
       end
     end
+    resources :divisions, only: [:index]
 
     resources :exam_time_tables, only: [:index, :create, :update, :destroy] do
       member do
@@ -43,18 +64,30 @@ namespace :api do
       end
     end
 
-    post 'forgot_password', to: 'passwords#forgot_password'
-    put 'reset_password', to: 'passwords#reset_password'
-
-    resources :courses, only: [:index]
-    resources :branches, only: [:index]
-    resources :semesters, only: [:index]
-    resources :subjects, only: [:index] do
-      collection do
-        get :fetch_subjects
+    resources :time_table_block_wise_reports, only: [:index, :create, :update, :destroy] do
+      member do
+        get :fetch_details
       end
     end
-    resources :divisions, only: [:index]
+
+    resources :supervisions, only: [:index, :create, :update, :destroy] do
+      member do
+        get :fetch_details
+      end
+    end
+    
+    resources :other_duties, only: [:index, :create, :update, :destroy] do
+      member do
+        get :fetch_details
+      end
+    end
+
+    resources :marks_entries, only: [:index, :create, :update, :destroy] do
+      member do
+        get :fetch_details
+      end
+    end
+    
     resources :students, only: [:index, :update, :destroy] do
       member do
         get :find_student
@@ -74,32 +107,8 @@ namespace :api do
       end
     end
 
+    resources :fee_details, only: [:index, :create, :update, :destroy]
 
-    resources :supervisions, only: [:index, :create, :update, :destroy] do
-      member do
-        get :fetch_details
-      end
-    end
-
-    resources :time_table_block_wise_reports, only: [:index, :create, :update, :destroy] do
-      member do
-        get :fetch_details
-      end
-    end
-    resources :excel_sheets, only: [:index, :create, :update, :destroy]
-    resources :marks_entries, only: [:index, :create, :update, :destroy] do
-      member do
-        get :fetch_details
-      end
-    end
-
-    resources :examination_names, only: [:index, :create, :update, :destroy]
-    resources :examination_times, only: [:index, :create, :update, :destroy]
-    resources :examination_types, only: [:index, :create, :update, :destroy] do
-      member do
-        get :fetch_maximum_marks
-      end
-    end
     resources :student_marks, only: [:index, :create, :update] do
       collection do
         get :eligible_for_publish

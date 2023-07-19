@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_18_093707) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_19_050921) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -199,6 +199,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_18_093707) do
     t.datetime "updated_at", null: false
     t.index ["subject_id"], name: "index_faculty_supervisions_on_subject_id"
     t.index ["user_id"], name: "index_faculty_supervisions_on_user_id"
+  end
+
+  create_table "fee_details", force: :cascade do |t|
+    t.string "amount"
+    t.bigint "course_id", null: false
+    t.bigint "branch_id", null: false
+    t.bigint "semester_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["branch_id"], name: "index_fee_details_on_branch_id"
+    t.index ["course_id"], name: "index_fee_details_on_course_id"
+    t.index ["semester_id"], name: "index_fee_details_on_semester_id"
   end
 
   create_table "guardian_details", force: :cascade do |t|
@@ -536,6 +548,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_18_093707) do
   add_foreign_key "faculty_subjects", "users"
   add_foreign_key "faculty_supervisions", "subjects"
   add_foreign_key "faculty_supervisions", "users"
+  add_foreign_key "fee_details", "branches"
+  add_foreign_key "fee_details", "courses"
+  add_foreign_key "fee_details", "semesters"
   add_foreign_key "guardian_details", "students"
   add_foreign_key "marks_entries", "branches"
   add_foreign_key "marks_entries", "courses"

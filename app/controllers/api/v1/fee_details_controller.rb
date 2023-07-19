@@ -25,7 +25,7 @@ module Api
       def create
         @fee_detail = FeeDetail.new(fee_detail_params)
 
-        if @fee_detail
+        if @fee_detail.save
           render json: {
             message: "Fee Details saved.",
             data: {

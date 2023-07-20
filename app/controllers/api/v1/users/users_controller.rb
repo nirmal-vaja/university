@@ -2,6 +2,7 @@ module Api
   module V1
     module Users
       class UsersController < ApiController
+        skip_before_action :doorkeeper_authorize!, only: [:send_otp]
 
         def index
           @user = User.where(show: true)

@@ -8,5 +8,7 @@ class Semester < ApplicationRecord
   has_many :students, dependent: :destroy
 
   has_many :configurations, dependent: :destroy
+
+  has_many :fee_details, dependent: :destroy
   
 end

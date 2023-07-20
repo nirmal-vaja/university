@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_19_060121) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_20_080145) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -326,6 +326,20 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_19_060121) do
     t.index ["student_id"], name: "index_parent_details_on_student_id"
   end
 
+  create_table "payments", force: :cascade do |t|
+    t.bigint "fee_detail_id", null: false
+    t.bigint "student_id", null: false
+    t.string "status"
+    t.string "razorpay_payment_id"
+    t.text "razorpay_payment_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "academic_year"
+    t.string "razorpay_order_id"
+    t.index ["fee_detail_id"], name: "index_payments_on_fee_detail_id"
+    t.index ["student_id"], name: "index_payments_on_student_id"
+  end
+
   create_table "role_emails", force: :cascade do |t|
     t.string "email"
     t.bigint "role_id", null: false
@@ -565,6 +579,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_19_060121) do
   add_foreign_key "other_duties", "courses"
   add_foreign_key "other_duties", "users"
   add_foreign_key "parent_details", "students"
+  add_foreign_key "payments", "fee_details"
+  add_foreign_key "payments", "students"
   add_foreign_key "role_emails", "roles"
   add_foreign_key "semesters", "branches"
   add_foreign_key "student_marks", "branches"

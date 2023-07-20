@@ -1,6 +1,6 @@
 module Api
   module V1
-    class FeeDetailsController < ApplicationController
+    class FeeDetailsController < ApiController
 
       before_action :set_fee_detail, only: [:update, :destroy]
 

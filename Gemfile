@@ -94,3 +94,5 @@ gem 'activerecord-import'
 gem "tailwindcss-rails", "~> 2.0"
 gem 'twilio-ruby'
 gem 'validates_email_format_of'
+gem 'razorpay', '~> 2.0'
+

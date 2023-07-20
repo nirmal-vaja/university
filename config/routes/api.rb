@@ -95,9 +95,12 @@ namespace :api do
         put :update_fees
       end
 
+      resources :payments, only: [:create, :index, :show]
+
       collection do
         post :otp_login
         post :validate_otp
+        post 'payments/callback', to: 'payments#payment_callback'
       end
     end
 

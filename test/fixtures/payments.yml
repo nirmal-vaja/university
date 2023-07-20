@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  fee_detail: one
+  student: one
+  status: false
+  razorpay_payment_id: MyString
+  razorpay_payment_url: MyText
+
+two:
+  fee_detail: two
+  student: two
+  status: false
+  razorpay_payment_id: MyString
+  razorpay_payment_url: MyText

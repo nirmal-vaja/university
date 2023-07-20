@@ -27,10 +27,10 @@ module Api
 
         if @fee_detail.save
           render json: {
-            message: "Fee Details saved.",
+            message: "Created Successfully.",
             data: {
               fee_detail: @fee_detail
-            }, status: :ok
+            }, status: :create
           }
         else
           render json: {

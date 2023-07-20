@@ -100,7 +100,7 @@ namespace :api do
       collection do
         post :otp_login
         post :validate_otp
-        post 'payments/callback', to: 'payments#payment_callback'
+        post 'payments/callback', to: 'payments#callback'
       end
     end
 

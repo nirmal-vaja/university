@@ -1,6 +1,9 @@
 module Api
   module V1
     class PaymentsController < ApiController
+
+      skip_before_action :doorkeeper_authorize!
+
       def create
         student = Student.find_by_id(params[:student_id])
         if student
@@ -54,13 +57,13 @@ module Api
 
       def callback
         # Fetching payment_id from the request params or session
-        order_id = params[:order_id]
+        order_id = params["order_id"]
 
         razorpay_order = Razorpay::Order.fetch(order_id)
-
         if razorpay_order.attributes['status'] == 'paid'
+
           # Payment successful, marking fee as paid for the Student
-          @payment = Payment.find_by_id(razorpay_order_id: order_id)
+          @payment = Payment.find_by(razorpay_order_id: order_id)
 
           if @payment.update(status: 'paid')
             render json: {
@@ -73,11 +76,6 @@ module Api
               status: :unprocessable_entity
             }
           end
-
-          render json: {
-            message: "Payment Successfull!",
-            status: :ok
-          }
         else
           render json: {
             message: "Payment failed, please try again!",

@@ -11,7 +11,6 @@ module UniversityProject
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 
-    config.web_console.whitelisted_ips = '2401:4900:1f3f:fda5:9dbe:acac:45e3:69fe'
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

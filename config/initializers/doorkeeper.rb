@@ -14,9 +14,14 @@ Doorkeeper.configure do
   # end
 
   resource_owner_from_credentials do
-    user = User.authenticate(params[:subdomain], params[:email], params[:password])
-    user = User.authenticate(params[:subdomain], params[:email], params[:password], params[:otp]) if (params[:email].present? && params[:otp].present? )
-    user ||= Student.authenticate(params[:subdomain], params[:mobile_number], params[:otp])
+    user = if (params[:email].present? && params[:otp].present?)
+      User.authenticate(params[:subdomain], params[:email], params[:password], params[:otp])
+    elsif(params[:mobile_number].present? && params[:otp].present?)
+      User.authenticate(params[:subdomain], params[:mobile_number], params[:otp])
+    else
+      User.authenticate(params[:subdomain], params[:email], params[:password])
+    end
+
     user
   end
 

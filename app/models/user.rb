@@ -75,20 +75,23 @@ class User < ApplicationRecord
       Apartment::Tenant.switch!(subdomain)
       puts "tenant switched"
       user = User.find_for_authentication(email: email)
+      binding.pry
       if user && user.status == "true"
         if otp.nil?
           user.valid_password?(password) ? user : nil
         else
-          role = user.roles.last
-          @user = User.where(
-            course_id: user.course.id,
-            show: true
-          ).with_role(role.name).last
-          if @user.valid_otp?(otp)
-            user.generate_doorkeeper_token 
-            user
-          else
-            nil
+          role = user.roles.where.not(name: "faculty").first
+          if role
+            @user = User.where(
+              course_id: user.course.id,
+              show: true
+            ).with_role(role&.name).last
+            if @user.valid_otp?(otp)
+              user.generate_doorkeeper_token
+              user
+            else
+              nil
+            end
           end
         end
       else

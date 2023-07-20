@@ -95,7 +95,7 @@ module Api
       def otp_login
         if @student.nil?
           render json: {
-            message: "Entered Mobile Number is incorrect.",
+            message: "No student is registered with the mobile number you provided!",
             status: :unprocessable_entity
           }
         else

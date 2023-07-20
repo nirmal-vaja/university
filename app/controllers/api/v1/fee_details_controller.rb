@@ -30,7 +30,7 @@ module Api
             message: "Created Successfully.",
             data: {
               fee_detail: @fee_detail
-            }, status: :create
+            }, status: :created
           }
         else
           render json: {

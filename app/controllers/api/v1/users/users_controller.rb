@@ -154,29 +154,36 @@ module Api
           user = User.find_by_email(params[:email])
           role = user.roles.where.not(name: "faculty").first
 
-          @user = User.where(
-            course_id: user.course.id,
-            show: true
-          ).with_role(role.name).last
-
-          if user.present?
-            if @user.present?
-              @user.generate_otp
-              @user.send_otp_mail
+          if role.present?
+            @user = User.where(
+              course_id: user.course.id,
+              show: true
+            ).with_role(role.name).last
   
-              render json: {
-                message: "OTP has been sent to your email, please check your mail and come back!",
-                status: :ok
-              }
+            if user.present?
+              if @user.present?
+                @user.generate_otp
+                @user.send_otp_mail
+    
+                render json: {
+                  message: "OTP has been sent to your email, please check your mail and come back!",
+                  status: :ok
+                }
+              else
+                render json:{
+                  message: "No faculties has been assigned as #{role.name}",
+                  status: :unprocessable_entity
+                }
+              end
             else
-              render json:{
-                message: "No faculties has been assigned as #{role.name}",
+              render json: {
+                message: "Invalid Email Address",
                 status: :unprocessable_entity
               }
             end
           else
             render json: {
-              message: "Invalid Email Address",
+              message: "You haven't been assigned any role",
               status: :unprocessable_entity
             }
           end

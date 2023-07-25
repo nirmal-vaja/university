@@ -17,4 +17,20 @@ class UserMailer < ApplicationMailer
     @user = user
     mail(to: @user.email, subject: "You recieved an OTP")
   end
+
+  def send_university_registration_mail(user, university, password, url)
+    @user = user
+    @university = university
+    @password = password
+    @url = url
+    mail(to: @user.email, subject: "#{@university.name} has been registered.")
+  end
+
+  def send_marks_entry_notification(user, opts = {})
+    @user = user
+    @role_name = opts[:role_name]
+    @url = opts[:url] + "?d=#{@user.secure_id}"
+    @subject_names = opts[:subject_names]
+    mail(to: @user.email, subject: "You are assigned as #{@role_name}")
+  end
 end

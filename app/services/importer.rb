@@ -39,6 +39,10 @@ class Importer
           end
   
           name = user_data["faculty_name"].split(' ')
+
+          if user.secure_id.nil?
+            user.secure_id = SecureRandom.hex(7)
+          end
   
           user.assign_attributes(
             first_name: name[0],
@@ -340,6 +344,19 @@ class Importer
         student.semester_id = semester.id
         student.name = student_data["name"]
         student.fees_paid = student_data["fees_paid"].to_i === 0 ? false : true
+        student.gender = student_data["gender"]
+        student.father_name = student_data["father's_full_name"]
+        student.mother_name = student_data["mother's_full_name"]
+        student.date_of_birth = student_data["dateof_birth"]
+        student.birth_place = student_data["birth_place"]
+        student.religion = student_data["religion"]
+        student.caste = student_data["caste"]
+        student.blood_group = student_data["blood_group"]
+
+        student.build_contact_detail(
+          mobile_number: student_data["mobile_number"],
+          personal_email_address: student_data["email_address"],
+        )
 
         unless student.save
           return {
@@ -463,6 +480,10 @@ class Importer
     user.show = false
     user.status = "true"
     user.save
+  end
+
+  def create_marks_entry_user(course)
+    
   end
 
   def create_student_coordination_user(course)

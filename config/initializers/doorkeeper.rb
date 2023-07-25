@@ -17,7 +17,7 @@ Doorkeeper.configure do
     user = if (params[:email].present? && params[:otp].present?)
       User.authenticate(params[:subdomain], params[:email], params[:password], params[:otp])
     elsif(params[:mobile_number].present? && params[:otp].present?)
-      User.authenticate(params[:subdomain], params[:mobile_number], params[:otp])
+      Student.authenticate(params[:subdomain], params[:mobile_number], params[:otp]) || User.authenticate(params[:subdomain], params[:email], params[:password], params[:mobile_number], params[:otp])
     else
       User.authenticate(params[:subdomain], params[:email], params[:password])
     end

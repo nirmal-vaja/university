@@ -26,12 +26,19 @@ class Student < ApplicationRecord
     save
   end
 
+  def mobile_number
+    contact_detail.mobile_number
+  end
+
   def contact_details
     self.contact_detail
   end
 
   def as_json(options = {})
     super(options).merge(
+      course: course,
+      branch: branch,
+      semester: semester,
       contact_details: contact_detail,
       address_details: address_detail,
       parent_details: parent_detail,

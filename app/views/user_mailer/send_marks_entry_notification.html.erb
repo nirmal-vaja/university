@@ -1,0 +1,42 @@
+<p>Hello <%= @user.name %>!</p>
+
+<p> Greetings </p>
+
+<p>Greetings, You have been assigned as <%= @role_name %>, Below are the credentials you can use to login as <%= @role_name %> </p>
+
+<p><%= "Email : " + @user.email %></p>
+
+<p> Enter the above mentional email as input at the login page and click on "Send OTP", you will be receiving an OTP via your email. </p>
+<p> <a href="<%= @url %>"> Click here to login </a></p>
+
+<p> Please make sure this mail contains confidential information, do not forward or share with anyone. </p>
+<p> Thank You! </p>
+
+
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h2>Hello <%= @user.name %> </h2>
+    <p>Greetings!</p>
+    <p>We hope this email finds you well.</p>
+    <p>You have been assigned to enter Student's marks</p>
+    <p> Enter your email as input at the login page and click on "Send OTP", you will be receiving an OTP via your email. </p>
+    <p> <a href="<%= @url %>"> Click here to login </a></p>
+    <p> Below are the subjects you need to enter marks : </p>
+    <hr>
+    <table>
+      <% @subject_names.each do |subject_name| %>
+        <tr>
+          <td style="font-weight: bold;"><%= subject_name %></td>
+        </tr>
+      <% end %>
+    </table>
+    <hr>
+    
+    <p>We believe that this new addition will strengthen our community and provide more opportunities for collaboration and growth.</p>
+    <p>If you have any further inquiries or need additional information, please don't hesitate to reach out.</p>
+    <p>Thank you for your continued support!</p>
+  </body>
+</html>

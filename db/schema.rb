@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_20_080145) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_24_093308) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -72,23 +72,30 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_20_080145) do
     t.index ["course_id"], name: "index_branches_on_course_id"
   end
 
-  create_table "configurations", force: :cascade do |t|
+  create_table "configs", force: :cascade do |t|
     t.string "examination_name"
     t.string "examination_type"
     t.string "academic_year"
     t.bigint "course_id", null: false
     t.bigint "branch_id", null: false
-    t.bigint "semester_id", null: false
-    t.bigint "division_id", null: false
-    t.text "subject_ids"
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["branch_id"], name: "index_configurations_on_branch_id"
-    t.index ["course_id"], name: "index_configurations_on_course_id"
-    t.index ["division_id"], name: "index_configurations_on_division_id"
-    t.index ["semester_id"], name: "index_configurations_on_semester_id"
-    t.index ["user_id"], name: "index_configurations_on_user_id"
+    t.index ["branch_id"], name: "index_configs_on_branch_id"
+    t.index ["course_id"], name: "index_configs_on_course_id"
+    t.index ["user_id"], name: "index_configs_on_user_id"
+  end
+
+  create_table "configuration_semesters", force: :cascade do |t|
+    t.bigint "semester_id", null: false
+    t.bigint "division_id", null: false
+    t.text "subject_ids"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "config_id", null: false
+    t.index ["config_id"], name: "index_configuration_semesters_on_config_id"
+    t.index ["division_id"], name: "index_configuration_semesters_on_division_id"
+    t.index ["semester_id"], name: "index_configuration_semesters_on_semester_id"
   end
 
   create_table "contact_details", force: :cascade do |t|
@@ -526,6 +533,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_20_080145) do
     t.string "otp"
     t.datetime "otp_generated_at"
     t.boolean "show", default: true
+    t.text "secure_id"
     t.index ["branch_id"], name: "index_users_on_branch_id"
     t.index ["course_id"], name: "index_users_on_course_id"
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -544,11 +552,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_20_080145) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "address_details", "students"
   add_foreign_key "branches", "courses"
-  add_foreign_key "configurations", "branches"
-  add_foreign_key "configurations", "courses"
-  add_foreign_key "configurations", "divisions"
-  add_foreign_key "configurations", "semesters"
-  add_foreign_key "configurations", "users"
+  add_foreign_key "configs", "branches"
+  add_foreign_key "configs", "courses"
+  add_foreign_key "configs", "users"
+  add_foreign_key "configuration_semesters", "configs"
+  add_foreign_key "configuration_semesters", "divisions"
+  add_foreign_key "configuration_semesters", "semesters"
   add_foreign_key "contact_details", "students"
   add_foreign_key "divisions", "semesters"
   add_foreign_key "exam_time_tables", "branches"

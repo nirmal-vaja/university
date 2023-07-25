@@ -95,6 +95,10 @@ namespace :api do
         put :update_fees
       end
 
+      collection do
+        get :find_student_by_auth_token
+      end
+
       resources :payments, only: [:create, :index, :show]
 
       collection do

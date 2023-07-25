@@ -9,13 +9,21 @@ module Api
         end
 
         def find_user
-          current_user = User.find_by(id: doorkeeper_token[:resource_owner_id])
-
-          render json: {
-            user: current_user,
-            roles: current_user.roles.pluck(:name),
-            configuration: current_user.configuration
-          }
+          found_user = User.find_by(id: doorkeeper_token[:resource_owner_id])
+          if found_user.present?
+            render json: {
+              message: "User found",
+              user: found_user,
+              roles: found_user.roles.pluck(:name),
+              configurations: found_user.configs,
+              status: :ok
+            }
+          else
+            render json: {
+              message: "Invalid email address",
+              status: :not_found
+            }
+          end
         end
 
         # Fetching Faculty Names in the assign roles page
@@ -122,21 +130,29 @@ module Api
         end
 
         def deassign_role
-          remove_role(params[:id], user_params[:role_name])
           @user = User.find_by_id(params[:id])
-          role_name = user_params[:role_name]
-          render json: {
-            message: "Role Deassigned",
-            data: {
-              user: @user,
-              role: role_name
-            }, status: :ok
-          }
+          if @user
+            remove_role(params[:id], user_params[:role_name])
+            role_name = user_params[:role_name]
+            render json: {
+              message: "Role Deassigned",
+              data: {
+                user: @user,
+                role: role_name
+              }, status: :ok
+            }
+          else
+            render json: {
+              message: "User not found",
+              status: :unprocessable_entity
+            }
+          end
+          
         end
 
         def send_otp
           user = User.find_by_email(params[:email])
-          role = user.roles.last
+          role = user.roles.where.not(name: "faculty").first
 
           @user = User.where(
             course_id: user.course.id,
@@ -167,6 +183,14 @@ module Api
         end
 
         private
+
+        def give_user_details(user)
+          role = user.roles.where.not(name: "faculty").first
+          User.where(
+            course_id: user.course.id,
+            show: true
+          ).with_role(role.name).last
+        end
 
         def remove_role(user_id, role_name)
           @user = User.find_by_id(user_id)

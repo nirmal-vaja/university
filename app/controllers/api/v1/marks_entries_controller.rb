@@ -34,64 +34,41 @@ module Api
         @marks_entry = MarksEntry.new(marks_entry_params)
 
         if @marks_entry.save
-          
-          email = @marks_entry.user.email.split("@").join("_me_#{@marks_entry.entry_type.downcase}@")
-          password = SecureRandom.hex
 
-          user = User.new(
-              first_name: @marks_entry.user.first_name,
-              last_name: @marks_entry.user.last_name,
-              email: email,
-              password: password,
-              gender: @marks_entry.user.gender,
-              status: "true",
-              phone_number: @marks_entry.user.phone_number,
-              department: @marks_entry.user.department,
-              designation: @marks_entry.user.designation,
-              course_id: @marks_entry.user.course_id,
-              branch_id: @marks_entry.user.branch_id,
-              user_type: @marks_entry.user.user_type
-            )
-
-          configuration = user.build_configuration(
+          @configuration = Config.find_or_initialize_by(
             examination_name: @marks_entry.examination_name,
             examination_type: @marks_entry.entry_type,
             academic_year: @marks_entry.academic_year,
             course_id: @marks_entry.course_id,
             branch_id: @marks_entry.branch_id,
-            semester_id: @marks_entry.semester_id,
-            division_id: @marks_entry.division_id,
-            subject_ids: @marks_entry.subjects.pluck(:id)
+            user_id: @marks_entry.user_id
           )
 
-          if user.save
-            user.add_role("Marks Entry") unless user.has_role?("Marks Entry")
-            if configuration.save
-              marks_entry = 
-                if @marks_entry.subjects
-                  @marks_entry.attributes.merge({
-                    subjects: @marks_entry.subjects,
-                    password: password
-                  })
-                else
-                  @marks_entry
-                end
+          if @configuration.save
+            configuration_semester = @configuration.configuration_semesters.find_or_initialize_by(
+              semester_id: @marks_entry.semester_id,
+              division_id: @marks_entry.division_id
+            )
+            configuration_semester&.subject_ids = @marks_entry.subjects.pluck(:id)
 
+            if configuration_semester && configuration_semester.save
+              @marks_entry.user.add_role("Marks Entry") unless @marks_entry.user.has_role?("Marks Entry")
+              UserMailer.send_marks_entry_notification(@marks_entry.user, url: params[:url], role_name: "Marks Entry", subject_names: @marks_entry.subjects.pluck(:name)).deliver_now
               render json: {
                 message: "Faculty successfully assigned",
                 data: {
-                  marks_entry: marks_entry
+                  marks_entry: @marks_entry
                 }, status: :created
               }
-            else
+            else 
               render json: {
-                message: "There is some exception assigning this faculty! Try again later.",
+                message: configuration_semester.errors.full_messages.join(', '),
                 status: :unprocessable_entity
               }
             end
           else
             render json: {
-              message: "There is some exception assigning this faculty! Try again later.",
+              message: @configuration.errors.full_messages.join(', '),
               status: :unprocessable_entity
             }
           end
@@ -105,36 +82,35 @@ module Api
 
       def update
         if @marks_entry.update(marks_entry_params)
-          email = @marks_entry.user.email.split("@").join("_me_#{@marks_entry.entry_type.downcase}@")
 
-          user = User.find_by(email: email)
+          user = @marks_entry.user
 
-          user&.configuration&.update(
+          config = user.configs&.find_by(
             examination_name: @marks_entry.examination_name,
             examination_type: @marks_entry.entry_type,
             academic_year: @marks_entry.academic_year,
             course_id: @marks_entry.course_id,
             branch_id: @marks_entry.branch_id,
-            semester_id: @marks_entry.semester_id,
-            division_id: @marks_entry.division_id,
-            subject_ids: @marks_entry.subjects.pluck(:id)
           )
 
-          marks_entry = 
-            if @marks_entry.subjects
-              @marks_entry.attributes.merge({
-                subjects: @marks_entry.subjects
-              })
-            else
-              @marks_entry
-            end
-            
-          render json: {
-            message: "Update successful",
-            data: {
-              marks_entry: marks_entry
-            }, status: :ok
-          }
+          configuration_semester = config.configuration_semesters.find_by(
+            semester_id: @marks_entry.semester_id,
+            division_id: @marks_entry.division_id
+          )
+
+          if configuration_semester.update(subject_ids: @marks_entry.subjects.pluck(:id))
+            render json: {
+              message: "Update successful",
+              data: {
+                marks_entry: @marks_entry
+              }, status: :ok
+            }
+          else
+            render json: {
+              message: configuration_semester.errors.full_messages.join(', '),
+              status: :unprocessable_entity
+            }
+          end
         else
           render json: {
             message: @marks_entry.errors.full_messages.join(', '),

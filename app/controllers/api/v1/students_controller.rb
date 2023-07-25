@@ -24,6 +24,23 @@ module Api
         end
       end
 
+      def find_student_by_auth_token
+        @student = Student.find_by(id: doorkeeper_token[:resource_owner_id])
+        if @student.present?
+          render json: {
+            message: "Student Found",
+            data: {
+              student: @student
+            },status: :ok
+          }
+        else 
+          render json: {
+            message: "Student not found",
+            status: :not_found
+          }
+        end
+      end
+
       def find_student
         student = Student.find_by_enrollment_number(params[:id])
 
@@ -99,12 +116,13 @@ module Api
             status: :unprocessable_entity
           }
         else
-          @student.generate_otp
-          OtpSender.new(params[:mobile_number], @student.otp).call
-          render json: {
-            message: "OTP Sent Successfully",
-            status: :ok
-          }
+          if @student.generate_otp
+            OtpSender.new(@student.mobile_number.to_i, @student.otp).call
+            render json: {
+              message: "OTP Sent Successfully",
+              status: :ok
+            }
+          end
         end
       end
 

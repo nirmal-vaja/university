@@ -5,6 +5,10 @@ module Api
       def index
         @divisions = Division.where(division_params)
 
+        if params[:ids].present?
+          @divisions = @divisions.where(id: params[:ids])
+        end
+
         if @divisions
           render json: {
             message: "Details found",

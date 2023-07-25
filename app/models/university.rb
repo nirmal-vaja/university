@@ -1,6 +1,6 @@
 class University < ApplicationRecord
 
-  attr_accessor :examination_controller_email, :assistant_exam_controller_email, :academic_head_email, :hod_email, :admin_email, :admin_password
+  attr_accessor :examination_controller_email, :assistant_exam_controller_email, :academic_head_email, :hod_email, :admin_email, :admin_password, :url
 
   validates_presence_of :name
   after_create :create_tenant

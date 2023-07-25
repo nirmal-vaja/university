@@ -13,7 +13,7 @@ class User < ApplicationRecord
   belongs_to :course, optional: true
   belongs_to :branch, optional: true
 
-  has_one :configuration, dependent: :destroy
+  has_many :configs, dependent: :destroy
 
   has_many :faculty_subjects, dependent: :destroy
   has_many :subjects, through: :faculty_subjects
@@ -22,6 +22,8 @@ class User < ApplicationRecord
 
   has_many :faculty_supervisions, dependent: :destroy
   has_many :subjects_to_supervision, through: :faculty_supervisions, class_name: "Subject", foreign_key: "subject_id"
+
+  has_many :marks_entries, dependent: :destroy
 
   enum type: {
     "Junior": 0,
@@ -70,11 +72,11 @@ class User < ApplicationRecord
   end
 
   # the authenticate method from devise documentation
-  def self.authenticate(subdomain, email, password, otp = nil)
+  def self.authenticate(subdomain, email, password, otp = nil, mobile_number = nil)
     if Apartment.tenant_names.include?(subdomain)
       Apartment::Tenant.switch!(subdomain)
       puts "tenant switched"
-      user = User.find_for_authentication(email: email)
+      user = User.find_for_authentication(email: email) || User.find_for_authentication(phone_number: mobile_number)
       if user && user.status == "true"
         if otp.nil?
           user.valid_password?(password) ? user : nil
@@ -97,6 +99,14 @@ class User < ApplicationRecord
         nil
       end
     end
+  end
+
+  def as_json(options = {})
+    super(options).merge(
+      marks_entries: marks_entries,
+      course: course,
+      branch: branch
+    )
   end
 
   def name

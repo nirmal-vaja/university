@@ -7,6 +7,10 @@ module Api
       def index
         @semesters = Semester.where(branch_id: params[:branch_id])
 
+        if params[:ids].present?
+          @semesters = @semesters.where(id: params[:ids])
+        end
+
         render json: {
           data: {
             semesters: @semesters

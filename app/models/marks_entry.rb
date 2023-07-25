@@ -10,6 +10,12 @@ class MarksEntry < ApplicationRecord
 
   after_update :sanitize_data, if: :no_marks_entry_subjects_found
 
+  def as_json(options = {})
+    super(options).merge(
+      subjects: subjects
+    )
+  end
+
   private
 
   def no_marks_entry_subjects_found
@@ -17,9 +23,8 @@ class MarksEntry < ApplicationRecord
   end
 
   def sanitize_data
-      temp_user = User.find_by(email: user.email.split("@").join("_me_#{self.entry_type.downcase}@"))
-      temp_user.configuration.destroy
-      temp_user.destroy
+      temp_user = user
+      temp_user.configs.destroy_all
       self.destroy
   end
 end

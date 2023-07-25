@@ -41,6 +41,7 @@ module Api
           )
 
           user.add_role :super_admin
+          UserMailer.send_university_registration_mail(user, @university, university_params[:admin_password], university_params[:url]).deliver_now
           Apartment::Tenant.switch!(current_tenant)
           render json: {
             message: "University has been registered",
@@ -83,7 +84,7 @@ module Api
       private
 
       def university_params
-        params.require(:university).permit(:name, :subdomain, :established_year, :city, :state, :country, :admin_email, :admin_password, :examination_controller_email, :assistant_exam_controller_email, :academic_head_email, :hod_email)
+        params.require(:university).permit(:name, :subdomain, :established_year, :city, :state, :country, :admin_email, :admin_password, :examination_controller_email, :assistant_exam_controller_email, :academic_head_email, :hod_email, :url)
       end
     end
   end

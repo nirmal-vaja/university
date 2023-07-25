@@ -2,7 +2,7 @@ require 'twilio-ruby'
 
 class OtpSender
   def initialize(phone_number, otp)
-    @phone_numner = phone_number
+    @phone_number = "+91 " + phone_number.to_s
     @otp = otp
   end
 
@@ -12,10 +12,10 @@ class OtpSender
       ENV["TWILIO_AUTH_TOKEN"]
     )
 
-    client.messages.create(
-      from: ENV["TWILIO_SENDER_PHONE"],
-      to: @phone_numner,
-      body: "Your OTP is: #{@otp}"
-    )
+    # client.messages.create(
+    #   from: ENV["TWILIO_SENDER_PHONE"],
+    #   to: @phone_number,
+    #   body: "Your OTP is: #{@otp}"
+    # )
   end
 end

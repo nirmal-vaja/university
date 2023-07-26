@@ -102,13 +102,16 @@ class Importer
           name: cs_data["course"]
         )
 
+        if course.id.nil? && course.valid?
+          create_coe_user(course)
+          create_academic_head_user(course)
+          create_student_coordination_user(course)
+        end
+
+
         unless course.save
           return { message: course.errors.full_messages.join(', '), status: :unprocessable_entity }
         end
-
-        create_coe_user(course)
-        create_academic_head_user(course)
-        create_student_coordination_user(course)
 
         branch = course.branches.find_or_initialize_by(
           name: cs_data["branch"]
@@ -461,7 +464,7 @@ class Importer
   private
 
   def create_coe_user(course)
-    user = User.find_or_create_by(email: "#{course.name.delete(".").downcase}_coe@#{Apartment::Tenant.current.tr("_", "")}.com")
+    user = User.new(email: "#{course.name.delete(".").downcase}_coe@#{Apartment::Tenant.current.tr("_", "")}.com")
     user.password = SecureRandom.hex(4)
     user.phone_number = "91" + [1,2,3,4,5,6,7,8,9,0].sample(8).join("")
     user.course = course
@@ -472,7 +475,7 @@ class Importer
   end
 
   def create_academic_head_user(course)
-    user = User.find_or_create_by(email: "#{course.name.delete(".").downcase}_academic_head@#{Apartment::Tenant.current.tr("_", "")}.com")
+    user = User.new(email: "#{course.name.delete(".").downcase}_academic_head@#{Apartment::Tenant.current.tr("_", "")}.com")
     user.password = SecureRandom.hex(4)
     user.phone_number = "92" + [1,2,3,4,5,6,7,8,9,0].sample(8).join("")
     user.course = course
@@ -487,7 +490,7 @@ class Importer
   end
 
   def create_student_coordination_user(course)
-    user = User.find_or_create_by(email: "#{course.name.delete(".").downcase}_student_coordinator@#{Apartment::Tenant.current.tr("_", "")}.com")
+    user = User.new(email: "#{course.name.delete(".").downcase}_student_coordinator@#{Apartment::Tenant.current.tr("_", "")}.com")
     user.password = SecureRandom.hex(4)
     user.phone_number = "93" + [1,2,3,4,5,6,7,8,9].sample(8).join("")
     user.course = course

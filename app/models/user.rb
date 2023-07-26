@@ -88,7 +88,7 @@ class User < ApplicationRecord
               show: true
             ).with_role(role&.name).last
             if @user.valid_otp?(otp)
-              user.generate_doorkeeper_token
+              @user.generate_doorkeeper_token
               user
             else
               nil

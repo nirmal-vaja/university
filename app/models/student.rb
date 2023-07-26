@@ -17,6 +17,8 @@ class Student < ApplicationRecord
   has_one :parent_detail, dependent: :destroy
   has_one :guardian_detail, dependent: :destroy
   has_many :student_marks, dependent: :destroy
+  has_many :payments, dependent: :destroy
+  has_many :fee_details, through: :payments
 
   scope :fees_paid, -> {where(fees_paid: true)}
 
@@ -42,7 +44,9 @@ class Student < ApplicationRecord
       contact_details: contact_detail,
       address_details: address_detail,
       parent_details: parent_detail,
-      guardian_details: guardian_detail
+      guardian_details: guardian_detail,
+      fee_details: fee_details,
+      payments: payments
     )
   end
 

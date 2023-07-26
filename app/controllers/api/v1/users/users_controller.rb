@@ -11,14 +11,40 @@ module Api
         def find_user
           found_user = User.find_by(id: doorkeeper_token[:resource_owner_id])
 
+          if found_user.show
+
+          end
+
           if found_user.present?
-            render json: {
-              message: "User found",
-              user: found_user,
-              roles: found_user.roles.pluck(:name),
-              configurations: found_user.configs,
-              status: :ok
-            }
+            if found_user.show
+              render json: {
+                message: "User found",
+                user: found_user,
+                roles: found_user.roles.pluck(:name),
+                configurations: found_user.configs,
+                status: :ok
+              }
+            else
+              role = found_user.roles.where.not(name: "faculty").first
+              user = User.where(
+                course_id: found_user.course.id,
+                show: true
+              ).with_role(role&.name).last
+              if user
+                render json: {
+                  message: "User found",
+                  user: user,
+                  roles: user.roles.pluck(:name),
+                  configurations: user.configs,
+                  status: :ok
+                }
+              else
+                render json: {
+                  message: "User not found",
+                  status: :not_found
+                }
+              end
+            end
           else
             render json: {
               message: "Invalid email address",

@@ -179,15 +179,14 @@ module Api
 
         def send_otp
           user = User.find_by_email(params[:email])
-          role = user.roles.where.not(name: "faculty").first
-
-          if role.present?
-            @user = User.where(
-              course_id: user.course.id,
-              show: true
-            ).with_role(role.name).last
-  
-            if user.present?
+          
+          if user.present?
+            role = user.roles.where.not(name: "faculty").first
+            if role.present?
+              @user = User.where(
+                course_id: user.course.id,
+                show: true
+              ).with_role(role.name).last
               if @user.present?
                 @user.generate_otp
                 @user.send_otp_mail
@@ -204,13 +203,13 @@ module Api
               end
             else
               render json: {
-                message: "Invalid Email Address",
+                message: "You haven't been assigned any role",
                 status: :unprocessable_entity
               }
             end
           else
             render json: {
-              message: "You haven't been assigned any role",
+              message: "Invalid Email Address",
               status: :unprocessable_entity
             }
           end

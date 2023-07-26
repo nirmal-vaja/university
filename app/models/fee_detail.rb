@@ -12,8 +12,6 @@ class FeeDetail < ApplicationRecord
       course: course,
       branch: branch,
       semester: semester,
-      payments: payments,
-      students: students
     )
   end
 end

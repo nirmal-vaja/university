@@ -45,8 +45,6 @@ class Student < ApplicationRecord
       address_details: address_detail,
       parent_details: parent_detail,
       guardian_details: guardian_detail,
-      fee_details: fee_details,
-      payments: payments
     )
   end
 

@@ -294,6 +294,7 @@ class Importer
   end
 
   def create_students
+
     excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
 
     if excel_sheet.sheet.attached?
@@ -356,10 +357,17 @@ class Importer
         student.caste = student_data["caste"]
         student.blood_group = student_data["blood_group"]
 
-        student.build_contact_detail(
-          mobile_number: student_data["mobile_number"],
-          personal_email_address: student_data["email_address"],
-        )
+        if student.id.nil?
+          student.build_contact_detail(
+            mobile_number: student_data["mobile_number"].to_i,
+            personal_email_address: student_data["email_address"],
+          )
+        else
+          student.contact_detail.update(
+            mobile_number: student_data["mobile_number"].to_i,
+            personal_email_address: student_data["email_address"],
+          )
+        end
 
         unless student.save
           return {

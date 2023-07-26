@@ -1,3 +1,4 @@
+require 'dotenv/load'
 require 'razorpay/order'
 require 'razorpay/customer'
 key_id = ENV["RAZORPAY_KEY_ID"]

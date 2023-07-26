@@ -96,7 +96,7 @@ namespace :api do
       end
 
       collection do
-        get :find_student_by_auth_token
+        get :find_student_with_auth_token
       end
 
       resources :payments, only: [:create, :index, :show]

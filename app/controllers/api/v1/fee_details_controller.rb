@@ -5,7 +5,7 @@ module Api
       before_action :set_fee_detail, only: [:update, :destroy]
 
       def index
-        @fee_details = FeeDetails.where(fee_detail_params)
+        @fee_details = FeeDetail.where(fee_detail_params)
 
         if @fee_details
           render json: {

@@ -87,9 +87,11 @@ module Api
           role_names = Role.all.pluck(:name).reject{ |x| x == "super_admin" || x == "faculty" || x == "Marks Entry" }
           @users = []
           role_names.each do |name|
-            @users << User.where(show: true).with_any_role(name)
+            if user_params[:course_id].present?
+              @users << User.where(course_id: user_params[:course_id], show: true).with_any_role(name)
+            end
           end
-          users = @users.flatten.map do |user|
+          users = @users&.flatten.map do |user|
             user.attributes.merge(
               {
                 role_names: user.roles_name.reject{ |x| x == "super_admin" || x == "faculty" || x == "Marks Entry" }.join(', ')

@@ -54,7 +54,7 @@ module Api
             student: @student,
             fee_detail: @fee_detail,
             status: status
-          }
+          }, status: :ok
         }
       end
 

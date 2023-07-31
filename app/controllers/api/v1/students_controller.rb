@@ -46,7 +46,7 @@ module Api
         @academic_year = params[:academic_year]
         @semester_id = params[:semester_id]
         @fee_detail = FeeDetail.find_by(semester_id: @semester_id, academic_year: @academic_year)
-        status = @student.payments.present? && @student.payments.where(status: "paid", academic_year: @academic_year, semester_id: @semester_id).present?
+        status = @student.payments.present? && @student.payments.where(status: "paid", academic_year: @academic_year, fee_detail_id: @fee_detail.id).present?
 
         render json: {
           message: "Status for the payment",

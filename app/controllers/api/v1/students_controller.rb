@@ -41,6 +41,26 @@ module Api
         end
       end
 
+      def fetch_paid_fee_detail
+        @student = Student.find_by(id: params[:id])
+        @fee_detail_ids = @student.payments.paid.pluck(:fee_detail_id)
+        @fee_details = FeeDetail.where(id: @fee_detail_ids)
+
+        if @fee_details
+          render json: {
+            message: "Details found",
+            data: {
+              fee_details: @fee_details
+            }, status: :ok
+          }
+        else
+          render json: {
+            message: "Details not found",
+            status: :not_found
+          }
+        end
+      end
+
       def fetch_fee_payment_status
         @student = Student.find_by_id(params[:id])
         @academic_year = params[:academic_year]

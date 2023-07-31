@@ -94,6 +94,7 @@ namespace :api do
         get :fetch_subjects
         put :update_fees
         get :fetch_fee_payment_status
+        get :fetch_paid_fee_detail
       end
 
       collection do

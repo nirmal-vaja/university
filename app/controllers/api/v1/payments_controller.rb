@@ -58,14 +58,15 @@ module Api
       def callback
         # Fetching payment_id from the request params or session
         order_id = params["order_id"]
+        payment_id = params["payment_id"]
 
         razorpay_order = Razorpay::Order.fetch(order_id)
         if razorpay_order.attributes['status'] == 'paid'
 
           # Payment successful, marking fee as paid for the Student
           @payment = Payment.find_by(razorpay_order_id: order_id)
-
-          if @payment.update(status: 'paid')
+          Payment.where(academic_year: @payment.academic_year).where.not(razorpay_order_id: order_id).destroy_all
+          if @payment.update(status: 'paid', razorpay_payment_id: payment_id)
             render json: {
               message: "Payment Successfull",
               status: :ok

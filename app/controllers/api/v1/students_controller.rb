@@ -41,6 +41,10 @@ module Api
         end
       end
 
+      def fetch_fee_payment_status
+        
+      end
+
       def find_student
         student = Student.find_by_enrollment_number(params[:id])
 

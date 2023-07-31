@@ -42,7 +42,17 @@ module Api
       end
 
       def fetch_fee_payment_status
-        
+        @student = Student.find_by_id(params[:id])
+        @academic_year = params[:academic_year]
+        status = @student.payments.present? && @student.payments.where(status: "paid", academic_year: @academic_year).present?
+
+        render json: {
+          message: "Status for the payment",
+          data: {
+            student: @student,
+            status: status
+          }
+        }
       end
 
       def find_student

@@ -93,6 +93,7 @@ namespace :api do
         get :find_student
         get :fetch_subjects
         put :update_fees
+        get :fetch_fee_payment_status
       end
 
       collection do

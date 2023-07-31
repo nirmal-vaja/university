@@ -19,6 +19,8 @@ class Student < ApplicationRecord
   has_many :student_marks, dependent: :destroy
   has_many :payments, dependent: :destroy
   has_many :fee_details, through: :payments
+  has_many :student_certificates, dependent: :destroy
+  has_many :certificates, through: :student_certificates
 
   scope :fees_paid, -> {where(fees_paid: true)}
 

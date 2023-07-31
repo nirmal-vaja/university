@@ -184,6 +184,25 @@ module Api
         end
       end
 
+      def request_certificate
+        if @student
+          @student_certificate = @student.student_certificates.new(student_certificate_params)
+          if @student_certificate.save
+            render json: {
+              message: "Certificate has been requested",
+              data: {
+                student_certificate: @student_certificate
+              }, status: :created
+            }
+          else
+            render json: {
+              message: @student_certificate.errors.full_messages.join(', '),
+              status: :unprocessable_entity
+            }
+          end
+        end
+      end
+
       private
 
       def find_student_with_mobile_number
@@ -209,7 +228,7 @@ module Api
 
       def student_params
         if params["student"].present?
-          params.require(:student).permit(:course_id, :branch_id, :semester_id, :name, :enrollment_number, :barcode, :qrcode, :gender, :father_name, :mother_name, :date_of_birth, :birth_place, :religion, :caste, :nationality, :mother_tongue, :marrital_status, :blood_group, :physically_handicapped).to_h
+          params.require(:student).permit(:course_id, :branch_id, :semester_id, :name, :enrollment_number, :barcode, :qrcode, :gender, :father_name, :mother_name, :date_of_birth, :birth_place, :religion, :caste, :nationality, :mother_tongue, :marrital_status, :blood_group, :physically_handicapped, certificate_ids: []).to_h
         else 
           {}
         end
@@ -237,6 +256,10 @@ module Api
         if params["guardian_detail"].present?
           params.require(:guardian_detail)&.permit(:name, :relation, :mobile_number, :personal_email, :professional_email, :address_1, :address_2, :area, :country, :state, :city, :pincode).to_h
         end
+      end
+
+      def student_certificate_params
+        params.require(:student_certificate).permit(:number_of_copy, :amount, :certificate_id, :reason).to_h
       end
     end
   end

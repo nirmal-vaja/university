@@ -95,6 +95,7 @@ namespace :api do
         put :update_fees
         get :fetch_fee_payment_status
         get :fetch_paid_fee_detail
+        post :request_certificate
       end
 
       collection do

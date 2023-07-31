@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_31_091933) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_31_093139) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -382,6 +382,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_31_091933) do
     t.index ["branch_id"], name: "index_semesters_on_branch_id"
   end
 
+  create_table "student_certificates", force: :cascade do |t|
+    t.bigint "certificate_id", null: false
+    t.bigint "student_id", null: false
+    t.text "reason"
+    t.string "number_of_copy"
+    t.string "amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["certificate_id"], name: "index_student_certificates_on_certificate_id"
+    t.index ["student_id"], name: "index_student_certificates_on_student_id"
+  end
+
   create_table "student_marks", force: :cascade do |t|
     t.string "examination_name"
     t.string "examination_type"
@@ -599,6 +611,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_31_091933) do
   add_foreign_key "payments", "students"
   add_foreign_key "role_emails", "roles"
   add_foreign_key "semesters", "branches"
+  add_foreign_key "student_certificates", "certificates"
+  add_foreign_key "student_certificates", "students"
   add_foreign_key "student_marks", "branches"
   add_foreign_key "student_marks", "courses"
   add_foreign_key "student_marks", "divisions"

@@ -5,7 +5,7 @@ module Api
       before_action :find_certificate, only: [:update, :destroy]
 
       def index
-        @certificates = Certificate.where(certificate_params)
+        @certificates = Certificate.all
 
         if @certificates
           render json: {

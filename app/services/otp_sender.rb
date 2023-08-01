@@ -8,14 +8,14 @@ class OtpSender
 
   def call
     client = Twilio::REST::Client.new(
-      ENV["TWILIO_ACCOUNT_SID"],
-      ENV["TWILIO_AUTH_TOKEN"]
+      "AC57f2548bc9785e5733976d64640883b9",
+      "f9a1a9d45e5ecb4293bb1eab429a33f4"
     )
 
-    # client.messages.create(
-    #   from: ENV["TWILIO_SENDER_PHONE"],
-    #   to: @phone_number,
-    #   body: "Your OTP is: #{@otp}"
-    # )
+    client.messages.create(
+      from: "+18148317008",
+      to: @phone_number,
+      body: "Your OTP is: #{@otp}"
+    )
   end
 end

@@ -65,12 +65,15 @@ module Api
 
           # Payment successful, marking fee as paid for the Student
           @payment = Payment.find_by(razorpay_order_id: order_id)
+          @student = @payment.student
           Payment.where(academic_year: @payment.academic_year, student_id: params["student_id"]).where.not(razorpay_order_id: order_id).destroy_all
           if @payment.update(status: 'paid', razorpay_payment_id: payment_id)
-            render json: {
-              message: "Payment Successfull",
-              status: :ok
-            }
+            if @student.update(fees_paid: true)
+              render json: {
+                message: "Payment Successfull",
+                status: :ok
+              }
+            end
           else
             render json: {
               message: @payment.errors.full_messages.join(', '),

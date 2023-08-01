@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_31_093139) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_01_055556) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -390,6 +390,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_31_093139) do
     t.string "amount"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "status", default: 0
     t.index ["certificate_id"], name: "index_student_certificates_on_certificate_id"
     t.index ["student_id"], name: "index_student_certificates_on_student_id"
   end

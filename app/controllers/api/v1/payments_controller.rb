@@ -71,6 +71,9 @@ module Api
             if @student.update(fees_paid: true)
               render json: {
                 message: "Payment Successfull",
+                data: {
+                  payment: @payment
+                }
                 status: :ok
               }
             end

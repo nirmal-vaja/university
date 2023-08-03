@@ -24,8 +24,6 @@ environment ENV.fetch("RAILS_ENV") { "development" }
 # Specifies the `pidfile` that Puma will use.
 pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }
 
-bind "unix://#{shared_path}/tmp/sockets/university-puma.sock"
-
 config = Rails.application.config_for(:active_storage_service)
 if config['service'] == 'S3'
   config['aws']['region'] = 'ap-south-1'

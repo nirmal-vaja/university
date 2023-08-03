@@ -115,4 +115,4 @@ end
 Rails.application.config.middleware.use Apartment::Elevators::Subdomain
 # Rails.application.config.middleware.use Apartment::Elevators::FirstSubdomain
 # Rails.application.config.middleware.use Apartment::Elevators::Host
-Apartment::Elevators::Subdomain.excluded_subdomains = ['www', '6c3b-43-242-116-241.ngrok-free.app', '6c3b-43-242-116-241', 'ec2-13-234-111-241', '9c5d-182-69-164-36']
+Apartment::Elevators::Subdomain.excluded_subdomains = ['www', '6c3b-43-242-116-241.ngrok-free.app', '6c3b-43-242-116-241', 'ec2-13-234-111-241', '9ec6-106-214-127-198']

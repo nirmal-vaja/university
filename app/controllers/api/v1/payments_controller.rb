@@ -73,7 +73,7 @@ module Api
                 message: "Payment Successfull",
                 data: {
                   payment: @payment
-                }
+                },
                 status: :ok
               }
             end

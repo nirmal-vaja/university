@@ -1,5 +1,5 @@
 # Change these
-server '13.234.111.241', port: 22, roles: [:web, :app, :db], primary: true
+server '3.110.181.152', port: 22, roles: [:web, :app, :db], primary: true
 
 set :repo_url,        'git@github.com:nirmal-vaja/university.git'
 set :application,     'university'

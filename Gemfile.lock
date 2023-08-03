@@ -338,7 +338,7 @@ DEPENDENCIES
   jbuilder
   pg (~> 1.1)
   pry-rails
-  puma (~> 4.3.12)
+  puma (~> 4.3.9)
   pundit
   rack-cors
   rails (~> 7.0.4, >= 7.0.4.3)

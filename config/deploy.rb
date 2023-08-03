@@ -5,8 +5,6 @@ set :repo_url,        'git@github.com:nirmal-vaja/university.git'
 set :application,     'university'
 set :branch,          'master'
 
-set :ssh_options,     { forward_agent: true, user: fetch(:user), keys: %w(~/.ssh/id_rsa.pub) }
-
 set :rbenv_ruby,      '3.1.3'
 # set :rbenv_ruby_dir,  '/home/ubuntu/.rbenv/versions/3.0.2'
 set :default_env, { path: "~/.rbenv/shims:~/.rbenv/bin:$PATH" }
@@ -49,7 +47,7 @@ append :rbenv_map_bins, 'puma', 'pumactl'
 
 ## Linked Files & Directories (Default None):
 # set :linked_files, %w{config/database.yml}
-set :linked_dirs,  %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
+# set :linked_dirs,  %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
 
 namespace :puma do
   desc 'Create Directories for Puma Pids and Socket'

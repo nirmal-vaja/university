@@ -24,11 +24,6 @@ environment ENV.fetch("RAILS_ENV") { "development" }
 # Specifies the `pidfile` that Puma will use.
 pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }
 
-config = Rails.application.config_for(:active_storage_service)
-if config['service'] == 'S3'
-  config['aws']['region'] = 'ap-south-1'
-end
-
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked web server processes. If using threads and workers together
 # the concurrency of the application would be max `threads` * `workers`.

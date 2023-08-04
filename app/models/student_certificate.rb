@@ -13,7 +13,9 @@ class StudentCertificate < ApplicationRecord
   def as_json(options = {})
     super(options).merge(
       certificate: certificate,
-      student: student
+      student: student,
+      requested_date: created_at.strftime("%d-%m-%Y"),
+      approval_date: updated_at.strftime("%d-%m-%Y")
     )
   end
 end

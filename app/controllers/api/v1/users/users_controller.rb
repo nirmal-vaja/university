@@ -185,19 +185,30 @@ module Api
           if user.present?
             role = user.roles.where.not(name: "faculty").first
             if role.present?
-              @user = User.where(
-                course_id: user.course.id,
-                show: true
-              ).with_role(role.name).last
+
+              if role.name == "Marks Entry"
+                @user = user
+              else
+                @user = User.where(
+                  course_id: user.course.id,
+                  show: true
+                ).with_role(role.name).last
+              end
               if @user.present?
-                @user = @user.generate_otp
-                @user.send_otp_mail
+                if @user.generate_otp
+                  @user.send_otp_mail
     
-                render json: {
-                  message: "OTP has been sent to your email, please check your mail and come back!",
-                  otp: @user.otp,
-                  status: :ok
-                }
+                  render json: {
+                    message: "OTP has been sent to your email, please check your mail and come back!",
+                    otp: @user.otp,
+                    status: :ok
+                  }
+                else
+                  render json: {
+                    message: "Something went wrong, please try again",
+                    status: :unprocessable_entity
+                  }
+                end
               else
                 render json:{
                   message: "No faculties has been assigned as #{role.name}",

@@ -190,11 +190,12 @@ module Api
                 show: true
               ).with_role(role.name).last
               if @user.present?
-                @user.generate_otp
+                @user = @user.generate_otp
                 @user.send_otp_mail
     
                 render json: {
                   message: "OTP has been sent to your email, please check your mail and come back!",
+                  otp: @user.otp,
                   status: :ok
                 }
               else

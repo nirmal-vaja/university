@@ -28,7 +28,6 @@ class UserMailer < ApplicationMailer
 
   def send_marks_entry_notification(user, opts = {})
     @user = user
-    @user.reload
     @role_name = opts[:role_name]
     @url = opts[:url] + "?d=#{@user.secure_id}"
     @subject_names = opts[:subject_names]

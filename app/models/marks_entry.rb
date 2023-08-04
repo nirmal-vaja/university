@@ -23,8 +23,8 @@ class MarksEntry < ApplicationRecord
   end
 
   def sanitize_data
-      temp_user = user
-      temp_user.configs.destroy_all
+      user.configs.destroy_all
+      user.remove_role_without_deletion("Marks Entry")
       self.destroy
   end
 end

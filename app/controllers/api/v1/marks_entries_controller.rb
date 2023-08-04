@@ -85,7 +85,7 @@ module Api
 
           user = @marks_entry.user
 
-          config = user.configs&.find_by(
+          configs = user.configs&.where(
             examination_name: @marks_entry.examination_name,
             examination_type: @marks_entry.entry_type,
             academic_year: @marks_entry.academic_year,
@@ -93,24 +93,24 @@ module Api
             branch_id: @marks_entry.branch_id,
           )
 
-          configuration_semester = config&.configuration_semesters.find_by(
-            semester_id: @marks_entry.semester_id,
-            division_id: @marks_entry.division_id
-          )
+          if configs
+              configs.each do |config|
+                configuration_semester = config.configuration_semesters.find_by(
+                  semester_id: @marks_entry.semester_id,
+                  division_id: @marks_entry.division_id
+                )
 
-          if configuration_semester&.update(subject_ids: @marks_entry.subjects.pluck(:id)) || configuration_semester.nil?
-            render json: {
-              message: "Update successful",
-              data: {
-                marks_entry: @marks_entry
-              }, status: :ok
-            }
-          else
-            render json: {
-              message: configuration_semester&.errors.full_messages.join(', '),
-              status: :unprocessable_entity
-            }
+                if configuration_semester.present?
+                  configuration_semester.update(subject_ids: @marks_entry.subjects.pluck(:id))
+                end
+              end
           end
+          render json: {
+            message: "Update successful",
+            data: {
+              marks_entry: @marks_entry
+            }, status: :ok
+          }
         else
           render json: {
             message: @marks_entry.errors.full_messages.join(', '),

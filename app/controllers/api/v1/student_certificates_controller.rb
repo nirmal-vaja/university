@@ -24,9 +24,8 @@ module Api
         @student_certificate = StudentCertificate.find_by_id(params[:id])
 
         if @student_certificate.update(student_certificate_params)
-          event = @student_certificate.status === "accept" ? "accepted" : "rejected"
           render json: {
-            message: "Request #{event}",
+            message: "Request #{@student_certificate.status}",
             data: {
               student_certificate: @student_certificate
             },status: :ok

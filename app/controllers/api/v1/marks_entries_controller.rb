@@ -93,12 +93,12 @@ module Api
             branch_id: @marks_entry.branch_id,
           )
 
-          configuration_semester = config.configuration_semesters.find_by(
+          configuration_semester = config&.configuration_semesters.find_by(
             semester_id: @marks_entry.semester_id,
             division_id: @marks_entry.division_id
           )
 
-          if configuration_semester.update(subject_ids: @marks_entry.subjects.pluck(:id))
+          if configuration_semester&.update(subject_ids: @marks_entry.subjects.pluck(:id)) || configuration_semester.nil?
             render json: {
               message: "Update successful",
               data: {
@@ -107,7 +107,7 @@ module Api
             }
           else
             render json: {
-              message: configuration_semester.errors.full_messages.join(', '),
+              message: configuration_semester&.errors.full_messages.join(', '),
               status: :unprocessable_entity
             }
           end

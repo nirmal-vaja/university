@@ -229,7 +229,7 @@ module Api
 
         def remove_role(user_id, role_name)
           @user = User.find_by_id(user_id)
-          @user.remove_role_without_deletion(role_name) if @user.has_role? role_name
+          @user.remove_role_w ithout_deletion(role_name) if @user.has_role? role_name
         end
 
         def add_role(user_id, role_name)

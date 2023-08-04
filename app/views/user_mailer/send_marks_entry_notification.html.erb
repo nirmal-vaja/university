@@ -6,19 +6,23 @@
     <h2>Hello <%= @user.name %> </h2>
     <p>Greetings!</p>
     <p>We hope this email finds you well.</p>
-    <p>You have been assigned to enter Student's marks</p>
-    <p> Enter your email as input at the login page and click on "Send OTP", you will be receiving an OTP via your email. </p>
-    <p> <a href="<%= @url %>"> Click here to login </a></p>
-    <p> Below are the subjects you need to enter marks : </p>
-    <hr>
-    <table>
-      <% @subject_names.each do |subject_name| %>
-        <tr>
-          <td style="font-weight: bold;"><%= subject_name %></td>
-        </tr>
-      <% end %>
-    </table>
-    <hr>
+    <% if @user.has_role?(@role_name) %>
+      <p>You have been assigned to enter Student's marks</p>
+      <p> Enter your email as input at the login page and click on "Send OTP", you will be receiving an OTP via your email. </p>
+      <p> <a href="<%= @url %>"> Click here to login </a></p>
+      <p> Below are the subjects you need to enter marks : </p>
+      <hr>
+      <table>
+        <% @subject_names.each do |subject_name| %>
+          <tr>
+            <td style="font-weight: bold;"><%= subject_name %></td>
+          </tr>
+        <% end %>
+      </table>
+      <hr>
+    <% else %>
+      <p> You are not authorized to enter student's marks </p>
+    <% end %>
     
     <p>We believe that this new addition will strengthen our community and provide more opportunities for collaboration and growth.</p>
     <p>If you have any further inquiries or need additional information, please don't hesitate to reach out.</p>

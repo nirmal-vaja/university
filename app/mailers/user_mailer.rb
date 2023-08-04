@@ -31,6 +31,11 @@ class UserMailer < ApplicationMailer
     @role_name = opts[:role_name]
     @url = opts[:url] + "?d=#{@user.secure_id}"
     @subject_names = opts[:subject_names]
-    mail(to: @user.email, subject: "You are assigned as #{@role_name}")
+
+    if @user.has_role?(@role_name)
+      mail(to: @user.email, subject: "You are assigned as #{@role_name}")
+    else
+      mail(to: @user.email, subject: "You are revoked as #{@role_name}")
+    end
   end
 end

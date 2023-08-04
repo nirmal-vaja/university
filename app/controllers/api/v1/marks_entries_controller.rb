@@ -84,7 +84,7 @@ module Api
         if @marks_entry.update(marks_entry_params)
 
           user = @marks_entry.user
-          user.reload!
+
           UserMailer.send_marks_entry_notification(user, url: params[:url], role_name: "Marks Entry", subject_names: @marks_entry.subjects.pluck(:name)).deliver_now
 
           configs = user.configs&.where(

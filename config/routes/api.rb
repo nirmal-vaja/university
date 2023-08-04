@@ -111,6 +111,8 @@ namespace :api do
       end
     end
 
+    resources :student_certificates, only: [:index, :update]
+
     resources :certificates, only: [:index, :create, :update, :destroy]
 
     resources :syllabuses, only: [:index, :show, :create, :update] do

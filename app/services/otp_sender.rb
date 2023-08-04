@@ -9,7 +9,7 @@ class OtpSender
   def call
     client = Twilio::REST::Client.new(
       "AC57f2548bc9785e5733976d64640883b9",
-      "87567e258bf2f160990f0ec6b267a980"
+      "780e9d98d54a9b16b52ce5fb8f506ea4"
     )
 
     client.messages.create(

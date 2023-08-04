@@ -185,6 +185,7 @@ module Api
       end
 
       def request_certificate
+        @student = Student.find_by_id(params[:id])
         if @student
           @student_certificate = @student.student_certificates.new(student_certificate_params)
           if @student_certificate.save
@@ -204,6 +205,10 @@ module Api
       end
 
       private
+
+      def find_student
+        @student = Student.find_by_id(params[:id])
+      end
 
       def find_student_with_mobile_number
         @student = ContactDetail.find_by_mobile_number(params[:mobile_number])&.student

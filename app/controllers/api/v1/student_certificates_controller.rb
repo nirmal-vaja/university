@@ -3,7 +3,7 @@ module Api
     class StudentCertificatesController < ApiController
 
       def index
-        @student_certificates = StudentCertificate.all
+        @student_certificates = StudentCertificate.pending
 
         if @student_certificates
           render json: {

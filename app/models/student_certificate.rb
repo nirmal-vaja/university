@@ -2,6 +2,8 @@ class StudentCertificate < ApplicationRecord
   belongs_to :certificate
   belongs_to :student
 
+  scope :pending, -> {where(status: "pending")}
+
   enum status: {
     pending: 0,
     accepted: 1,

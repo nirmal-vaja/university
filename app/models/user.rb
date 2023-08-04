@@ -83,10 +83,14 @@ class User < ApplicationRecord
         else
           role = user.roles.where.not(name: "faculty").first
           if role
-            @user = User.where(
-              course_id: user.course.id,
-              show: true
-            ).with_role(role&.name).last
+            if role.name == "Marks Entry"
+              @user = user
+            else
+              @user = User.where(
+                course_id: user.course.id,
+                show: true
+              ).with_role(role&.name).last
+            end
             if @user.valid_otp?(otp)
               @user.generate_doorkeeper_token
               user

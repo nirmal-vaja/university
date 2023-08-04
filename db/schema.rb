@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_01_055556) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_04_100323) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -341,7 +341,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_055556) do
   end
 
   create_table "payments", force: :cascade do |t|
-    t.bigint "fee_detail_id", null: false
     t.bigint "student_id", null: false
     t.string "status"
     t.string "razorpay_payment_id"
@@ -350,6 +349,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_055556) do
     t.datetime "updated_at", null: false
     t.string "academic_year"
     t.string "razorpay_order_id"
+    t.string "payment_type"
+    t.bigint "certificate_id", null: false
+    t.bigint "fee_detail_id", null: false
+    t.index ["certificate_id"], name: "index_payments_on_certificate_id"
     t.index ["fee_detail_id"], name: "index_payments_on_fee_detail_id"
     t.index ["student_id"], name: "index_payments_on_student_id"
   end
@@ -391,6 +394,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_055556) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "status", default: 0
+    t.text "notes"
     t.index ["certificate_id"], name: "index_student_certificates_on_certificate_id"
     t.index ["student_id"], name: "index_student_certificates_on_student_id"
   end
@@ -608,6 +612,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_055556) do
   add_foreign_key "other_duties", "courses"
   add_foreign_key "other_duties", "users"
   add_foreign_key "parent_details", "students"
+  add_foreign_key "payments", "certificates"
   add_foreign_key "payments", "fee_details"
   add_foreign_key "payments", "students"
   add_foreign_key "role_emails", "roles"

@@ -1,5 +1,6 @@
 class Payment < ApplicationRecord
-  belongs_to :fee_detail
+  belongs_to :fee_detail, optional: true
+  belongs_to :certificate, optional: true
   belongs_to :student
 
   scope :paid, -> {where(status: "paid")}

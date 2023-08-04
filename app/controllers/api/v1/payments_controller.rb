@@ -7,7 +7,12 @@ module Api
       def create
         student = Student.find_by_id(params[:student_id])
         if student
-          fee = student.semester.fee_details.find_by(academic_year: payment_params[:academic_year])
+          fee = 
+            if payment_params[:payment_type] == "fee"
+              student.semester.fee_details.find_by(academic_year: payment_params[:academic_year])
+            else
+              Certificate.find_by(name: params[:certificate_name])
+            end
 
           if fee
             amount = (fee.amount.to_i) * 100
@@ -16,11 +21,17 @@ module Api
             if razorpay_order.present? && razorpay_order.attributes['id'].present?
               @payment = Payment.new(
                 student_id: student.id,
-                fee_detail_id: fee.id,
                 razorpay_order_id: razorpay_order.attributes['id'],
                 academic_year: payment_params[:academic_year],
-                status: 'pending'
+                status: 'pending',
+                payment_type: payment_params[:payment_type]
               )
+
+              if @payment.payment_type == "fee"
+                @payment.fee_detail_id = fee.id
+              else
+                @payment.certificate_id = fee.id
+              end
 
               if @payment.save
                 render json: {
@@ -94,7 +105,7 @@ module Api
       private
 
       def payment_params
-        params.require(:payment).permit(:academic_year, :student_id, :fee_detail_id )
+        params.require(:payment).permit(:academic_year, :student_id, :fee_detail_id, :payment_type, :certificate_id )
       end
     end
   end

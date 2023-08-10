@@ -11,6 +11,29 @@ on:
   pull_request:
     branches: [ "master" ]
 jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Ruby
+        uses: actions/setup-ruby@v2
+        with:
+          ruby-version: 2.x # Specify your Ruby version
+
+      - name: Install Dependencies
+        run: |
+          gem install bundler
+          bundle install --deployment --without development test
+
+      - name: Deploy to Production
+        run: |
+          cap production deploy
+        env:
+          RAILS_ENV: production
+
   test:
     runs-on: ubuntu-latest
     services:
@@ -49,4 +72,3 @@ jobs:
         uses: ruby/setup-ruby@55283cc23133118229fd3f97f9336ee23a179fcf # v1.146.0
         with:
           bundler-cache: true
-      # Add or replace any other lints here

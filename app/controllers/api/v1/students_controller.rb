@@ -154,7 +154,7 @@ module Api
           }
         else
           if @student.generate_otp
-            StudentMailer.send_otp_mail(@student)
+            StudentMailer.send_otp_mail(@student).deliver_now
             render json: {
               message: "OTP Sent Successfully",
               status: :ok

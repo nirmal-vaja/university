@@ -154,7 +154,7 @@ module Api
           }
         else
           if @student.generate_otp
-            OtpSender.new(@student.mobile_number.to_i, @student.otp).call
+            StudentMailer.send_otp_mail(@student)
             render json: {
               message: "OTP Sent Successfully",
               status: :ok
@@ -211,7 +211,7 @@ module Api
       end
 
       def find_student_with_mobile_number
-        @student = ContactDetail.find_by_mobile_number(params[:mobile_number])&.student
+        @student = ContactDetail.find_by_mobile_number(params[:mobile_number])&.student || ContactDetail.find_by_personal_email_address(params[:mobile_number])&.student || ContactDetail.find_by_university_email_address(params[:mobile_number])&.student
       end
 
       def render_success_response(message, student)

@@ -54,7 +54,7 @@ class Student < ApplicationRecord
     if Apartment.tenant_names.include?(subdomain)
       Apartment::Tenant.switch!(subdomain)
       puts "tenant switched"
-      student = ContactDetail.find_by_mobile_number(mobile_number)&.student 
+      student = ContactDetail.find_by_mobile_number(mobile_number)&.student || ContactDetail.find_by_personal_email_address(mobile_number)&.student || ContactDetail.find_by_university_email_address(mobile_number)&.student
       student.valid_otp?(otp) ? student : nil
     end
   end

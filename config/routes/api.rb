@@ -2,11 +2,17 @@
 
 namespace :api do
   namespace :v1 do
-
+    get "/get_authorization_details", to: "home#get_authorization_details"
+    get "/current_user", to: "home#get_current_user"
+    get "/universities", to: "home#get_universities"
+    post "/check_subdomain", to: "home#check_subdomain"
+    get "/find_user", to: "home#find_user"
     resources :roles, only: [:index,:create, :destroy]
     resources :universities, only: [:index, :create] do
       member do
         get :get_authorization_details
+        post :approve_university
+        post :reject_university
       end
     end
 

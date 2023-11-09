@@ -13,17 +13,7 @@
       <td><%= @university.name %></td>
     </tr>
     <tr>
-      <td style="font-weight: bold;">University Website:</td>
-      <td> <a href="http://#{@university.subdomain}+'.superadmin.'+#{@url}"> <%= @university.subdomain + ".superadmin." + @url %> </a> </td>
-    </tr>
-    <h4> Your Credentials :</h4>
-    <tr>
-      <td style="font-weight: bold;">Email :</td>
-      <td> <%= @user.email %> </td
-    </tr>
-    <tr>
-      <td style="font-weight: bold;">Password :</td>
-      <td> <%= @password %> </td
+      <td colspan="2" style="font-weight: bold;"> <%= link_to "Click here", @url + "/resetPassword?reset_password_token=#{@token}" %> to get started. </td>
     </tr>
   </table>
   <hr>

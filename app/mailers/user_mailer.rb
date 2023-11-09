@@ -18,12 +18,12 @@ class UserMailer < ApplicationMailer
     mail(to: @user.email, subject: "You recieved an OTP")
   end
 
-  def send_university_registration_mail(user, university, password, url)
-    @user = user
+  def send_university_registration_mail(email, university, url, token)
+    @email = email
     @university = university
-    @password = password
     @url = url
-    mail(to: @user.email, subject: "#{@university.name} has been registered.")
+    @token = token
+    mail(to: @email, subject: "#{@university.name} has been registered.")
   end
 
   def send_marks_entry_notification(user, opts = {})

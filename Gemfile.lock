@@ -93,6 +93,7 @@ GEM
     bindex (0.8.1)
     bootsnap (1.16.0)
       msgpack (~> 1.2)
+    brotli (0.4.0)
     builder (3.2.4)
     capistrano (3.17.2)
       airbrussh (>= 1.0.0)
@@ -208,6 +209,9 @@ GEM
       activesupport (>= 3.0.0)
     racc (1.6.2)
     rack (2.2.6.4)
+    rack-brotli (1.2.0)
+      brotli (>= 0.1.7)
+      rack (>= 1.4)
     rack-cors (2.0.1)
       rack (>= 2.0.0)
     rack-test (2.1.0)
@@ -340,6 +344,7 @@ DEPENDENCIES
   pry-rails
   puma (~> 4.3.9)
   pundit
+  rack-brotli
   rack-cors
   rails (~> 7.0.4, >= 7.0.4.3)
   razorpay (~> 2.0)

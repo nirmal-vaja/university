@@ -40,28 +40,38 @@ class Importer
   
           name = user_data["faculty_name"].split(' ')
 
-          if user.secure_id.nil?
-            user.secure_id = SecureRandom.hex(7)
+          if user.persisted?
+            user.update_attributes_if_changes(
+              first_name: name[0],
+              last_name: name[1],
+              phone_number: user_data["phone_number"].to_i,
+              designation: user_data["designation"],
+              date_of_joining: user_data["dateof_joining"],
+              gender: user_data["gender"],
+              department: user_data["department"],
+              course: course,
+              branch: branch,
+              user_type: user_data["type"] == "Junior" ? 0 : 1
+            )
+          else
+            user.secure_id = SecureRandom.hex(7) if user.secure_id.nil?
+            user.assign_attributes(
+              first_name: name[0],
+              last_name: name[1],
+              phone_number: user_data["phone_number"].to_i,
+              designation: user_data["designation"],
+              password: "password",
+              date_of_joining: user_data["dateof_joining"],
+              gender: user_data["gender"],
+              status: "true",
+              department: user_data["department"],
+              course: course,
+              branch: branch,
+              user_type: user_data["type"] == "Junior" ? 0 : 1
+            )
+            user.save!
+            user.add_role(:faculty)
           end
-  
-          user.assign_attributes(
-            first_name: name[0],
-            last_name: name[1],
-            phone_number: user_data["phone_number"].to_i,
-            designation: user_data["designation"],
-            password: "password",
-            date_of_joining: user_data["dateof_joining"],
-            gender: user_data["gender"],
-            status: "true",
-            department: user_data["department"],
-            course: course,
-            branch: branch,
-            user_type: user_data["type"] == "Junior" ? 0 : 1
-          )
-
-          user.save!
-          user.add_role(:faculty)
-
           users << user
         end
       rescue ActiveRecord::RecordInvalid => e
@@ -70,7 +80,6 @@ class Importer
         return { message: e.to_s, status: :unprocessable_entity }
       end
     end
-    users.each { |user| user.add_role(:faculty) }
 
     {
       message: "Excel Sheet has been uploaded successfully",

@@ -1,16 +1,44 @@
 class University < ApplicationRecord
 
-  attr_accessor :examination_controller_email, :assistant_exam_controller_email, :academic_head_email, :hod_email, :admin_email, :admin_password, :url
+  attr_accessor :examination_controller_email, :assistant_exam_controller_email, :academic_head_email, :hod_email, :admin_password, :url
 
   validates_presence_of :name
-  after_create :create_tenant
-  after_create :create_doorkeeper_application
-  after_create :create_default_roles
+  after_update :check_status_changed_to_accept
+
+  scope :accepted, -> {where(status: 'accepted')}
+  scope :pending, -> {where(status: 'pending')}
+  scope :rejected, -> {where(status: 'rejected')}
+
+  enum status: {
+    pending: 0,
+    rejected: 1,
+    accepted: 2
+  }
 
   private
 
+  def check_status_changed_to_accept
+    if status == "accepted"
+      create_tenant
+      create_default_roles
+      create_doorkeeper_application
+    end
+  end
+
   def create_tenant
     Apartment::Tenant.create(subdomain)
+    current_tenant = Apartment::Tenant.current
+
+    Apartment::Tenant.switch!(subdomain)
+    user = User.create(
+      email: admin_email,
+      password: "password",
+      status: "true",
+      phone_number: "7890098767"
+    )
+    user.add_role :super_admin
+
+    Apartment::Tenant.switch!(current_tenant)
   end
 
   def create_default_roles

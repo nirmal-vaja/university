@@ -30,6 +30,14 @@ class User < ApplicationRecord
     "Senior": 1
   }
 
+  def update_attributes_if_changes(new_attributes)
+    assign_attributes(new_attributes)
+    changes.each do |attribute, value|
+      self[attribute] = value[0] if self[attribute] == value[1]
+    end
+    save!
+  end
+
   def remove_role_without_deletion(role_name)
     role = Role.find_by_name(role_name)
     roles.delete(role)
@@ -101,6 +109,12 @@ class User < ApplicationRecord
         end
       else
         nil
+      end
+    else
+      Apartment::Tenant.switch!
+      user = User.find_for_authentication(email: email)
+      if user
+        user.valid_password?(password) ? user : nil
       end
     end
   end

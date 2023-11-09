@@ -11,10 +11,6 @@ module Api
         def find_user
           found_user = User.find_by(id: doorkeeper_token[:resource_owner_id])
 
-          if found_user.show
-
-          end
-
           if found_user.present?
             if found_user.show
               render json: {

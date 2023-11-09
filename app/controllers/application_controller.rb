@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
   before_action :set_tenant
 
   protect_from_forgery with: :null_session
-
+  
   protected
 
   def configure_permitted_parameters
@@ -32,6 +32,10 @@ class ApplicationController < ActionController::Base
 
   def set_tenant
     subdomain = params[:subdomain]
-    subdomain.present? ? Apartment::Tenant.switch!(subdomain) : Apartment::Tenant.switch!
+    if params[:admin].present?
+      Apartment::Tenant.switch!
+    else
+      subdomain.present? ? Apartment::Tenant.switch!(subdomain) : Apartment::Tenant.switch!
+    end
   end
 end

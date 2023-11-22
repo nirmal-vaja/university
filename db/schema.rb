@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_03_105227) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_22_100934) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -350,8 +350,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_03_105227) do
     t.string "academic_year"
     t.string "razorpay_order_id"
     t.string "payment_type"
-    t.bigint "certificate_id", null: false
-    t.bigint "fee_detail_id", null: false
+    t.bigint "certificate_id"
+    t.bigint "fee_detail_id"
     t.index ["certificate_id"], name: "index_payments_on_certificate_id"
     t.index ["fee_detail_id"], name: "index_payments_on_fee_detail_id"
     t.index ["student_id"], name: "index_payments_on_student_id"

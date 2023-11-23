@@ -51,11 +51,12 @@ module Api
 
         # Fetching Faculty Names in the assign roles page
         def faculty_names
-          if params[:request_from] == "marks_entry"
-            User.where(show: true).without_role("Examination Controller").without_role("Student Coordinator").without_role("Academic Head").without_role("HOD").with_role(:faculty)
-          else
-            User.where(show: true).with_role(:faculty)
-          end
+          @users =
+            if params[:request_from] == "marks_entry"
+              User.where(show: true).without_role("Examination Controller").without_role("Student Coordinator").without_role("Academic Head").without_role("HOD").with_role(:faculty)
+            else
+              User.where(show: true).with_role(:faculty)
+            end
 
           @users = @users.where(user_params) if params[:user].present?
 

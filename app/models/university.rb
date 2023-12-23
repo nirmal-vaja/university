@@ -26,19 +26,20 @@ class University < ApplicationRecord
   end
 
   def create_tenant
-    Apartment::Tenant.create(subdomain)
-    current_tenant = Apartment::Tenant.current
+    unless Apartment.connection.schema_exists?(subdomain)
+      current_tenant = Apartment::Tenant.current
+      Apartment::Tenant.create(subdomain)
 
-    Apartment::Tenant.switch!(subdomain)
-    user = User.create(
-      email: admin_email,
-      password: "password",
-      status: "true",
-      phone_number: "7890098767"
-    )
-    user.add_role :super_admin
-
-    Apartment::Tenant.switch!(current_tenant)
+      Apartment::Tenant.switch!(subdomain)
+      user = User.create(
+        email: admin_email,
+        password: "password",
+        status: "true",
+        phone_number: "7890098767"
+      )
+      user.add_role :super_admin
+      Apartment::Tenant.switch!(current_tenant)
+    end
   end
 
   def create_default_roles

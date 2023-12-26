@@ -89,7 +89,7 @@ module Api
       end
 
       def certificate_params
-        params.require(:certificate).permit(:name, :amount).to_h
+        params.require(:certificate).permit(:name, :amount, :template).to_h
       end
     end
   end

@@ -23,6 +23,7 @@ class Student < ApplicationRecord
   has_many :certificates, through: :student_certificates
 
   scope :fees_paid, -> {where(fees_paid: true)}
+  scope :fees_unpaid, -> {where(fees_paid: false)}
 
   def generate_otp
     self.otp = [1,2,3,4,5,6,7,8,9].sample(6).join("")

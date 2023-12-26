@@ -7,7 +7,11 @@ module Api
 
       def index
         @students = Student.where(student_params)
-        students = @students.fees_paid
+        students = if params[:unpaid]
+                     @students.fees_paid
+                   else
+                    @students.fees_paid
+                   end
 
         if students
           render json: {

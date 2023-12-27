@@ -7,17 +7,12 @@ module Api
 
       def index
         @students = Student.where(student_params)
-        students = if params[:unpaid] == 'true'
-                     @students.fees_unpaid
-                   else
-                    @students.fees_paid
-                   end
 
-        if students
+        if @students
           render json: {
             message: "Details found",
             data: {
-              students: students
+              students: @students
             }, status: :ok
           }
         else
@@ -237,7 +232,7 @@ module Api
 
       def student_params
         if params["student"].present?
-          params.require(:student).permit(:course_id, :branch_id, :semester_id, :name, :enrollment_number, :barcode, :qrcode, :gender, :father_name, :mother_name, :date_of_birth, :birth_place, :religion, :caste, :nationality, :mother_tongue, :marrital_status, :blood_group, :physically_handicapped, certificate_ids: []).to_h
+          params.require(:student).permit(:course_id, :branch_id, :semester_id, :name, :enrollment_number, :barcode, :qrcode, :gender, :father_name, :mother_name, :date_of_birth, :birth_place, :religion, :caste, :nationality, :mother_tongue, :marrital_status, :blood_group, :physically_handicapped, :fees_paid, certificate_ids: []).to_h
         else 
           {}
         end

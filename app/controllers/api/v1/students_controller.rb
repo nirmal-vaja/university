@@ -7,8 +7,8 @@ module Api
 
       def index
         @students = Student.where(student_params)
-        students = if params[:unpaid]
-                     @students.fees_paid
+        students = if params[:unpaid] == 'true'
+                     @students.fees_unpaid
                    else
                     @students.fees_paid
                    end

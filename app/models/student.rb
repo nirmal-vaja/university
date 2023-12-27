@@ -31,6 +31,40 @@ class Student < ApplicationRecord
     save
   end
 
+  def move_to_next_semester
+    student_branch = branch
+    current_semester = semester
+
+    next_semester_name =
+      if current_semester.name.to_i == student_branch.semesters.count
+        current_semester.name
+      else
+        current_semester.name.to_i + 1
+      end
+
+    next_semester = student_branch.semesters.find_by_name(next_semester_name)
+    if next_semester
+      self.update(semester_id: next_semester.id, fees_paid: false)
+    end
+  end
+
+  def drag_to_previous_semester
+    student_branch = branch
+    current_semester = semester
+
+    previous_semester_name =
+      if current_semester.name.to_i == 1
+        current_semester.name
+      else
+        current_semester.name.to_i - 1
+      end
+
+    previous_semester = student_branch.semesters.find_by_name(previous_semester_name)
+    if previous_semester
+      self.update(semester_id: previous_semester.id,  fees_paid: false)
+    end
+  end
+
   def mobile_number
     contact_detail.mobile_number
   end

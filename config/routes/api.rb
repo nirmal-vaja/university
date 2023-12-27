@@ -106,6 +106,7 @@ namespace :api do
 
       collection do
         get :find_student_by_auth_token
+        put :update_student_mass_operation
       end
 
       resources :payments, only: [:create, :index, :show]

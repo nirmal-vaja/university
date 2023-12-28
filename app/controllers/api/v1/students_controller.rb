@@ -303,7 +303,7 @@ module Api
       end
 
       def student_params_for_update
-        params.require(:students).params.permit(students: [:id, :course_id, :branch_id, :semester_id, :name, :enrollment_number, :barcode, :qrcode, :gender, :father_name, :mother_name, :date_of_birth, :birth_place, :religion, :caste, :nationality, :mother_tongue, :marrital_status, :blood_group, :physically_handicapped, :fees_paid])
+        params.permit(students: [:id, :course_id, :branch_id, :semester_id, :name, :enrollment_number, :barcode, :qrcode, :gender, :father_name, :mother_name, :date_of_birth, :birth_place, :religion, :caste, :nationality, :mother_tongue, :marrital_status, :blood_group, :physically_handicapped, :fees_paid]).require(:students)
       end
     end
   end

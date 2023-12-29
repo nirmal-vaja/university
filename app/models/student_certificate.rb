@@ -1,4 +1,5 @@
 class StudentCertificate < ApplicationRecord
+  include Rails.application.routes.url_helpers
   belongs_to :certificate
   belongs_to :student
 
@@ -15,7 +16,8 @@ class StudentCertificate < ApplicationRecord
       certificate: certificate,
       student: student,
       requested_date: created_at.strftime("%d-%m-%Y"),
-      approval_date: updated_at.strftime("%d-%m-%Y")
+      approval_date: updated_at.strftime("%d-%m-%Y"),
+      template: certificate.template.present? ? url_for(certificate.template) : ''
     )
   end
 end

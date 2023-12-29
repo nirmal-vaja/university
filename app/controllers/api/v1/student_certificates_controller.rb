@@ -3,12 +3,7 @@ module Api
     class StudentCertificatesController < ApiController
 
       def index
-        @student_certificates = 
-          if params["student_certificate"].present?
-            StudentCertificate.where(student_certificate_params)
-          else
-            StudentCertificate.pending
-          end
+        @student_certificates = StudentCertificate.order(id: :desc)
 
         if @student_certificates
           render json: {

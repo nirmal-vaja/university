@@ -350,11 +350,21 @@ class Importer
           }
         end
 
+        division = semester.divisions.find_by_name(student_data["division"])
+
+        unless division
+          return {
+            message: "Division - #{student_data["division"]} not found in #{course.name} #{branch.name} #{semester.name}",
+            status: :unprocessable_entity
+          }
+        end
+
         student = Student.find_or_initialize_by(enrollment_number: student_data["enrollment_number"].to_i.to_s)
 
         student.course_id = course.id
         student.branch_id = branch.id
         student.semester_id = semester.id
+        student.division_id = division.id
         student.name = student_data["name"]
         student.fees_paid = student_data["fees_paid"].to_i === 0 ? false : true
         student.gender = student_data["gender"]

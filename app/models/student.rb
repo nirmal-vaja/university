@@ -11,6 +11,7 @@ class Student < ApplicationRecord
   belongs_to :course
   belongs_to :branch
   belongs_to :semester
+  belongs_to :division
 
   has_one :contact_detail, dependent: :destroy
   has_one :address_detail, dependent: :destroy

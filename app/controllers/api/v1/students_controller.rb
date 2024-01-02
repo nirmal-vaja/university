@@ -268,7 +268,7 @@ module Api
 
       def student_params
         if params["student"].present?
-          params.require(:student).permit(:course_id, :branch_id, :semester_id, :name, :enrollment_number, :barcode, :qrcode, :gender, :father_name, :mother_name, :date_of_birth, :birth_place, :religion, :caste, :nationality, :mother_tongue, :marrital_status, :blood_group, :physically_handicapped, :fees_paid, certificate_ids: []).to_h
+          params.require(:student).permit(:course_id, :branch_id, :semester_id, :division_id, :name, :enrollment_number, :barcode, :qrcode, :gender, :father_name, :mother_name, :date_of_birth, :birth_place, :religion, :caste, :nationality, :mother_tongue, :marrital_status, :blood_group, :physically_handicapped, :fees_paid, certificate_ids: []).to_h
         else 
           {}
         end

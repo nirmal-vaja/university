@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_22_100934) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_02_053041) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -447,8 +447,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_22_100934) do
     t.boolean "physically_handicapped", default: false
     t.string "otp"
     t.datetime "otp_generated_at"
+    t.bigint "division_id", null: false
     t.index ["branch_id"], name: "index_students_on_branch_id"
     t.index ["course_id"], name: "index_students_on_course_id"
+    t.index ["division_id"], name: "index_students_on_division_id"
     t.index ["semester_id"], name: "index_students_on_semester_id"
   end
 
@@ -629,6 +631,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_22_100934) do
   add_foreign_key "student_marks", "subjects"
   add_foreign_key "students", "branches"
   add_foreign_key "students", "courses"
+  add_foreign_key "students", "divisions"
   add_foreign_key "students", "semesters"
   add_foreign_key "subjects", "branches"
   add_foreign_key "subjects", "courses"

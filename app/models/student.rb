@@ -44,8 +44,10 @@ class Student < ApplicationRecord
       end
 
     next_semester = student_branch.semesters.find_by_name(next_semester_name)
+    next_division = next_semester.divisions.find_by(name: division.name)
+
     if next_semester
-      self.update(semester_id: next_semester.id, fees_paid: false)
+      self.update(semester_id: next_semester.id, fees_paid: false, division_id: next_division.id)
     end
   end
 
@@ -61,8 +63,10 @@ class Student < ApplicationRecord
       end
 
     previous_semester = student_branch.semesters.find_by_name(previous_semester_name)
+    previous_division = previous_semester.divisions.find_by(name: division.name)
+
     if previous_semester
-      self.update(semester_id: previous_semester.id,  fees_paid: false)
+      self.update(semester_id: previous_semester.id,  fees_paid: false, division_id: previous_division.id)
     end
   end
 

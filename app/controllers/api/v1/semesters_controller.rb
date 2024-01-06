@@ -8,7 +8,7 @@ module Api
         @semesters = Semester.where(branch_id: params[:branch_id])
 
         if params[:ids].present?
-          @semesters = @semesters.where(id: params[:ids])
+          @semesters = @semesters.where(id: params[:ids].split(","))
         end
 
         render json: {

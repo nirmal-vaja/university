@@ -7,13 +7,12 @@ module Api
 
       def index
         @students = Student.where(student_params)
-        students = @students.fees_paid
 
-        if students
+        if @students
           render json: {
             message: "Details found",
             data: {
-              students: students
+              students: @students
             }, status: :ok
           }
         else
@@ -146,6 +145,42 @@ module Api
         end
       end
 
+      def update_student_mass_operation
+        begin
+          Student.transaction do
+            ids = []
+            student_params_for_update.each do |student|
+              student_to_update = Student.find_by_id(student[:id])
+              ids << student[:id]
+
+              if params[:operation] == "next_semester"
+                student_to_update.move_to_next_semester
+              else
+                student_to_update.drag_to_previous_semester
+              end
+            end
+            @students = Student.where(id: ids)
+          end
+        rescue ActiveRecord::RecordNotFound
+          render json: {
+            message: "Details not found",
+            status: 404
+          }
+        rescue ActiveRecord::RecordInvalid => exception
+          render json: {
+            message: exception,
+            status: :unprocessable_entity
+          }
+        end
+        if @students
+          render json: {
+            data: {
+              students: @students
+            }, status: :ok
+          }
+        end
+      end
+
       def otp_login
         if @student.nil?
           render json: {
@@ -233,7 +268,7 @@ module Api
 
       def student_params
         if params["student"].present?
-          params.require(:student).permit(:course_id, :branch_id, :semester_id, :name, :enrollment_number, :barcode, :qrcode, :gender, :father_name, :mother_name, :date_of_birth, :birth_place, :religion, :caste, :nationality, :mother_tongue, :marrital_status, :blood_group, :physically_handicapped, certificate_ids: []).to_h
+          params.require(:student).permit(:course_id, :branch_id, :semester_id, :division_id, :name, :enrollment_number, :barcode, :qrcode, :gender, :father_name, :mother_name, :date_of_birth, :birth_place, :religion, :caste, :nationality, :mother_tongue, :marrital_status, :blood_group, :physically_handicapped, :fees_paid, certificate_ids: []).to_h
         else 
           {}
         end
@@ -265,6 +300,10 @@ module Api
 
       def student_certificate_params
         params.require(:student_certificate).permit(:number_of_copy, :amount, :certificate_id, :reason).to_h
+      end
+
+      def student_params_for_update
+        params.permit(students: [:id, :course_id, :branch_id, :semester_id, :name, :enrollment_number, :barcode, :qrcode, :gender, :father_name, :mother_name, :date_of_birth, :birth_place, :religion, :caste, :nationality, :mother_tongue, :marrital_status, :blood_group, :physically_handicapped, :fees_paid]).require(:students)
       end
     end
   end

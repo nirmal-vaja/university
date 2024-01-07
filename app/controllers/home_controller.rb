@@ -6,7 +6,7 @@ class HomeController < ApplicationController
     current_tenant = Apartment::Tenant.current
     Apartment::Tenant.switch!
     doorkeeper_client = Doorkeeper::Application.first
-    Apartment::Tenant.swithc!(current_tenant)
+    Apartment::Tenant.switch!(current_tenant)
 
     render json: {
       doorkeeper: {

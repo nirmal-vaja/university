@@ -62,7 +62,7 @@ module Api
       end
 
       def destroy
-        if @Certificate
+        if @certificate
           if @certificate.destroy
             render json: {
               message: "Successfully deleted",
@@ -89,9 +89,8 @@ module Api
       end
 
       def certificate_params
-        params.require(:certificate).permit(:name, :amount).to_h
+        params.require(:certificate).permit(:name, :amount, :template).to_h
       end
-
     end
   end
 end

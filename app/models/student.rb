@@ -11,6 +11,7 @@ class Student < ApplicationRecord
   belongs_to :course
   belongs_to :branch
   belongs_to :semester
+  belongs_to :division
 
   has_one :contact_detail, dependent: :destroy
   has_one :address_detail, dependent: :destroy
@@ -23,11 +24,50 @@ class Student < ApplicationRecord
   has_many :certificates, through: :student_certificates
 
   scope :fees_paid, -> {where(fees_paid: true)}
+  scope :fees_unpaid, -> {where(fees_paid: false)}
 
   def generate_otp
     self.otp = [1,2,3,4,5,6,7,8,9].sample(6).join("")
     self.otp_generated_at = Time.current
     save
+  end
+
+  def move_to_next_semester
+    student_branch = branch
+    current_semester = semester
+
+    next_semester_name =
+      if current_semester.name.to_i == student_branch.semesters.count
+        current_semester.name
+      else
+        current_semester.name.to_i + 1
+      end
+
+    next_semester = student_branch.semesters.find_by_name(next_semester_name)
+    next_division = next_semester.divisions.find_by(name: division.name)
+
+    if next_semester
+      self.update(semester_id: next_semester.id, fees_paid: false, division_id: next_division.id)
+    end
+  end
+
+  def drag_to_previous_semester
+    student_branch = branch
+    current_semester = semester
+
+    previous_semester_name =
+      if current_semester.name.to_i == 1
+        current_semester.name
+      else
+        current_semester.name.to_i - 1
+      end
+
+    previous_semester = student_branch.semesters.find_by_name(previous_semester_name)
+    previous_division = previous_semester.divisions.find_by(name: division.name)
+
+    if previous_semester
+      self.update(semester_id: previous_semester.id,  fees_paid: false, division_id: previous_division.id)
+    end
   end
 
   def mobile_number

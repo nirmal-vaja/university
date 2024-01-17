@@ -7,4 +7,5 @@ class TimeTableBlockWiseReport < ApplicationRecord
 
   validates_presence_of :no_of_students
 
+  has_many :blocks, dependent: :destroy
 end

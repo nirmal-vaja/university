@@ -16,6 +16,12 @@ namespace :api do
       end
     end
 
+    resources :blocks do
+      collection do
+        post :assign_students
+      end
+    end
+
     scope :users, module: :users do
       post '/', to: 'registrations#create', as: :user_registration
       resources :users, only: [:index] do

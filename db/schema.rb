@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_02_053041) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_16_124016) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -61,6 +61,23 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_02_053041) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["student_id"], name: "index_address_details_on_student_id"
+  end
+
+  create_table "blocks", force: :cascade do |t|
+    t.bigint "time_table_block_wise_report_id", null: false
+    t.string "name"
+    t.string "academic_year"
+    t.string "examination_name"
+    t.bigint "course_id", null: false
+    t.bigint "branch_id", null: false
+    t.bigint "semester_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "block_type"
+    t.index ["branch_id"], name: "index_blocks_on_branch_id"
+    t.index ["course_id"], name: "index_blocks_on_course_id"
+    t.index ["semester_id"], name: "index_blocks_on_semester_id"
+    t.index ["time_table_block_wise_report_id"], name: "index_blocks_on_time_table_block_wise_report_id"
   end
 
   create_table "branches", force: :cascade do |t|
@@ -173,6 +190,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_02_053041) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "maximum_marks"
+    t.integer "max_studentsper_block"
   end
 
   create_table "excel_sheets", force: :cascade do |t|
@@ -377,12 +395,58 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_02_053041) do
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource"
   end
 
+  create_table "room_blocks", force: :cascade do |t|
+    t.bigint "block_id", null: false
+    t.bigint "room_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "examination_name"
+    t.string "academic_year"
+    t.bigint "course_id", null: false
+    t.bigint "branch_id", null: false
+    t.date "date"
+    t.string "time"
+    t.index ["block_id"], name: "index_room_blocks_on_block_id"
+    t.index ["branch_id"], name: "index_room_blocks_on_branch_id"
+    t.index ["course_id"], name: "index_room_blocks_on_course_id"
+    t.index ["room_id"], name: "index_room_blocks_on_room_id"
+  end
+
+  create_table "rooms", force: :cascade do |t|
+    t.bigint "course_id", null: false
+    t.bigint "branch_id", null: false
+    t.string "floor"
+    t.integer "room_number"
+    t.string "capacity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["branch_id"], name: "index_rooms_on_branch_id"
+    t.index ["course_id"], name: "index_rooms_on_course_id"
+  end
+
   create_table "semesters", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "branch_id", null: false
     t.index ["branch_id"], name: "index_semesters_on_branch_id"
+  end
+
+  create_table "student_blocks", force: :cascade do |t|
+    t.bigint "block_id", null: false
+    t.bigint "student_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "examination_name"
+    t.string "academic_year"
+    t.bigint "course_id", null: false
+    t.bigint "branch_id", null: false
+    t.bigint "semester_id", null: false
+    t.index ["block_id"], name: "index_student_blocks_on_block_id"
+    t.index ["branch_id"], name: "index_student_blocks_on_branch_id"
+    t.index ["course_id"], name: "index_student_blocks_on_course_id"
+    t.index ["semester_id"], name: "index_student_blocks_on_semester_id"
+    t.index ["student_id"], name: "index_student_blocks_on_student_id"
   end
 
   create_table "student_certificates", force: :cascade do |t|
@@ -507,8 +571,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_02_053041) do
 
   create_table "time_table_block_wise_reports", force: :cascade do |t|
     t.bigint "exam_time_table_id", null: false
-    t.integer "rooms"
-    t.integer "blocks"
+    t.integer "number_of_blocks"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "academic_year"
@@ -579,6 +642,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_02_053041) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "address_details", "students"
+  add_foreign_key "blocks", "branches"
+  add_foreign_key "blocks", "courses"
+  add_foreign_key "blocks", "semesters"
+  add_foreign_key "blocks", "time_table_block_wise_reports"
   add_foreign_key "branches", "courses"
   add_foreign_key "configs", "branches"
   add_foreign_key "configs", "courses"
@@ -620,7 +687,18 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_02_053041) do
   add_foreign_key "payments", "fee_details"
   add_foreign_key "payments", "students"
   add_foreign_key "role_emails", "roles"
+  add_foreign_key "room_blocks", "blocks"
+  add_foreign_key "room_blocks", "branches"
+  add_foreign_key "room_blocks", "courses"
+  add_foreign_key "room_blocks", "rooms"
+  add_foreign_key "rooms", "branches"
+  add_foreign_key "rooms", "courses"
   add_foreign_key "semesters", "branches"
+  add_foreign_key "student_blocks", "blocks"
+  add_foreign_key "student_blocks", "branches"
+  add_foreign_key "student_blocks", "courses"
+  add_foreign_key "student_blocks", "semesters"
+  add_foreign_key "student_blocks", "students"
   add_foreign_key "student_certificates", "certificates"
   add_foreign_key "student_certificates", "students"
   add_foreign_key "student_marks", "branches"

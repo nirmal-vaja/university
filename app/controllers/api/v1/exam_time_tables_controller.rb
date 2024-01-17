@@ -5,16 +5,22 @@ module Api
       before_action :fetch_time_tables, only: [:index, :get_examination_dates]
 
       def index
+        page = params[:page] || 1
+        items_per_page = params[:items_per_page]
         time_tables = @exam_time_tables.map do |time_table|
+          @students = Student.where(branch_id: time_table.branch_id, semester_id: time_table.semester_id,fees_paid: true)
           time_table.attributes.merge({
             subject_name: time_table.subject_name,
-            subject_code: time_table.subject_code,
+            subject_code: time_table.subject_code
           })
         end
+        @pagy, @students = pagy(@students, page: page, items: items_per_page)
         render json: {
           message: "Successfully fetched all the time tables",
           data: {
-            time_tables: time_tables
+            time_tables: time_tables,
+            students: @students,
+            pagy: pagy_metadata(@pagy)
           }, status: :ok
         }
       end
@@ -27,12 +33,15 @@ module Api
         authorize @exam_time_table
         
         if @exam_time_table.save
-          render json: {
-            message: "Time table has been created",
-            data: {
-              time_table: @exam_time_table
-            }, status: :created
-          }
+          if @exam_time_table.create_block_details
+            render json: {
+              message: "Time table has been created",
+              data: {
+                time_table: @exam_time_table,
+                block_details: @exam_time_table.time_table_block_wise_reports
+              }, status: :created
+            }
+          end
         else
           render json: {
             message: @exam_time_table.errors.full_messages.join(' '),

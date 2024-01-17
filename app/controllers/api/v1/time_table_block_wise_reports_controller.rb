@@ -58,7 +58,6 @@ module Api
         @report.semester = @report.exam_time_table.semester
 
         equation = @report.no_of_students.to_f / 30
-        @report.rooms = equation.ceil()
         @report.blocks = equation.ceil()
 
         if @report.save
@@ -79,7 +78,6 @@ module Api
       def update
         @report.no_of_students = params[:report][:no_of_students]
         equation = @report.no_of_students.to_f / 30
-        @report.rooms = equation.ceil()
         @report.blocks = equation.ceil()
 
         if @report.save

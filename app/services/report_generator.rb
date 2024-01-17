@@ -16,7 +16,6 @@ class ReportGenerator
     @exam_time_tables.each do |time_table|
       report = TimeTableBlockWiseReport.new(
         exam_time_table_id: time_table.id,
-        rooms: equation.ceil(),
         blocks: equation.ceil(),
         academic_year: @academic_year
       )

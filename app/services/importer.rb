@@ -5,23 +5,23 @@ class Importer
     @excel_sheet_id = excel_sheet_id
   end
 
-  def create_rooms
-    excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
+  # def create_rooms
+  #   excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
 
-    return { message: "Excel sheet not found", status: :unprocessable_entity } unless excel_sheet&.sheet.attached?
+  #   return { message: "Excel sheet not found", status: :unprocessable_entity } unless excel_sheet&.sheet.attached?
 
-    data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
-    headers = []
-    i = 0
-    while headers.compact.empty? 
-      headers = data.row(i).compact.{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
-      i += 1
-    end
+  #   data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
+  #   headers = []
+  #   i = 0
+  #   while headers.compact.empty? 
+  #     headers = data.row(i).compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
+  #     i += 1
+  #   end
 
-    rooms = []
+  #   rooms = []
 
-    data
-  end
+  #   data
+  # end
 
   def create_faculty_details
     excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)

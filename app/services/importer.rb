@@ -5,23 +5,69 @@ class Importer
     @excel_sheet_id = excel_sheet_id
   end
 
-  # def create_rooms
-  #   excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
+  def create_rooms
+    excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)
+    
+    return { message: 'Excel sheet not found', status: :unprocessable_entity } unless excel_sheet&.sheet.attached?
 
-  #   return { message: "Excel sheet not found", status: :unprocessable_entity } unless excel_sheet&.sheet.attached?
+    data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
+    headers = []
+    i = 0
+    while headers.compact.empty?
+      headers = data.row(i).compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
+      i += 1
+    end
 
-  #   data = Roo::Spreadsheet.open(create_temp_file(excel_sheet.id))
-  #   headers = []
-  #   i = 0
-  #   while headers.compact.empty? 
-  #     headers = data.row(i).compact.map{ |header| header.gsub(/\s+/, '') }.map(&:underscore)
-  #     i += 1
-  #   end
+    rooms = []
 
-  #   rooms = []
+    data.each_with_index do |row, idx|
+      next if row.include?(nil) || row[1].gsub(/\s+/, '').underscore == headers[1]
 
-  #   data
-  # end
+      room_data = Hash[[headers, row].transpose]
+
+      begin
+        ActiveRecord::Base.transaction do
+          course = Course.find_by_name(room_data["course"])
+          branch = Branch.find_by_name(room_data["department"])
+
+          if course.nil?
+            return {message: "#{room_data['course']} not found", status: :unprocessable_entity}
+          end
+
+          if branch.nil?
+            return {message: "#{room_data['department']} not found", status: :unprocessable_entity}
+          end
+
+          room = Room.find_or_initialize_by(
+            course_id: course.id,
+            branch_id: branch.id,
+            floor: room_data["floor"].to_i.to_s,
+            room_number: room_data["room_number"].to_i.to_s
+          )
+          if room.persisted?
+            room.update_attributes_if_changes(
+              capacity: room_data["capacity"]
+            )
+          else
+            room.assign_attributes(capacity: room_data["capacity"].to_i.to_s)
+            room.save!
+          end
+          rooms << room
+        end
+      rescue ActiveRecord::RecordInvalid => e
+        return { message: room.errors.full_messages.join(' '), status: :unprocessable_entity }
+      rescue StandardError => e
+        return { message: e.to_s, status: :unprocessable_entity }
+      end
+    end
+
+    {
+      message: "Excel Sheet has been uploaded successfully",
+      data: {
+        rooms: rooms.compact
+      }, status: :created
+    }
+  end
 
   def create_faculty_details
     excel_sheet = ExcelSheet.find_by_id(@excel_sheet_id)

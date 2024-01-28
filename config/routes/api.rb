@@ -17,8 +17,20 @@ namespace :api do
     end
 
     resources :blocks do
-      collection do
+      member do
         post :assign_students
+      end
+      
+      collection do
+        get :fetch_blocks_date_wise
+      end
+    end
+
+    resources :block_extra_configs
+
+    resources :rooms do
+      member do
+        post :assign_block
       end
     end
 
@@ -73,6 +85,9 @@ namespace :api do
 
       collection do
         get :get_examination_dates
+        get :fetch_subjects
+        get :fetch_blocks
+        get :fetch_students
       end
     end
 

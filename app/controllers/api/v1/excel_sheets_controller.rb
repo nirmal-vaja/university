@@ -71,6 +71,8 @@ module Api
         excel_sheet = ExcelSheet.find_by_id(excel_sheet_id)
 
         case excel_sheet.name
+        when "Room Details"
+          Importer.new(excel_sheet.id).create_rooms
         when "Faculty Details"
           Importer.new(excel_sheet.id).create_faculty_details
         when "Course and Semester Details"

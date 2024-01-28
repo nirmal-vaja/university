@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_16_124016) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_28_081847) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -63,21 +63,42 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_124016) do
     t.index ["student_id"], name: "index_address_details_on_student_id"
   end
 
+  create_table "block_extra_configs", force: :cascade do |t|
+    t.string "examination_name"
+    t.string "academic_year"
+    t.bigint "course_id", null: false
+    t.date "date"
+    t.string "time"
+    t.integer "number_of_extra_jr_supervision", default: 0
+    t.integer "number_of_extra_sr_supervision", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "examination_type"
+    t.integer "number_of_supervisions"
+    t.index ["course_id"], name: "index_block_extra_configs_on_course_id"
+  end
+
   create_table "blocks", force: :cascade do |t|
-    t.bigint "time_table_block_wise_report_id", null: false
     t.string "name"
     t.string "academic_year"
     t.string "examination_name"
     t.bigint "course_id", null: false
     t.bigint "branch_id", null: false
-    t.bigint "semester_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "block_type"
+    t.integer "capacity"
+    t.integer "number_of_students"
+    t.bigint "exam_time_table_id", null: false
+    t.date "date"
+    t.string "time"
+    t.bigint "subject_id", null: false
+    t.bigint "block_extra_config_id"
+    t.index ["block_extra_config_id"], name: "index_blocks_on_block_extra_config_id"
     t.index ["branch_id"], name: "index_blocks_on_branch_id"
     t.index ["course_id"], name: "index_blocks_on_course_id"
-    t.index ["semester_id"], name: "index_blocks_on_semester_id"
-    t.index ["time_table_block_wise_report_id"], name: "index_blocks_on_time_table_block_wise_report_id"
+    t.index ["exam_time_table_id"], name: "index_blocks_on_exam_time_table_id"
+    t.index ["subject_id"], name: "index_blocks_on_subject_id"
   end
 
   create_table "branches", force: :cascade do |t|
@@ -406,6 +427,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_124016) do
     t.bigint "branch_id", null: false
     t.date "date"
     t.string "time"
+    t.string "examination_type"
     t.index ["block_id"], name: "index_room_blocks_on_block_id"
     t.index ["branch_id"], name: "index_room_blocks_on_branch_id"
     t.index ["course_id"], name: "index_room_blocks_on_course_id"
@@ -441,11 +463,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_124016) do
     t.string "academic_year"
     t.bigint "course_id", null: false
     t.bigint "branch_id", null: false
-    t.bigint "semester_id", null: false
     t.index ["block_id"], name: "index_student_blocks_on_block_id"
     t.index ["branch_id"], name: "index_student_blocks_on_branch_id"
     t.index ["course_id"], name: "index_student_blocks_on_course_id"
-    t.index ["semester_id"], name: "index_student_blocks_on_semester_id"
     t.index ["student_id"], name: "index_student_blocks_on_student_id"
   end
 
@@ -642,10 +662,12 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_124016) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "address_details", "students"
+  add_foreign_key "block_extra_configs", "courses"
+  add_foreign_key "blocks", "block_extra_configs"
   add_foreign_key "blocks", "branches"
   add_foreign_key "blocks", "courses"
-  add_foreign_key "blocks", "semesters"
-  add_foreign_key "blocks", "time_table_block_wise_reports"
+  add_foreign_key "blocks", "exam_time_tables"
+  add_foreign_key "blocks", "subjects"
   add_foreign_key "branches", "courses"
   add_foreign_key "configs", "branches"
   add_foreign_key "configs", "courses"
@@ -697,7 +719,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_124016) do
   add_foreign_key "student_blocks", "blocks"
   add_foreign_key "student_blocks", "branches"
   add_foreign_key "student_blocks", "courses"
-  add_foreign_key "student_blocks", "semesters"
   add_foreign_key "student_blocks", "students"
   add_foreign_key "student_certificates", "certificates"
   add_foreign_key "student_certificates", "students"

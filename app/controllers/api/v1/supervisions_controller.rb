@@ -33,7 +33,13 @@ module Api
         if @dates_to_assign.present?
           @dates_to_assign.each do |date|
             date = date.strftime("%Y-%m-%d")
-            no_of_blocks = ExamTimeTable.where(date: date).map{|x| x.time_table_block_wise_reports&.pluck(:number_of_blocks).compact.sum}.compact.sum
+            block_extra_config = BlockExtraConfig.where(block_extra_config_params).find_by(date: date)
+            no_of_blocks = 
+            if @supervision.list_type.downcase === "junior"
+              block_extra_config.number_of_supervisions + block_extra_config.number_of_extra_jr_supervision
+            else
+              block_extra_config.number_of_extra_sr_supervision
+            end
             supervision = Supervision.where("metadata LIKE ?", "%#{date}%")
   
             if supervision.count < no_of_blocks
@@ -44,6 +50,7 @@ module Api
           end
         end
         @supervision.metadata = metadata
+        binding.pry
         authorize @supervision
         if @supervision.metadata.present?
           if @supervision.save
@@ -82,7 +89,13 @@ module Api
         metadata = {}
         if @dates_to_assign.present?
           @dates_to_assign.each do |date|
-            no_of_blocks = ExamTimeTable.where(date: date).map{|x| x.time_table_block_wise_reports&.pluck(:number_of_blocks).compact.sum}.compact.sum
+            block_extra_config = BlockExtraConfig.where(block_extra_config_params).find_by(date: date)
+            no_of_blocks = 
+            if @supervision.list_type.downcase === "junior"
+              block_extra_config.number_of_supervisions + block_extra_config.number_of_extra_jr_supervision
+            else
+              block_extra_config.number_of_extra_sr_supervision
+            end
             supervisions = Supervision.where("metadata LIKE ?", "%#{date}%")
             if supervisions.count < no_of_blocks || supervisions.pluck(:id).include?(@supervision.id)
               @supervision.metadata[date] = true
@@ -91,6 +104,8 @@ module Api
             end
           end
         end
+
+        binding.pry
         
         if @supervision.metadata.present?
           if @supervision.update(supervision_params)
@@ -113,52 +128,6 @@ module Api
           }
         end
       end
-
-      # def update
-      #   @supervision = Supervision.find_by_id(params[:id])
-      #   unless params["branch_id"]
-      #     @supervision.branch_id = @supervision.user.branch.id
-      #   end
-      #   @supervision.metadata = params["supervision"]["metadata"]
-        
-      #   authorize @supervision
-      #   if @supervision.metadata
-      #     if @supervision.metadata.count <= @supervision.no_of_supervisions
-      #       if @supervision.update(supervision_params)
-      #         render json: {
-      #           message: "Supervision Altered",
-      #           data: {
-      #             supervision: @supervision
-      #           }, status: :ok
-      #         }
-      #       else
-      #         render json: {
-      #           message: @supervision.errors.full_messages.join(', '),
-      #           status: :unprocessable_entity
-      #         }
-      #       end
-      #     else
-      #       render json: {
-      #         message: "You can't assign more than #{@supervision.no_of_supervisions}!",
-      #         status: :unprocessable_entity
-      #       }
-      #     end
-      #   else
-      #     if @supervision.update(supervision_params)
-      #       render json: {
-      #         message: "Supervision Altered",
-      #         data: {
-      #           supervision: @supervision
-      #         }, status: :ok
-      #       }
-      #     else
-      #       render json: {
-      #         message: @supervision.errors.full_messages.join(', '),
-      #         status: :unprocessable_entity
-      #       }
-      #     end
-      #   end
-      # end
 
       def fetch_details
         user = User.find_by_id(params[:id])
@@ -215,6 +184,10 @@ module Api
 
       def supervision_params
         params.require(:supervision).permit(:examination_name, :academic_year, :metadata, :list_type, :user_id, :no_of_supervisions, :course_id, :branch_id, :semester_id, :date, :time, :supervision_type).to_h
+      end
+
+      def block_extra_config_params
+        params.require(:block_extra_config).permit(:examination_name, :examination_type, :academic_year, :course_id, :time)
       end
 
       def time_table_params

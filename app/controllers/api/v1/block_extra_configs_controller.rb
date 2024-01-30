@@ -35,7 +35,7 @@ class Api::V1::BlockExtraConfigsController < ApiController
   end
 
   def update
-    if @block_extra_config.update_attributes_if_changes(block_extra_configs_params)
+    if @block_extra_config.update(block_extra_configs_params)
       render json: {
         message: "Operation Successfull",
         data: {

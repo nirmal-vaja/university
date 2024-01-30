@@ -50,7 +50,6 @@ module Api
           end
         end
         @supervision.metadata = metadata
-        binding.pry
         authorize @supervision
         if @supervision.metadata.present?
           if @supervision.save
@@ -105,7 +104,6 @@ module Api
           end
         end
 
-        binding.pry
         
         if @supervision.metadata.present?
           if @supervision.update(supervision_params)

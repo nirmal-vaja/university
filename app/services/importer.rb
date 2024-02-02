@@ -46,10 +46,10 @@ class Importer
           )
           if room.persisted?
             room.update_attributes_if_changes(
-              capacity: room_data["capacity"]
+              capacity: room_data["capacity"].to_i
             )
           else
-            room.assign_attributes(capacity: room_data["capacity"].to_i.to_s)
+            room.assign_attributes(capacity: room_data["capacity"].to_i)
             room.save!
           end
           rooms << room

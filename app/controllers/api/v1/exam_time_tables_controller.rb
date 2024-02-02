@@ -1,7 +1,7 @@
 
 class Api::V1::ExamTimeTablesController < ApiController
   before_action :set_time_table, only: [:update, :destroy]
-  before_action :fetch_time_tables, only: [:index, :get_examination_dates]
+  before_action :fetch_time_tables, only: [:index]
 
   def index
     page = params[:page] || 1
@@ -84,6 +84,8 @@ class Api::V1::ExamTimeTablesController < ApiController
   end
 
   def get_examination_dates
+    @exam_time_tables = ExamTimeTable.where(time_table_params.except(:date))
+
     if @exam_time_tables
       render json: {
         message: "Examination dates are as below",
@@ -172,8 +174,8 @@ class Api::V1::ExamTimeTablesController < ApiController
   def fetch_blocks
     @blocks = Block.includes(:students, :student_blocks)
                 .where(block_params)
+                .order(name: :asc)
                 .select{ |block| block.students.count < block.capacity }
-
     if @blocks
       render json: {
         message: "Blocks found",
@@ -259,7 +261,11 @@ class Api::V1::ExamTimeTablesController < ApiController
       return 'A' unless current_block
       return current_block.succ
     end
-    current_block.nil? ? (max_block.succ) : (current_block.succ if current_block < max_block)
+
+    return max_block.succ unless current_block
+    current_block.succ.upto(max_block) do |name|
+      return name unless Block.exists?(date: @exam_time_table.date, name: name)
+    end
   end
 
   def find_maximum_students_per_block

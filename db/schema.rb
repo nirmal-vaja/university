@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_28_081847) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_02_071905) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -439,9 +439,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_28_081847) do
     t.bigint "branch_id", null: false
     t.string "floor"
     t.integer "room_number"
-    t.string "capacity"
+    t.integer "capacity", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "occupied", default: 0
     t.index ["branch_id"], name: "index_rooms_on_branch_id"
     t.index ["course_id"], name: "index_rooms_on_course_id"
   end

@@ -3,7 +3,24 @@ class Api::V1::RoomsController < ApiController
   before_action :set_room, only: %i[assign_block]
 
   def index
-    @rooms = Room.where(room_params)
+    @rooms = Room.where(room_params).where.not('capacity = occupied')
+    if @rooms
+      render json: {
+        message: "Rooms found",
+        data: {
+          rooms: @rooms
+        }, status: :ok
+      }
+    else
+      render json: {
+        message: "Rooms not found",
+        status: :unprocessable_entity
+      }
+    end
+  end
+
+  def fetch_room
+    @rooms = Room.where(room_params).where('capacity != occupied')
 
     if @rooms
       render json: {
@@ -22,7 +39,15 @@ class Api::V1::RoomsController < ApiController
 
   def assign_block
     @room_block = @room.room_blocks.new(room_block_params)
-    
+
+    if @room.occupied + @room_block.block.number_of_students > @room.capacity
+      render json: {
+        message: "Assigning this block would exceed the room capacity, Remaining Capacity : #{@room.capacity - @room.occupied}",
+        status: :unprocessable_entity
+      }
+      return
+    end
+
     if @room_block.save
       render json: {
         message: "Block has been assigned to the room",

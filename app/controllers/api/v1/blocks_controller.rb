@@ -3,12 +3,9 @@ class Api::V1::BlocksController < ApiController
   before_action :set_block, only: %i[assign_students]
 
   def index
-    # @blocks = Block
-    #             .where(block_params)
-    #             .select{ |block| block.number_of_students < block.capacity }
-    @blocks = Block.left_outer_joins(:rooms).where(block_params).where(rooms: { id: nil })
+    @blocks = Block.joins(:subject).left_outer_joins(:rooms).where(block_params).where(rooms: { id: nil }).where.not(number_of_students: 0).order('subjects.name, name')
 
-    if @blocks
+    if @blocks.present?
       render json: {
         message: "Blocks found",
         data: {
@@ -18,10 +15,8 @@ class Api::V1::BlocksController < ApiController
       }
     else
       render json: {
-        data: {
-          message: "Block not found",
-          status: :not_found
-        }
+        message: "No blocks found or No students are assigned to any blocks for the selected filters!",
+        status: :not_found
       }
     end
   end
@@ -116,7 +111,9 @@ class Api::V1::BlocksController < ApiController
       :course_id,
       :branch_id,
       :semester_id,
-      :block_type
+      :block_type,
+      :date,
+      :time
     )
   end
 

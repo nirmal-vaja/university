@@ -1,10 +1,9 @@
 class Api::V1::BlocksController < ApiController
 
-  before_action :set_block, only: %i[assign_students]
+  before_action :set_block, only: %i[assign_students fetch_details reassign_block]
 
   def index
-    @blocks = Block.joins(:subject).left_outer_joins(:rooms).where(block_params).where(rooms: { id: nil }).where.not(number_of_students: 0).order('subjects.name, name')
-
+    @blocks = Block.joins(:subject).where(block_params).where.not(number_of_students: 0).order('subjects.name, name')
     if @blocks.present?
       render json: {
         message: "Blocks found",
@@ -17,6 +16,59 @@ class Api::V1::BlocksController < ApiController
       render json: {
         message: "No blocks found or No students are assigned to any blocks for the selected filters!",
         status: :not_found
+      }
+    end
+  end
+
+  def fetch_details
+    return render json: {message: 'No rooms assigned', status: :unprocessable_entity} unless @block.rooms
+
+    @details = @block.room_blocks.find_by(room_block_params)
+
+    if @details
+      render json: {
+        message: "Room Block Found",
+        data: { details: @details },
+        status: :ok
+      }
+    else
+      render json: {
+        message: 'not found', 
+        status: :ok
+      }
+    end
+  end
+
+  def reassign_block
+    return render json: {message: 'No rooms assigned', status: :unprocessable_entity} unless @block.rooms
+    @room = Room.find_by(id: room_block_params[:room_id])
+    @room_block = @block.room_blocks.find_by(room_block_params.except(:room_id))
+    @previous_room = @room_block.room
+
+    if @room.occupied + @block.number_of_students > @room.capacity
+      render json: {
+        message: "Assigning this block would exceed the room capacity, Remaining Capacity : #{@room.capacity - @room.occupied}",
+        data: { room_block: @room_block },
+        status: :unprocessable_entity
+      }
+      return
+    end
+
+    if @room_block.update(room_block_params)
+      @room_block.room.update_occupied_from_blocks
+      @previous_room.update_occupied_from_blocks
+      render json: {
+        message: 'Block has been reassigned to the room',
+        data: {
+          room_block: @room_block
+        },
+        status: :ok
+      }
+    else
+      render json: {
+        message: @room_block.errors.full_messages.join(' '),
+        data: { room_block: @room_block },
+        status: :unprocessable_entity
       }
     end
   end
@@ -114,6 +166,19 @@ class Api::V1::BlocksController < ApiController
       :block_type,
       :date,
       :time
+    )
+  end
+
+  def room_block_params
+    params.require(:block).permit(
+      :academic_year,
+      :examination_name,
+      :course_id,
+      :branch_id,
+      :room_id,
+      :date,
+      :time,
+      :examination_type
     )
   end
 

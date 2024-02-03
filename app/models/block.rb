@@ -18,7 +18,8 @@ class Block < ApplicationRecord
       course: course,
       branch: branch,
       subject: subject,
-      students: students
+      students: students,
+      is_any_room_assigned: room_blocks.any?
     )
   end
 

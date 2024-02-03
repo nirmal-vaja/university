@@ -3,7 +3,8 @@ class Api::V1::RoomsController < ApiController
   before_action :set_room, only: %i[assign_block]
 
   def index
-    @rooms = Room.where(room_params).where.not('capacity = occupied')
+    @rooms = Room.where(room_params)
+    @rooms.each { |room| room.update_occupied_from_blocks if room.blocks }
     if @rooms
       render json: {
         message: "Rooms found",
@@ -49,6 +50,7 @@ class Api::V1::RoomsController < ApiController
     end
 
     if @room_block.save
+      @room.update_occupied_from_blocks
       render json: {
         message: "Block has been assigned to the room",
         data: {

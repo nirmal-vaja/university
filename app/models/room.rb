@@ -5,7 +5,6 @@ class Room < ApplicationRecord
   has_many :room_blocks, dependent: :destroy
   has_many :blocks, through: :room_blocks
 
-  after_save :update_occupied_from_blocks
 
   def as_json(options={})
     super(options).merge(

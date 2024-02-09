@@ -37,7 +37,6 @@ class ExamTimeTable < ApplicationRecord
   private
 
   def destroy_block_extra_config
-    binding.pry
     @exam_time_tables =
       ExamTimeTable.where(
         date: date,

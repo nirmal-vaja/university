@@ -3,6 +3,7 @@ module Api
     class SubjectsController < ApiController
 
       skip_before_action :doorkeeper_authorize!
+      before_action :set_subject, only: %i[fetch_exam_time_table_details]
     
       def index
         params =
@@ -16,6 +17,12 @@ module Api
         @subjects = Subject.where(params)
         
         if @subjects.present?
+          @subjects = @subjects.map do |subject|
+            subject.attributes.merge({
+              is_exam_time_table_created: subject.exam_time_tables.where(time_table_params).any?,
+              exam_time_table: subject.exam_time_tables.find_by(time_table_params)
+            })
+          end
           render json: {
             message: "Details found",
             data: {
@@ -24,7 +31,7 @@ module Api
           }
         else
           render json: {
-            message: "Details not found",
+            message: "Subjects not found",
             status: :not_found
           }
         end
@@ -58,7 +65,7 @@ module Api
           }
         else
           render json: {
-            message: "Details not found",
+            message: "Subjects not found",
             status: :not_found
           }
         end
@@ -68,6 +75,10 @@ module Api
 
       def subject_params
         params.require(:subject).permit(:course_id, :branch_id, :semester_id, :id).to_h
+      end
+
+      def time_table_params
+        params.require(:exam_time_table).permit(:name, :semester_id, :subject_id, :date, :time, :course_id, :branch_id, :academic_year, :day, :time_table_type)
       end
 
       def subject_params_for_syllabus

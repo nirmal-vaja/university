@@ -33,7 +33,7 @@ module Api
         if @dates_to_assign.present?
           @dates_to_assign.each do |date|
             date = date.strftime("%Y-%m-%d")
-            block_extra_config = BlockExtraConfig.where(block_extra_config_params).find_by(date: date)
+            block_extra_config = BlockExtraConfig.where(block_extra_config_params).reject{|config| config.number_of_supervisions }.find_by(date: date)
             no_of_blocks = 
             if @supervision.list_type.downcase === "junior"
               block_extra_config.number_of_supervisions + block_extra_config.number_of_extra_jr_supervision

@@ -19,7 +19,8 @@ namespace :api do
     resources :blocks do
       member do
         post :assign_students
-        get :fetch_details
+        get :fetch_rooms_details
+        get :fetch_students_details
         put :reassign_block
       end
       

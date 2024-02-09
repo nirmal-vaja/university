@@ -33,15 +33,15 @@ class Api::V1::ExamTimeTablesController < ApiController
 
     begin
       ActiveRecord::Base.transaction do
-        raise ActiveRecord::Rollback unless @exam_time_table.save
         create_block_wise_reports
+        raise ActiveRecord::Rollback unless @exam_time_table.save
         generate_and_store_blocks
         generate_block_extra_configs
         render json: {
           message: "Time table has been created",
           data: {
             time_table: @exam_time_table,
-            block_details: @exam_time_table.time_table_block_wise_reports
+            block_details: @exam_time_table.time_table_block_wise_report
           }, status: :created
         }
       end
@@ -55,6 +55,7 @@ class Api::V1::ExamTimeTablesController < ApiController
 
   def update
     if @time_table.update(time_table_params)
+      generate_block_extra_configs
       render json: {
         message: "Time table has been updated",
         data: {
@@ -84,7 +85,7 @@ class Api::V1::ExamTimeTablesController < ApiController
   end
 
   def get_examination_dates
-    @exam_time_tables = ExamTimeTable.where(time_table_params.except(:date))
+    @exam_time_tables = ExamTimeTable.where(time_table_params.except(:date)).order(date: :asc)
 
     if @exam_time_tables
       render json: {
@@ -198,7 +199,15 @@ class Api::V1::ExamTimeTablesController < ApiController
   end
 
   def generate_block_extra_configs
-    total_number_of_blocks = ExamTimeTable.where(date: @exam_time_table.date, time: @exam_time_table.time, name: @exam_time_table.name, academic_year: @exam_time_table.academic_year).map{|x| x.time_table_block_wise_reports&.pluck(:number_of_blocks).compact.sum}.compact.sum
+    total_number_of_blocks = 
+      ExamTimeTable.where(
+        date: @exam_time_table.date,
+        time: @exam_time_table.time,
+        name: @exam_time_table.name,
+        academic_year: @exam_time_table.academic_year,
+        course_id: @exam_time_table.course_id,
+        time_table_type: @exam_time_table.time_table_type
+      ).map{|x| x.time_table_block_wise_report.number_of_blocks}.compact.sum
 
     block_extra_config = BlockExtraConfig.find_or_create_by(
       examination_name: @exam_time_table.name,
@@ -216,7 +225,7 @@ class Api::V1::ExamTimeTablesController < ApiController
     find_maximum_students_per_block
     find_no_students_appearing_for_this_exam
     blocks = (@number_of_students.to_f / @max_students_per_block)
-    @exam_time_table.time_table_block_wise_reports.create(
+    @exam_time_table.build_time_table_block_wise_report(
       examination_name: @exam_time_table.name,
       number_of_blocks: blocks.ceil(),
       academic_year: @exam_time_table.academic_year,
@@ -229,28 +238,28 @@ class Api::V1::ExamTimeTablesController < ApiController
   end
 
   def generate_and_store_blocks
-    return unless @exam_time_table.time_table_block_wise_reports.any?
+    return unless @exam_time_table.time_table_block_wise_report.present?
 
-    @exam_time_table.time_table_block_wise_reports.each do |report|
-      number_of_blocks = report.number_of_blocks
-      block_name = get_next_block_name
-      number_of_blocks.times do
-        @exam_time_table.blocks.create!(
-          name: block_name,
-          date: @exam_time_table.date,
-          time: @exam_time_table.time,
-          academic_year: @exam_time_table.academic_year,
-          examination_name: @exam_time_table.name,
-          course_id: @exam_time_table.course_id,
-          branch_id: @exam_time_table.branch_id,
-          capacity: @max_students_per_block,
-          block_type: @exam_time_table.time_table_type,
-          subject_id: @exam_time_table.subject_id,
-          number_of_students: 0
-        )
+    number_of_blocks = @exam_time_table.time_table_block_wise_report.number_of_blocks
 
-        block_name = get_next_block_name(block_name)
-      end
+    block_name = get_next_block_name
+
+    number_of_blocks.times do
+      @exam_time_table.blocks.create!(
+        name: block_name,
+        date: @exam_time_table.date,
+        time: @exam_time_table.time,
+        academic_year: @exam_time_table.academic_year,
+        examination_name: @exam_time_table.name,
+        course_id: @exam_time_table.course_id,
+        branch_id: @exam_time_table.branch_id,
+        capacity: @max_students_per_block,
+        block_type: @exam_time_table.time_table_type,
+        subject_id: @exam_time_table.subject_id,
+        number_of_students: 0
+      )
+
+      block_name = get_next_block_name(block_name)
     end
   end
 

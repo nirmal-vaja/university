@@ -1,6 +1,6 @@
 class Api::V1::BlocksController < ApiController
 
-  before_action :set_block, only: %i[assign_students fetch_details reassign_block]
+  before_action :set_block, only: %i[assign_students fetch_rooms_details reassign_block fetch_students_details]
 
   def index
     @blocks = Block.joins(:subject).where(block_params).where.not(number_of_students: 0).order('subjects.name, name')
@@ -20,7 +20,7 @@ class Api::V1::BlocksController < ApiController
     end
   end
 
-  def fetch_details
+  def fetch_rooms_details
     return render json: {message: 'No rooms assigned', status: :unprocessable_entity} unless @block.rooms
 
     @details = @block.room_blocks.find_by(room_block_params)
@@ -33,10 +33,22 @@ class Api::V1::BlocksController < ApiController
       }
     else
       render json: {
-        message: 'not found', 
+        message: 'not found',
         status: :ok
       }
     end
+  end
+
+  def fetch_students_details
+    return render json: { message: 'No students assigned', status: :unprocessable_entity } unless @block.students
+
+    render json: {
+      message: "Students found",
+      data: {
+        students: @block.students,
+        room: @block.rooms.first
+      }, status: :ok
+    }
   end
 
   def reassign_block
@@ -162,7 +174,6 @@ class Api::V1::BlocksController < ApiController
       :examination_name,
       :course_id,
       :branch_id,
-      :semester_id,
       :block_type,
       :date,
       :time

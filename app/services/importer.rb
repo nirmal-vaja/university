@@ -417,8 +417,9 @@ class Importer
         division = semester.divisions.find_by_name(student_data["division"])
 
         unless division
+          binding.pry
           return {
-            message: "Division - #{student_data["division"]} not found in #{course.name} #{branch.name} #{semester.name}",
+            message: "Division - #{student_data["division"]} not found in #{course.name} #{branch.name} Semester: #{semester.name}",
             status: :unprocessable_entity
           }
         end
@@ -453,6 +454,7 @@ class Importer
         end
 
         unless student.save
+          binding.pry
           return {
             message: student.errors.full_messages.join(', '),
             status: :unprocessable_entity

@@ -84,5 +84,7 @@ test:
 production:
   <<: *default
   database: university
+  username: postgres
+  password: root
   host: ec2-3-110-133-204.ap-south-1.compute.amazonaws.com
   schema_search_path: public

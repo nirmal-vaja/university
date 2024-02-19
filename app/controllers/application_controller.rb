@@ -32,10 +32,6 @@ class ApplicationController < ActionController::Base
 
   def set_tenant
     subdomain = params[:subdomain]
-    if params[:admin].present?
-      Apartment::Tenant.switch!
-    else
-      subdomain.present? ? Apartment::Tenant.switch!(subdomain) : Apartment::Tenant.switch!
-    end
+    subdomain.present? ? Apartment::Tenant.switch!(subdomain) : Apartment::Tenant.switch!
   end
 end

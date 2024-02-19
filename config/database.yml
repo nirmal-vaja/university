@@ -84,7 +84,7 @@ test:
 production:
   <<: *default
   database: university
-  username: postgres
-  password: root
-  host: ec2-3-110-133-204.ap-south-1.compute.amazonaws.com
+  username: <%= ENV['DB_USERNAME'] %>
+  password: <%= ENV['DB_PASSWORD'] %>
+  host: <%= ENV['DB_HOST'] %>
   schema_search_path: public

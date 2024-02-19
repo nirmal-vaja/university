@@ -84,3 +84,5 @@ test:
 production:
   <<: *default
   database: university
+  host: ec2-3-110-133-204.ap-south-1.compute.amazonaws.com
+  schema_search_path: public

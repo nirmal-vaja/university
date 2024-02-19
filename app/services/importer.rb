@@ -430,7 +430,7 @@ class Importer
         student.semester_id = semester.id
         student.division_id = division.id
         student.name = student_data["name"]
-        student.fees_paid = student_data["fees_paid"].to_i === 0 ? false : true
+        student.fees_paid = student_data["fees_paid"].to_i == 0 ? false : true
         student.gender = student_data["gender"]
         student.father_name = student_data["father's_full_name"]
         student.mother_name = student_data["mother's_full_name"]

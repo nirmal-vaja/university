@@ -52,6 +52,7 @@ module Api
         @supervision.metadata = metadata
         authorize @supervision
         if @supervision.metadata.present?
+          @supervision.no_of_supervisions = @supervision.metadata.length
           if @supervision.save
             render json: {
               message: "Supervision successfully assigned!",

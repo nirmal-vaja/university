@@ -92,11 +92,12 @@ module Api
             block_extra_config = BlockExtraConfig.where(block_extra_config_params).where.not(number_of_supervisions: [nil, 0]).find_by(date: date)
             no_of_blocks = 
             if @supervision.list_type.downcase === "junior"
-              block_extra_config.number_of_supervisions + block_extra_config.number_of_extra_jr_supervision
+              no_of_blocks = block_extra_config.number_of_supervisions + block_extra_config.number_of_extra_jr_supervision
+              supervisions = Supervision.where(list_type: 'Junior').where("metadata LIKE ?", "%#{date}%")
             else
-              block_extra_config.number_of_extra_sr_supervision
+              no_of_blocks = block_extra_config.number_of_extra_sr_supervision
+              supervisions = Supervision.where(list_type: 'Senior').where("metadata LIKE ?", "%#{date}%")
             end
-            supervisions = Supervision.where("metadata LIKE ?", "%#{date}%")
             if supervisions.count < no_of_blocks || supervisions.pluck(:id).include?(@supervision.id)
               @supervision.metadata[date] = true
             else
@@ -107,6 +108,7 @@ module Api
 
         
         if @supervision.metadata.present?
+          @supervision.no_of_supervisions = @supervision.metadata.length
           if @supervision.update(supervision_params)
             render json: {
               message: "Successfully Updated!",

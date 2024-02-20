@@ -33,14 +33,14 @@ module Api
         if @dates_to_assign.present?
           @dates_to_assign.each do |date|
             date = date.strftime("%Y-%m-%d")
-            block_extra_config = BlockExtraConfig.where(block_extra_config_params).where.not(number_of_supervisions: [nil, 0]).find_by(date: date)
-            no_of_blocks = 
+            block_extra_config = BlockExtraConfig.where(block_extra_config_params).where.not(number_of_supervisions: [nil, 0]).find_by(date: date) 
             if @supervision.list_type.downcase === "junior"
-              block_extra_config.number_of_supervisions + block_extra_config.number_of_extra_jr_supervision
+              no_of_blocks = block_extra_config.number_of_supervisions + block_extra_config.number_of_extra_jr_supervision
+              supervision = Supervision.where(list_type: 'Junior').where("metadata LIKE ?", "%#{date}");
             else
-              block_extra_config.number_of_extra_sr_supervision
+              no_of_blocks = block_extra_config.number_of_extra_sr_supervision
+              supervision = Supervision.where(list_type: 'Senior').where("metadata LIKE ?", "%#{date}");
             end
-            supervision = Supervision.where("metadata LIKE ?", "%#{date}%")
   
             if supervision.count < no_of_blocks
               metadata[date] = true

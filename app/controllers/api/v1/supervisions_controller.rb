@@ -98,6 +98,8 @@ module Api
               no_of_blocks = block_extra_config.number_of_extra_sr_supervision
               supervisions = Supervision.where(list_type: 'Senior').where("metadata LIKE ?", "%#{date}%")
             end
+            p supervisions
+            p no_of_blocks
             if supervisions.count < no_of_blocks || supervisions.pluck(:id).include?(@supervision.id)
               @supervision.metadata[date] = true
             else

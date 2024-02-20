@@ -83,7 +83,9 @@ module Api
 
       def update
         @supervision = Supervision.find_by_id(params[:id])
-
+        if @supervision.metadata.length >= supervision_params[:no_of_supervisions].to_i
+          @supervision.metadata = {}
+        end
         @dates = ExamTimeTable.where(time_table_params).pluck(:date).uniq.map{|date| date.strftime("%Y-%m-%d")}.reject{ |x| @supervision.metadata.keys.include?(x) }
         @dates_to_assign = @dates&.sample(supervision_params[:no_of_supervisions].to_i)
         @block_extra_configs = BlockExtraConfig.where(block_extra_config_params).where.not(number_of_supervisions: [nil, 0])

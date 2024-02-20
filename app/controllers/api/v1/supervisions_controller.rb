@@ -108,8 +108,7 @@ module Api
 
         
         if @supervision.metadata.present?
-          supervision_params[:no_of_supervisions] = @supervision.metadata.length
-          if @supervision.update(supervision_params)
+          if @supervision.update(no_of_supervisions: @supervision.metadata.length)
             render json: {
               message: "Successfully Updated!",
               data: {

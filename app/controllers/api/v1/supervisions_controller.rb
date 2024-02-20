@@ -86,11 +86,11 @@ module Api
 
         @dates = ExamTimeTable.where(time_table_params).pluck(:date).uniq.map{|date| date.strftime("%Y-%m-%d")}.reject{ |x| @supervision.metadata.keys.include?(x) }
         @dates_to_assign = @dates&.sample(supervision_params[:no_of_supervisions].to_i)
+        @block_extra_configs = BlockExtraConfig.where(block_extra_config_params).where.not(number_of_supervisions: [nil, 0])
         metadata = {}
         if @dates_to_assign.present?
           @dates_to_assign.each do |date|
-            block_extra_config = BlockExtraConfig.where(block_extra_config_params).where.not(number_of_supervisions: [nil, 0]).find_by(date: date)
-            no_of_blocks = 
+            block_extra_config = @block_extra_configs.find_by(date: date)
             if @supervision.list_type.downcase === "junior"
               no_of_blocks = block_extra_config.number_of_supervisions + block_extra_config.number_of_extra_jr_supervision
               supervisions = Supervision.where(list_type: 'Junior').where("metadata LIKE ?", "%#{date}%")
@@ -98,9 +98,6 @@ module Api
               no_of_blocks = block_extra_config.number_of_extra_sr_supervision
               supervisions = Supervision.where(list_type: 'Senior').where("metadata LIKE ?", "%#{date}%")
             end
-            Rails.logger.debug "Supervisions : #{supervisions}";
-            Rails.logger.debug "No of Blocks : #{no_of_blocks}";
-            Rails.logger.debug "Some Condition : #{supervisions.pluck(:id).include?(@supervision.id)}}"
             if supervisions.count < no_of_blocks || supervisions.pluck(:id).include?(@supervision.id)
               @supervision.metadata[date] = true
             else

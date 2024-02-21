@@ -7,7 +7,12 @@ namespace :api do
     get "/universities", to: "home#get_universities"
     post "/check_subdomain", to: "home#check_subdomain"
     get "/find_user", to: "home#find_user"
-    resources :roles, only: [:index,:create, :destroy]
+    resources :roles, only: [:index, :create, :destroy] do
+      collection do
+        get :fetch_roles
+      end
+    end
+
     resources :universities, only: [:index, :create] do
       member do
         get :get_authorization_details

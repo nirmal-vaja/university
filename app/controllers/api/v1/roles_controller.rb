@@ -46,6 +46,27 @@ module Api
         end
       end
 
+      def fetch_roles
+        @user = User.find_by_id(params[:user_id])
+        remove_role_name = @user.roles.pluck(:name) + ['super_admin', 'faculty', 'Marks Entry'];
+        @roles = Role.where.not(name: remove_role_name.uniq)
+
+        if @roles
+          render json: {
+            message: "These are the roles",
+            data: {
+              roles: @roles
+            },
+            status: :ok
+          }
+        else
+          render json: {
+            message: "No roles found",
+            status: :unprocessable_entity
+          }
+        end
+      end
+
       private
 
       def role_params

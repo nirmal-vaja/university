@@ -47,9 +47,17 @@ module Api
       end
 
       def fetch_roles
-        @user = User.find_by_id(params[:user_id])
-        remove_role_name = @user.roles.pluck(:name) + ['super_admin', 'faculty', 'Marks Entry'];
-        @roles = Role.where.not(name: remove_role_name.uniq)
+        @course = Course.find_by_id(params[:course_id])
+        @remove_role_name = @course.users
+                            .joins(:roles)
+                            .where(roles: { name: 'faculty' })
+                            .where.not(id: User.joins(:roles).group('users.id').having('COUNT(roles.id) = 1').pluck(:id))
+                            .flat_map(&:roles)
+                            .map(&:name)
+                            .uniq
+        @remove_role_name = @remove_role_name + ["super_admin", "faculty", "Marks Entry"]
+
+        @roles = Role.where.not(name: @remove_role_name.uniq)
 
         if @roles
           render json: {

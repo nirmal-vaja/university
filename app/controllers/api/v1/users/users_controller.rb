@@ -165,7 +165,7 @@ module Api
             remove_role(params[:id], user_params[:role_name])
             role_name = user_params[:role_name]
             render json: {
-              message: "Role Deassigned",
+              message: "#{@user.first_name} #{@user.last_name} has removed as #{user_params[:role_name]}",
               data: {
                 user: @user,
                 role: role_name
